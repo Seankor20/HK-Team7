@@ -155,7 +155,7 @@ const Chat = () => {
 
   return (
     <div className="p-4 md:p-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-8rem)]">
+      <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 min-h-screen">
         {/* Chat Rooms List */}
         <Card className="lg:col-span-1">
           <CardHeader>
