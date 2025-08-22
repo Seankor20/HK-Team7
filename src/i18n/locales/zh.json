@@ -1,0 +1,102 @@
+{
+  "common": {
+    "welcome": "欢迎",
+    "home": "首页",
+    "profile": "个人资料",
+    "chat": "聊天",
+    "quiz": "测验",
+    "leaderboard": "排行榜",
+    "settings": "设置",
+    "logout": "退出登录",
+    "login": "登录",
+    "register": "注册",
+    "search": "搜索",
+    "submit": "提交",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "today": "今天",
+    "yesterday": "昨天",
+    "download": "下载"
+  },
+  "navigation": {
+    "dashboard": "仪表板",
+    "courses": "课程",
+    "progress": "进度",
+    "achievements": "成就"
+  },
+  "home": {
+    "hero": {
+      "title": "学习与成长",
+      "subtitle": "发现新技能，提升你的职业生涯",
+      "cta": "开始学习",
+      "welcomeBack": "哦，欢迎回来！",
+      "description": "我们很高兴看到你继续与你的小家伙一起这段令人惊叹的学习之旅。你们一起度过的每一刻都会创造持续一生的回忆。",
+      "continueLearning": "继续学习",
+      "imageAlt": "家庭一起学习"
+    },
+    "features": {
+      "title": "为什么选择我们",
+      "feature1": "互动学习",
+      "feature2": "专业讲师",
+      "feature3": "灵活时间"
+    },
+    "progress": {
+      "title": "你孩子的进步",
+      "subtitle": "看看你的小学习者做得多么棒！",
+      "greatProgress": "进步很大！",
+      "sarahMath": "莎拉的数学进步",
+      "readingAchievement": "阅读成就"
+    },
+    "materials": {
+      "title": "学习材料",
+      "subtitle": "教师演示和有用的学习资源",
+      "video": "视频",
+      "pdfDocument": "PDF文档",
+      "beginner": "初学者",
+      "intermediate": "中级",
+      "numbersCounting": "数字与计数",
+      "letterRecognition": "字母识别指南",
+      "creativeArts": "创意艺术与手工",
+      "watchNow": "立即观看"
+    }
+  },
+  "quiz": {
+    "title": "测试你的知识",
+    "start": "开始测验",
+    "question": "问题",
+    "of": "共",
+    "correct": "正确！",
+    "incorrect": "错误！",
+    "score": "分数",
+    "timeLeft": "剩余时间"
+  },
+  "chat": {
+    "title": "AI学习助手",
+    "placeholder": "询问任何关于学习的问题...",
+    "send": "发送",
+    "thinking": "思考中...",
+    "newChat": "新对话"
+  },
+  "profile": {
+    "title": "你的个人资料",
+    "personalInfo": "个人信息",
+    "learningStats": "学习统计",
+    "achievements": "成就",
+    "editProfile": "编辑资料"
+  },
+  "leaderboard": {
+    "title": "排行榜",
+    "rank": "排名",
+    "name": "姓名",
+    "score": "分数",
+    "level": "等级"
+  }
+}
