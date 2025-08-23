@@ -4,6 +4,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Medal, Award, Clock, TrendingUp } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 
+// Import avatar images
+import chiWingAvatar from "@/assets/chi-wing.png";
+import rainbowAvatar from "@/assets/rainbow.png";
+import ciciAvatar from "@/assets/cici.png";
+import yoyoAvatar from "@/assets/yoyo.png";
+import avaAvatar from "@/assets/ava.png";
+import shaunAvatar from "@/assets/shaun.png";
+
 interface user {
   id: number;
   name: string;
@@ -19,7 +27,7 @@ const students: user[] = [
   {
     id: 1,
     name: "Chi Wing Wang",
-    avatar: "",
+    avatar: chiWingAvatar,
     score: 945,
     streak: 12,
     testsCompleted: 28,
@@ -29,7 +37,7 @@ const students: user[] = [
   {
     id: 2,
     name: "Rainbow Cheng",
-    avatar: "",
+    avatar: rainbowAvatar,
     score: 920,
     streak: 8,
     testsCompleted: 25,
@@ -39,7 +47,7 @@ const students: user[] = [
   {
     id: 3,
     name: "Cici Leung",
-    avatar: "",
+    avatar: ciciAvatar,
     score: 895,
     streak: 15,
     testsCompleted: 24,
@@ -49,7 +57,7 @@ const students: user[] = [
   {
     id: 4,
     name: "Yoyo Pan",
-    avatar: "",
+    avatar: yoyoAvatar,
     score: 880,
     streak: 6,
     testsCompleted: 23,
@@ -59,7 +67,7 @@ const students: user[] = [
   {
     id: 5,
     name: "Ava Wang",
-    avatar: "",
+    avatar: avaAvatar,
     score: 865,
     streak: 10,
     testsCompleted: 22,
@@ -68,8 +76,8 @@ const students: user[] = [
   },
   {
     id: 6,
-    name: "Sean Pong",
-    avatar: "",
+    name: "Shaun Pong",
+    avatar: shaunAvatar,
     score: 850,
     streak: 7,
     testsCompleted: 21,
@@ -84,13 +92,13 @@ const Leaderboard = () => {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Trophy className="h-6 w-6 text-warning" />;
+        return <Trophy className="h-6 w-6 text-accent" />;
       case 2:
         return <Medal className="h-6 w-6 text-muted-foreground" />;
       case 3:
-        return <Award className="h-6 w-6 text-accent" />;
+        return <Award className="h-4 w-4 text-accent" />;
       default:
-        return <span className="text-lg font-bold text-muted-foreground">#{rank}</span>;
+        return 
     }
   };
 
@@ -193,52 +201,146 @@ const Leaderboard = () => {
           {/* Large Castle Background */}
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
             <div className="relative">
-              {/* Castle base - very wide */}
-              <div className="w-80 h-32 bg-gradient-to-b from-gray-400 via-gray-300 to-gray-200 border-4 border-gray-600 rounded-t-3xl shadow-2xl relative">
-                {/* Castle entrance */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-gray-700 rounded-t border-2 border-gray-800"></div>
-                {/* Windows */}
-                <div className="absolute top-8 left-8 w-6 h-4 bg-blue-200 rounded border border-gray-500"></div>
-                <div className="absolute top-8 right-8 w-6 h-4 bg-blue-200 rounded border border-gray-500"></div>
-                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-blue-200 rounded border border-gray-500"></div>
+              {/* Castle base - very wide with enhanced details */}
+              <div className="w-96 h-36 bg-gradient-to-b from-gray-500 via-gray-400 to-gray-300 border-4 border-gray-700 rounded-t-3xl shadow-2xl relative">
+                {/* Castle entrance - more detailed */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-20 h-12 bg-gradient-to-b from-gray-800 to-gray-600 rounded-t border-2 border-gray-900 shadow-inner">
+                  {/* Door details */}
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-8 bg-yellow-600 rounded-full"></div>
+                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-blue-400 rounded-full"></div>
+                </div>
+                
+                {/* Windows with more detail */}
+                <div className="absolute top-8 left-8 w-8 h-6 bg-gradient-to-b from-blue-200 to-blue-300 rounded border-2 border-gray-600 shadow-inner">
+                  <div className="absolute top-1 left-1 w-1 h-4 bg-gray-700 rounded-full"></div>
+                  <div className="absolute top-1 right-1 w-1 h-4 bg-gray-700 rounded-full"></div>
+                </div>
+                <div className="absolute top-8 right-8 w-8 h-6 bg-gradient-to-b from-blue-200 to-blue-300 rounded border-2 border-gray-600 shadow-inner">
+                  <div className="absolute top-1 left-1 w-1 h-4 bg-gray-700 rounded-full"></div>
+                  <div className="absolute top-1 right-1 w-1 h-4 bg-gray-700 rounded-full"></div>
+                </div>
+                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-10 h-8 bg-gradient-to-b from-blue-200 to-blue-300 rounded border-2 border-gray-600 shadow-inner">
+                  <div className="absolute top-1 left-1 w-1 h-6 bg-gray-700 rounded-full"></div>
+                  <div className="absolute top-1 right-1 w-1 h-6 bg-gray-700 rounded-full"></div>
+                </div>
+                
+                {/* Battlements along the top */}
+                <div className="absolute top-0 left-0 right-0 h-4 flex justify-between">
+                  {[...Array(12)].map((_, i) => (
+                    <div key={i} className="w-6 h-4 bg-gray-400 border-r border-gray-600"></div>
+                  ))}
+                </div>
               </div>
               
-              {/* Castle towers */}
-              <div className="flex justify-center gap-4 -mt-2">
-                <div className="w-16 h-24 bg-gradient-to-b from-gray-200 to-gray-400 rounded-t-2xl border-2 border-gray-600 shadow-xl"></div>
-                <div className="w-20 h-32 bg-gradient-to-b from-gray-100 to-gray-300 rounded-t-3xl border-2 border-gray-600 shadow-2xl relative">
-                  {/* Main tower window */}
-                  <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-blue-200 rounded border border-gray-500"></div>
-                  {/* Main tower flag */}
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="w-1 h-8 bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-md"></div>
-                    <div className="w-6 h-4 bg-gradient-to-r from-red-500 to-red-600 rounded-sm shadow-md"></div>
+              {/* Enhanced castle towers */}
+              <div className="flex justify-center gap-6 -mt-2">
+                {/* Left tower */}
+                <div className="w-20 h-28 bg-gradient-to-b from-gray-300 to-gray-500 rounded-t-2xl border-2 border-gray-700 shadow-xl relative">
+                  {/* Tower battlements */}
+                  <div className="absolute top-0 left-0 right-0 h-3 flex justify-between">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="w-4 h-3 bg-gray-400 border-r border-gray-600"></div>
+                    ))}
+                  </div>
+                  {/* Tower window */}
+                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-blue-200 rounded border border-gray-600"></div>
+                  {/* Tower flag */}
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-md"></div>
+                    <div className="w-5 h-3 bg-gradient-to-r from-red-500 to-red-600 rounded-sm shadow-md"></div>
                   </div>
                 </div>
-                <div className="w-16 h-24 bg-gradient-to-b from-gray-200 to-gray-400 rounded-t-2xl border-2 border-gray-600 shadow-xl"></div>
+                
+                {/* Main center tower - larger and more prominent */}
+                <div className="w-24 h-36 bg-gradient-to-b from-gray-200 to-gray-400 rounded-t-3xl border-2 border-gray-700 shadow-2xl relative">
+                  {/* Main tower battlements */}
+                  <div className="absolute top-0 left-0 right-0 h-4 flex justify-between">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="w-5 h-4 bg-gray-300 border-r border-gray-600"></div>
+                    ))}
+                  </div>
+                  {/* Main tower window - larger */}
+                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-10 h-8 bg-gradient-to-b from-blue-200 to-blue-300 rounded border-2 border-gray-600 shadow-inner">
+                    <div className="absolute top-1 left-1 w-1 h-6 bg-gray-700 rounded-full"></div>
+                    <div className="absolute top-1 right-1 w-1 h-6 bg-gray-700 rounded-full"></div>
+                  </div>
+                  {/* Main tower flag - larger */}
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="w-1 h-10 bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-md"></div>
+                    <div className="w-7 h-5 bg-gradient-to-r from-red-500 to-red-600 rounded-sm shadow-md"></div>
+                  </div>
+                </div>
+                
+                {/* Right tower */}
+                <div className="w-20 h-28 bg-gradient-to-b from-gray-300 to-gray-500 rounded-t-2xl border-2 border-gray-700 shadow-xl relative">
+                  {/* Tower battlements */}
+                  <div className="absolute top-0 left-0 right-0 h-3 flex justify-between">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="w-4 h-3 bg-gray-400 border-r border-gray-600"></div>
+                    ))}
+                  </div>
+                  {/* Tower window */}
+                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-blue-200 rounded border border-gray-600"></div>
+                  {/* Tower flag */}
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-md"></div>
+                    <div className="w-5 h-3 bg-gradient-to-r from-red-500 to-red-600 rounded-sm shadow-md"></div>
+                  </div>
+                </div>
               </div>
               
-              {/* Castle glow effect */}
-              <div className="absolute inset-0 bg-yellow-200/20 rounded-full blur-2xl scale-150"></div>
+              {/* Additional architectural details */}
+              {/* Side walls with windows */}
+              <div className="absolute -left-4 top-8 w-8 h-20 bg-gradient-to-b from-gray-400 to-gray-300 border-2 border-gray-600 rounded-l-lg">
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-4 h-3 bg-blue-200 rounded border border-gray-500"></div>
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-3 bg-blue-200 rounded border border-gray-500"></div>
+              </div>
+              <div className="absolute -right-4 top-8 w-8 h-20 bg-gradient-to-b from-gray-400 to-gray-300 border-2 border-gray-600 rounded-r-lg">
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-4 h-3 bg-blue-200 rounded border border-gray-500"></div>
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-3 bg-blue-200 rounded border border-gray-500"></div>
+              </div>
+              
+              {/* Castle glow effect - enhanced */}
+              <div className="absolute inset-0 bg-yellow-200/30 rounded-full blur-3xl scale-150 animate-pulse"></div>
+              <div className="absolute inset-0 bg-blue-200/20 rounded-full blur-2xl scale-125 animate-pulse" style={{animationDelay: '1s'}}></div>
             </div>
           </div>
 
-          {/* Mountain path */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-green-700 to-transparent"></div>
+          {/* Mountain path - enhanced with more detail */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-green-800 via-green-600 to-transparent"></div>
           
-          {/* Enhanced climbing path indicators with glow effects */}
-          <div className="absolute left-1/4 top-32 w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-80 shadow-lg shadow-green-400/50"></div>
-          <div className="absolute right-1/4 top-80 w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-80 shadow-lg shadow-green-400/50"></div>
-          <div className="absolute left-1/4 top-160 w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-80 shadow-lg shadow-green-400/50"></div>
-          <div className="absolute right-1/4 top-240 w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-80 shadow-lg shadow-green-400/50"></div>
-          <div className="absolute left-1/4 top-320 w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-80 shadow-lg shadow-green-400/50"></div>
-          <div className="absolute right-1/4 top-400 w-2 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-80 shadow-lg shadow-green-400/50"></div>
+          {/* Enhanced climbing path indicators with glow effects and better positioning */}
+          <div className="absolute left-1/4 top-32 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse"></div>
+          <div className="absolute right-1/4 top-80 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+          <div className="absolute left-1/4 top-160 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute right-1/4 top-240 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '1.5s'}}></div>
+          <div className="absolute left-1/4 top-320 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute right-1/4 top-400 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '2.5s'}}></div>
           
-          {/* Floating achievement orbs */}
-          <div className="absolute left-1/6 top-48 w-3 h-3 bg-yellow-300 rounded-full animate-pulse opacity-60"></div>
-          <div className="absolute right-1/6 top-120 w-2 h-2 bg-blue-300 rounded-full animate-pulse opacity-60" style={{animationDelay: '1s'}}></div>
-          <div className="absolute left-1/6 top-200 w-2 h-2 bg-purple-300 rounded-full animate-pulse opacity-60" style={{animationDelay: '2s'}}></div>
-          <div className="absolute right-1/6 top-280 w-3 h-3 bg-pink-300 rounded-full animate-pulse opacity-60" style={{animationDelay: '0.5s'}}></div>
+          {/* Additional climbing paths for more dynamic feel */}
+          <div className="absolute left-1/3 top-200 w-2 h-8 bg-gradient-to-b from-green-300 to-green-500 rounded-full opacity-70 shadow-md shadow-green-300/40"></div>
+          <div className="absolute right-1/3 top-280 w-2 h-8 bg-gradient-to-b from-green-300 to-green-500 rounded-full opacity-70 shadow-md shadow-green-300/40"></div>
+          <div className="absolute left-1/3 top-360 w-2 h-8 bg-gradient-to-b from-green-300 to-green-500 rounded-full opacity-70 shadow-md shadow-green-300/40"></div>
+          
+          {/* Floating achievement orbs - enhanced with better positioning and effects */}
+          <div className="absolute left-1/6 top-48 w-4 h-4 bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-yellow-300/50"></div>
+          <div className="absolute right-1/6 top-120 w-3 h-3 bg-gradient-to-r from-blue-300 to-blue-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-blue-300/50" style={{animationDelay: '1s'}}></div>
+          <div className="absolute left-1/6 top-200 w-3 h-3 bg-gradient-to-r from-purple-300 to-purple-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-purple-300/50" style={{animationDelay: '2s'}}></div>
+          <div className="absolute right-1/6 top-280 w-4 h-4 bg-gradient-to-r from-pink-300 to-pink-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-pink-300/50" style={{animationDelay: '0.5s'}}></div>
+          <div className="absolute left-1/2 top-160 w-3 h-3 bg-gradient-to-r from-green-300 to-green-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-green-300/50" style={{animationDelay: '1.5s'}}></div>
+          
+          {/* Additional decorative elements */}
+          {/* Small rocks/stones on the mountain */}
+          <div className="absolute left-1/5 top-180 w-2 h-2 bg-gray-600 rounded-full opacity-60"></div>
+          <div className="absolute right-1/5 top-220 w-1.5 h-1.5 bg-gray-500 rounded-full opacity-60"></div>
+          <div className="absolute left-1/5 top-260 w-1.5 h-1.5 bg-gray-600 rounded-full opacity-60"></div>
+          <div className="absolute right-1/5 top-300 w-2 h-2 bg-gray-500 rounded-full opacity-60"></div>
+          
+          {/* Small trees/bushes */}
+          <div className="absolute left-1/6 top-140 w-3 h-3 bg-green-700 rounded-full opacity-70"></div>
+          <div className="absolute right-1/6 top-180 w-2.5 h-2.5 bg-green-700 rounded-full opacity-70"></div>
+          <div className="absolute left-1/6 top-320 w-2.5 h-2.5 bg-green-700 rounded-full opacity-70"></div>
+          <div className="absolute right-1/6 top-360 w-3 h-3 bg-green-700 rounded-full opacity-70"></div>
           
           {/* Students positioned around the castle - King on top, others climbing */}
           {students.slice(0, 6).map((student, index) => {
@@ -254,15 +356,18 @@ const Leaderboard = () => {
             } else if (level === 2) {
               // 2nd rank - right below the king
               topPosition = 120; // Below the king
-              horizontalPosition = 'left-1/2'; // Center, below king
+              horizontalPosition = 'left-1/4'; // Center, below king
+            } else if (level === 3) {
+              // 3rd rank - right below the king
+              topPosition = 150; // Below the king
+              horizontalPosition = 'left-3/4'; // Center, below king
             } else {
-              // Others (3rd-6th) - climbing up to the castle
-              const climbLevel = level - 2; // 1, 2, 3, 4
-              topPosition = 160 + (climbLevel - 1) * 40; // 160, 200, 240, 280
-              
-              // Alternate sides for climbers
-              horizontalPosition = climbLevel % 2 === 1 ? 'left-1/6' : 'right-1/6';
-            }
+              const climbLevel = level; 
+              topPosition = 160 + (climbLevel - 1) * 40; 
+              const randomPositions = ['left-[15%]', 'left-[65%]', 'left-[25%]', 'left-[75%]', 'left-[35%]', 'left-[45%]', 'left-[55%]', 'left-[55%]', 'left-[85%]'];
+              horizontalPosition = randomPositions[climbLevel - 1] || 'left-1/2';
+
+            } 
             
             return (
               <div 
@@ -271,30 +376,36 @@ const Leaderboard = () => {
                 style={{ top: `${topPosition}px` }}
               >
                 {/* Enhanced Student avatar with royal styling for king */}
-                <div className={`relative ${level === 1 ? 'scale-175' : isTop3 ? 'scale-150' : 'scale-125'} transition-all duration-300 hover:scale-110`}>
+                <div className={`relative transition-all duration-300 hover:scale-110 ${
+                  level === 1 ? 'scale-200' : // King - biggest
+                  level === 2 ? 'scale-175' : // 2nd place
+                  level === 3 ? 'scale-150' : // 3rd place
+                  level === 4 ? 'scale-125' : // 4th place
+                  level === 5 ? 'scale-110' : // 5th place
+                  'scale-100' // 6th place and below
+                }`}>
                   {/* Avatar with enhanced borders and effects */}
                   <div className="relative">
                     <Avatar className={`mx-auto border-4 ${
-                      level === 1 ? 'h-20 w-20 border-yellow-400 shadow-2xl shadow-yellow-400/50 bg-gradient-to-br from-yellow-100 to-yellow-300' :
-                      level === 2 ? 'h-18 w-18 border-gray-300 shadow-xl shadow-gray-300/50 bg-gradient-to-br from-gray-100 to-gray-300' :
-                      level === 3 ? 'h-16 w-16 border-amber-600 shadow-lg shadow-amber-600/50 bg-gradient-to-br from-amber-100 to-amber-300' :
-                      'h-16 w-16 border-green-300 shadow-md bg-gradient-to-br from-green-100 to-green-300'
+                      level === 1 ? 'h-24 w-24 border-yellow-400 shadow-2xl shadow-yellow-400/50 bg-gradient-to-br from-yellow-100 to-yellow-300' :
+                      level === 2 ? 'h-20 w-20 border-gray-300 shadow-xl shadow-gray-300/50 bg-gradient-to-br from-gray-100 to-gray-300' :
+                      level === 3 ? 'h-18 w-18 border-amber-600 shadow-lg shadow-amber-600/50 bg-gradient-to-br from-amber-100 to-amber-300' :
+                      level === 4 ? 'h-16 w-16 border-green-400 shadow-md shadow-green-400/30 bg-gradient-to-br from-green-100 to-green-300' :
+                      level === 5 ? 'h-14 w-14 border-blue-400 shadow-md shadow-blue-400/30 bg-gradient-to-br from-blue-100 to-blue-300' :
+                      'h-12 w-12 border-purple-400 shadow-md bg-gradient-to-br from-purple-100 to-purple-300'
                     } transition-all duration-300 hover:shadow-2xl`}>
                       <AvatarImage src={student.avatar} alt={student.name} />
-                      <AvatarFallback className={`text-lg font-bold ${
-                        level === 1 ? 'bg-gradient-to-br from-yellow-100 to-yellow-300' :
-                        level === 2 ? 'bg-gradient-to-br from-gray-100 to-gray-300' :
-                        level === 3 ? 'bg-gradient-to-br from-amber-100 to-amber-300' :
-                        'bg-gradient-to-br from-green-100 to-green-300'
+                      <AvatarFallback className={`font-bold ${
+                        level === 1 ? 'text-2xl bg-gradient-to-br from-yellow-100 to-yellow-300' :
+                        level === 2 ? 'text-xl bg-gradient-to-br from-gray-100 to-gray-300' :
+                        level === 3 ? 'text-lg bg-gradient-to-br from-amber-100 to-amber-300' :
+                        level === 4 ? 'text-base bg-gradient-to-br from-green-100 to-green-300' :
+                        level === 5 ? 'text-sm bg-gradient-to-br from-blue-100 to-blue-300' :
+                        'text-xs bg-gradient-to-br from-purple-100 to-purple-300'
                       }`}>
                         {student.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
-                    
-                    {/* Enhanced rank badge with glow */}
-                    <div className="absolute -top-3 -right-3 transform hover:scale-110 transition-transform">
-                      {getRankIcon(student.rank)}
-                    </div>
                     
                     {/* Special crown for the king */}
                     {level === 1 && (
@@ -309,9 +420,14 @@ const Leaderboard = () => {
                     )}
                   </div>
                   
-                  {/* Enhanced score and rank display */}
-                  <div className="mt-3 text-center">
-                    <div className="mt-1 text-xs font-medium text-white bg-black/30 backdrop-blur-sm rounded-full px-2 py-1">
+                  {/* Trophy/Medal positioned between avatar and rank */}
+                  <div className="mt-2 text-center">
+                    <div className="flex justify-center items-center mb-2">
+                      <div className="transform hover:scale-110 transition-transform">
+                        {getRankIcon(student.rank)}
+                      </div>
+                    </div>
+                    <div className="text-xs font-medium text-white bg-black/30 backdrop-blur-sm rounded-full px-2 py-1">
                       #{level}
                     </div>
                   </div>
@@ -322,17 +438,43 @@ const Leaderboard = () => {
         </div>
         
         {/* Enhanced mountain base with grass and flowers */}
-        <div className="h-16 bg-gradient-to-t from-green-600 via-green-500 to-green-400 rounded-b-3xl relative overflow-hidden">
-          {/* Grass texture */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-green-700 to-green-500"></div>
+        <div className="h-20 bg-gradient-to-t from-green-700 via-green-600 to-green-500 rounded-b-3xl relative overflow-hidden">
+          {/* Grass texture - multiple layers for depth */}
+          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-green-800 to-green-600"></div>
+          <div className="absolute bottom-2 left-0 right-0 h-6 bg-gradient-to-t from-green-700 to-green-500"></div>
+          <div className="absolute bottom-4 left-0 right-0 h-4 bg-gradient-to-t from-green-600 to-green-400"></div>
           
-          {/* Decorative flowers */}
-          <div className="absolute bottom-2 left-1/4 w-2 h-2 bg-yellow-300 rounded-full"></div>
-          <div className="absolute bottom-3 left-1/4 w-1 h-1 bg-green-600 rounded-full"></div>
-          <div className="absolute bottom-2 right-1/4 w-2 h-2 bg-pink-300 rounded-full"></div>
-          <div className="absolute bottom-3 right-1/4 w-1 h-1 bg-green-600 rounded-full"></div>
-          <div className="absolute bottom-2 left-1/2 w-2 h-2 bg-blue-300 rounded-full"></div>
-          <div className="absolute bottom-3 left-1/2 w-1 h-1 bg-green-600 rounded-full"></div>
+          {/* Decorative flowers - more variety and better positioning */}
+          <div className="absolute bottom-3 left-1/4 w-2.5 h-2.5 bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-full shadow-sm"></div>
+          <div className="absolute bottom-4 left-1/4 w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+          <div className="absolute bottom-2 left-1/4 w-1 h-1 bg-green-800 rounded-full"></div>
+          
+          <div className="absolute bottom-3 right-1/4 w-2.5 h-2.5 bg-gradient-to-r from-pink-300 to-pink-400 rounded-full shadow-sm"></div>
+          <div className="absolute bottom-4 right-1/4 w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+          <div className="absolute bottom-2 right-1/4 w-1 h-1 bg-green-800 rounded-full"></div>
+          
+          <div className="absolute bottom-3 left-1/2 w-2.5 h-2.5 bg-gradient-to-r from-blue-300 to-blue-400 rounded-full shadow-sm"></div>
+          <div className="absolute bottom-4 left-1/2 w-1.5 h-1.5 bg-green-600 rounded-full"></div>
+          <div className="absolute bottom-2 left-1/2 w-1 h-1 bg-green-800 rounded-full"></div>
+          
+          {/* Additional flowers for more variety */}
+          <div className="absolute bottom-3 left-1/6 w-2 h-2 bg-gradient-to-r from-purple-300 to-purple-400 rounded-full shadow-sm"></div>
+          <div className="absolute bottom-4 left-1/6 w-1 h-1 bg-green-600 rounded-full"></div>
+          
+          <div className="absolute bottom-3 right-1/6 w-2 h-2 bg-gradient-to-r from-orange-300 to-orange-400 rounded-full shadow-sm"></div>
+          <div className="absolute bottom-4 right-1/6 w-1 h-1 bg-green-600 rounded-full"></div>
+          
+          <div className="absolute bottom-3 left-2/3 w-2 h-2 bg-gradient-to-r from-red-300 to-red-400 rounded-full shadow-sm"></div>
+          <div className="absolute bottom-4 left-2/3 w-1 h-1 bg-green-600 rounded-full"></div>
+          
+          {/* Small grass tufts for texture */}
+          <div className="absolute bottom-1 left-1/5 w-1 h-2 bg-green-800 rounded-full"></div>
+          <div className="absolute bottom-1 right-1/5 w-1 h-2 bg-green-800 rounded-full"></div>
+          <div className="absolute bottom-1 left-3/5 w-1 h-2 bg-green-800 rounded-full"></div>
+          <div className="absolute bottom-1 right-3/5 w-1 h-2 bg-green-800 rounded-full"></div>
+          
+          {/* Castle reflection/shadow on the ground */}
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-80 h-4 bg-gradient-to-t from-gray-400/30 to-transparent rounded-full blur-sm"></div>
         </div>
         
         {/* Enhanced motivational message */}
@@ -373,7 +515,6 @@ const Leaderboard = () => {
                   "hover:shadow-sm"
                 }`}
               >
-                {/* Rank with special styling for top 3 */}
                 <div className="w-12 flex justify-center">
                   <div className={`relative ${index < 3 ? 'scale-110' : ''}`}>
                     {getRankIcon(student.rank)}
@@ -383,7 +524,6 @@ const Leaderboard = () => {
                   </div>
                 </div>
                 
-                {/* Avatar with rank-based border */}
                 <Avatar className={`h-12 w-12 border-2 ${
                   index === 0 ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' :
                   index === 1 ? 'border-gray-400 shadow-lg shadow-gray-400/30' :
