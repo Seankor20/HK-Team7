@@ -11,7 +11,7 @@ import Quiz from "./pages/Quiz";
 import Leaderboard from "./pages/Leaderboard";
 import Chat from "./pages/Chat";
 import ChatMessages from "./pages/ChatMessages";
-
+import Profile from "./pages/Profile";
 import Homework from "./pages/Homework";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -60,7 +60,7 @@ const App = () => (
                     <Route path="/leaderboard" element={<Leaderboard />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/chat/:roomId" element={<ChatMessages />} />
-
+                    <Route path="/profile" element={<Profile />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
