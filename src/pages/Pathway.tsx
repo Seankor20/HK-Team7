@@ -403,7 +403,6 @@ const Pathway = () => {
                     </div>
                     
                     <div className="flex gap-2 pt-2">
-                      {/* Status Update Button - Available for all users */}
                       {hw.status === 'completed' ? (
                         <Button 
                           size="sm"
@@ -425,7 +424,6 @@ const Pathway = () => {
                         </Button>
                       )}
                       
-                      {/* Management Buttons - Only for Teachers/NGOs */}
                       {canManageHomework && (
                         <>
                           <Button 
@@ -481,10 +479,6 @@ const Pathway = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                  <div className="p-4 bg-white rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-red-600">5</div>
-                    <div className="text-sm text-muted-foreground">Questions per Quiz</div>
-                  </div>
                   <div className="p-4 bg-white rounded-lg shadow-sm">
                     <div className="text-2xl font-bold text-red-600">100</div>
                     <div className="text-sm text-muted-foreground">XP per Quiz</div>
