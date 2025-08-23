@@ -1,63 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, Trophy, RotateCcw } from "lucide-react";
+import { CheckCircle, XCircle, Trophy, RotateCcw, Loader2 } from "lucide-react";
+import { questionService } from "@/lib/supabase-services";
+import type { Database } from "@/lib/supabase";
 
-interface Question {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-}
-
-const questions: Question[] = [
-  {
-    id: 1,
-    question: "What comes after the number 5?",
-    options: ["4", "6", "7", "3"],
-    correctAnswer: 1,
-    explanation: "Great job! 6 comes after 5 when we count: 1, 2, 3, 4, 5, 6!"
-  },
-  {
-    id: 2,
-    question: "Which letter comes first in the alphabet?",
-    options: ["B", "A", "C", "D"],
-    correctAnswer: 1,
-    explanation: "Perfect! A is the first letter in the alphabet!"
-  },
-  {
-    id: 3,
-    question: "What color do you get when you mix red and yellow?",
-    options: ["Purple", "Orange", "Green", "Blue"],
-    correctAnswer: 1,
-    explanation: "Excellent! Red + Yellow = Orange. You're learning about colors!"
-  },
-  {
-    id: 4,
-    question: "How many legs does a cat have?",
-    options: ["2", "3", "4", "5"],
-    correctAnswer: 2,
-    explanation: "That's right! Cats have 4 legs, just like dogs and many other animals!"
-  },
-  {
-    id: 5,
-    question: "What shape has 3 sides?",
-    options: ["Circle", "Triangle", "Square", "Rectangle"],
-    correctAnswer: 1,
-    explanation: "Amazing! A triangle has exactly 3 sides and 3 corners!"
-  }
-];
+type Question = Database['public']['Tables']['question']['Row'];
 
 const Quiz = () => {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [quizCompleted, setQuizCompleted] = useState(false);
+
+  // Fetch questions from Supabase
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // You can choose one of these methods:
+        // const questionsData = await questionService.getAllQuestions();
+        // const questionsData = await questionService.getQuestionsByCategory('math');
+        const questionsData = await questionService.getRandomQuestions(5);
+        
+        // Debug: Log the data structure
+        console.log('Fetched questions:', questionsData);
+        if (questionsData.length > 0) {
+          console.log('First question structure:', questionsData[0]);
+        }
+        
+        if (questionsData.length === 0) {
+          setError('No questions found. Please try again later.');
+        } else {
+          // Validate question structure
+          const validQuestions = questionsData.filter(q => {
+            const isValid = q.question && q.option && Array.isArray(q.option) && q.option.length > 0;
+            if (!isValid) {
+              console.warn('Invalid question structure:', q);
+            }
+            return isValid;
+          });
+          
+          if (validQuestions.length === 0) {
+            setError('No valid questions found. Please check your database structure.');
+          } else {
+            setQuestions(validQuestions);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching questions:', err);
+        setError('Failed to load questions. Please check your connection.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
@@ -69,7 +77,7 @@ const Quiz = () => {
     const newAnswers = [...answers, selectedAnswer];
     setAnswers(newAnswers);
 
-    if (selectedAnswer === questions[currentQuestion].correctAnswer) {
+    if (selectedAnswer === questions[currentQuestion].correct_answer) {
       setScore(score + 1);
     }
 
@@ -92,6 +100,41 @@ const Quiz = () => {
     setAnswers([]);
     setQuizCompleted(false);
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="p-4 md:p-8">
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+          <h2 className="text-xl font-semibold">Loading Quiz...</h2>
+          <p className="text-muted-foreground">Please wait while we prepare your questions.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-4 md:p-8">
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div className="mx-auto mb-4 w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+            <XCircle className="h-8 w-8 text-destructive" />
+          </div>
+          <h2 className="text-xl font-semibold text-destructive">Error Loading Quiz</h2>
+          <p className="text-muted-foreground">{error}</p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
 
   const progress = ((currentQuestion + (quizCompleted ? 1 : 0)) / questions.length) * 100;
 
@@ -152,6 +195,28 @@ const Quiz = () => {
 
   const question = questions[currentQuestion];
 
+  // Safety check for question structure
+  if (!question || !question.option || !Array.isArray(question.option)) {
+    console.error('Invalid question structure:', question);
+    return (
+      <div className="p-4 md:p-8">
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div className="mx-auto mb-4 w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+            <XCircle className="h-8 w-8 text-destructive" />
+          </div>
+          <h2 className="text-xl font-semibold text-destructive">Question Format Error</h2>
+          <p className="text-muted-foreground">
+            The question format is invalid. Please check your database structure.
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-8">
       <div className="max-w-2xl mx-auto space-y-6">
@@ -173,7 +238,7 @@ const Quiz = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3">
-              {question.options.map((option, index) => (
+              {question.option.map((option, index) => (
                 <Button
                   key={index}
                   variant={selectedAnswer === index ? "default" : "outline"}
@@ -191,28 +256,30 @@ const Quiz = () => {
 
             {showResult && selectedAnswer !== null && (
               <Card className={`mt-4 ${
-                selectedAnswer === question.correctAnswer 
+                selectedAnswer === question.correct_answer 
                   ? "border-success bg-success/5" 
                   : "border-destructive bg-destructive/5"
               }`}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    {selectedAnswer === question.correctAnswer ? (
+                    {selectedAnswer === question.correct_answer ? (
                       <CheckCircle className="h-5 w-5 text-success mt-0.5" />
                     ) : (
                       <XCircle className="h-5 w-5 text-destructive mt-0.5" />
                     )}
                     <div>
                       <p className={`font-medium ${
-                        selectedAnswer === question.correctAnswer 
+                        selectedAnswer === question.correct_answer 
                           ? "text-success" 
                           : "text-destructive"
                       }`}>
-                        {selectedAnswer === question.correctAnswer ? "Correct!" : "Not quite right"}
+                        {selectedAnswer === question.correct_answer ? "Correct!" : "Not quite right"}
                       </p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {question.explanation}
-                      </p>
+                      {question.explanation && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {question.explanation}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </CardContent>
