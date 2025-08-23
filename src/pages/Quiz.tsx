@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle, XCircle, Trophy, RotateCcw, Loader2 } from "lucide-react";
 import { questionService } from "@/lib/supabase-services";
 import type { Database } from "@/lib/supabase";
+import dino from "@/assets/dino.jpg";
 
 type Question = Database['public']['Tables']['question']['Row'];
 
@@ -104,7 +105,7 @@ const Quiz = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="p-4 md:p-8">
+      <div className="min-h-screen bg-cover bg-center p-4 md:p-8" style={{ backgroundImage: `url(${dino})` }}>
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <div className="flex items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -119,7 +120,7 @@ const Quiz = () => {
   // Error state
   if (error) {
     return (
-      <div className="p-4 md:p-8">
+      <div className="min-h-screen bg-cover bg-center p-8 md:p-8" style={{ backgroundImage: `url(${dino})` }}>
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <div className="mx-auto mb-4 w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
             <XCircle className="h-8 w-8 text-destructive" />
@@ -135,7 +136,6 @@ const Quiz = () => {
     );
   }
 
-
   const progress = ((currentQuestion + (quizCompleted ? 1 : 0)) / questions.length) * 100;
 
   if (quizCompleted) {
@@ -144,7 +144,7 @@ const Quiz = () => {
     const isGood = percentage >= 60;
 
     return (
-      <div className="p-4 md:p-8">
+      <div className="min-h-screen bg-cover bg-center p-8 md:p-8" style={{ backgroundImage: `url(${dino})` }}>
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 w-16 h-16 bg-gradient-success rounded-full flex items-center justify-center">
@@ -199,7 +199,7 @@ const Quiz = () => {
   if (!question || !question.option || !Array.isArray(question.option)) {
     console.error('Invalid question structure:', question);
     return (
-      <div className="p-4 md:p-8">
+      <div className="min-h-screen bg-cover bg-center p-8 md:p-8" style={{ backgroundImage: `url(${dino})` }}>
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <div className="mx-auto mb-4 w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
             <XCircle className="h-8 w-8 text-destructive" />
@@ -218,12 +218,12 @@ const Quiz = () => {
   }
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="min-h-screen bg-cover bg-center p-8 md:p-8" style={{ backgroundImage: `url(${dino})` }}>
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-2xl md:text-3xl font-bold">Learning Quiz</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold">Homework</h1>
+          <p className="font-bold">
             Question {currentQuestion + 1} of {questions.length}
           </p>
           <Progress value={progress} className="h-2" />
