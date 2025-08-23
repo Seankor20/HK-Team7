@@ -19,6 +19,7 @@ export interface Database {
           email: string
           full_name: string
           avatar_url?: string
+          role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at: string
           updated_at: string
         }
@@ -27,6 +28,7 @@ export interface Database {
           email: string
           full_name: string
           avatar_url?: string
+          role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at?: string
           updated_at?: string
         }
@@ -35,6 +37,7 @@ export interface Database {
           email?: string
           full_name?: string
           avatar_url?: string
+          role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at?: string
           updated_at?: string
         }
@@ -112,6 +115,76 @@ export interface Database {
           message?: string
           response?: string
           created_at?: string
+        }
+      }
+      homework: {
+        Row: {
+          id: string
+          created_at: string
+          title: string
+          due_date: string
+          status: 'pending' | 'in-progress' | 'completed' | 'overdue'
+          description: string
+          quiz_id?: string
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          title: string
+          due_date: string
+          status?: 'pending' | 'in-progress' | 'completed' | 'overdue'
+          description: string
+          quiz_id?: string
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          title?: string
+          due_date?: string
+          status?: 'pending' | 'in-progress' | 'completed' | 'overdue'
+          description?: string
+          quiz_id?: string
+        }
+      }
+      completed_materials: {
+        Row: {
+          id: string
+          title: string
+          type: string
+          difficulty: string
+          estimated_time: number
+          xp_reward: number
+          icon: string
+          color: string
+          category: string
+          completed_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          type: string
+          difficulty: string
+          estimated_time: number
+          xp_reward: number
+          icon: string
+          color: string
+          category: string
+          completed_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          type?: string
+          difficulty?: string
+          estimated_time?: number
+          xp_reward?: number
+          icon?: string
+          color?: string
+          category?: string
+          completed_at?: string
+          user_id?: string
         }
       }
     }

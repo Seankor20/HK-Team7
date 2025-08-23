@@ -1,24 +1,32 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTranslation } from 'react-i18next';
+import { useSupabase } from "@/hooks/use-supabase";
 import { 
   Home, 
   BookOpen, 
   Trophy, 
   MessageCircle, 
   User,
-  Map
+  Map,
+  PenTool
 } from "lucide-react";
 import LanguageSwitcher from './LanguageSwitcher';
+import { Badge } from "./ui/badge";
 
 const Navigation = () => {
   const location = useLocation();
   const { t } = useTranslation();
+  const { user, profile } = useSupabase();
+
+  // Check if user has access to homework management
+  const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
 
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
     { path: "/pathway", label: "Learning Path", icon: Map },
-    { path: "/quiz", label: t('common.quiz'), icon: BookOpen },
+    // Only show homework for teachers, NGOs, and admins
+    ...(canManageHomework ? [{ path: "/homework", label: "Homework", icon: PenTool }] : []),
     { path: "/leaderboard", label: t('common.leaderboard'), icon: Trophy },
     { path: "/chat", label: t('common.chat'), icon: MessageCircle },
     { path: "/profile", label: t('common.profile'), icon: User },
@@ -51,6 +59,14 @@ const Navigation = () => {
                 <p className="text-sm text-muted-foreground mt-1">
                   Learning Together
                 </p>
+                {/* Role Display */}
+                {profile && (
+                  <div className="mt-2">
+                    <Badge variant="secondary" className="text-xs">
+                      Role: {profile.role || 'student'}
+                    </Badge>
+                  </div>
+                )}
               </div>
               <LanguageSwitcher />
             </div>
