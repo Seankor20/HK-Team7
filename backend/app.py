@@ -156,7 +156,64 @@ def upload_video():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get_images', methods=['GET'])
+def get_images():
+    try:
+        response = supabase.storage.from_('docs').list('images')
+        files = response  # List of file objects
+        print(files)
 
+        file_urls = []
+        for file_info in files:
+            # For files inside a folder, the path is "images/filename"
+            file_path = f"images/{file_info['name']}"
+            url_data = supabase.storage.from_('docs').get_public_url(file_path)
+            file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
+
+        # Return URLs to frontend
+        return jsonify({"image_urls": file_urls}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/get_videos', methods=['GET'])
+def get_videos():
+    try:
+        response = supabase.storage.from_('docs').list('videos')
+        files = response  # List of file objects
+        print(files)
+
+        file_urls = []
+        for file_info in files:
+            # For files inside a folder, the path is "videos/filename"
+            file_path = f"videos/{file_info['name']}"
+            url_data = supabase.storage.from_('docs').get_public_url(file_path)
+            file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
+
+        # Return URLs to frontend
+        return jsonify({"video_urls": file_urls}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/get_pdfs', methods=['GET'])
+def get_pdfs():
+    try:
+        response = supabase.storage.from_('docs').list('pdfs')
+        files = response  # List of file objects
+        print(files)
+
+        file_urls = []
+        for file_info in files:
+            # For files inside a folder, the path is "pdfs/filename"
+            file_path = f"pdfs/{file_info['name']}"
+            url_data = supabase.storage.from_('docs').get_public_url(file_path)
+            file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
+
+        # Return URLs to frontend
+        return jsonify({"pdf_urls": file_urls}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
