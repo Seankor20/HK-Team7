@@ -135,20 +135,6 @@ const Quiz = () => {
     );
   }
 
-  // No questions state
-  if (questions.length === 0) {
-    return (
-      <div className="p-4 md:p-8">
-        <div className="max-w-2xl mx-auto text-center space-y-6">
-          <div className="mx-auto mb-4 w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-            <Trophy className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <h2 className="text-xl font-semibold">No Questions Available</h2>
-          <p className="text-muted-foreground">There are no questions in the database yet.</p>
-        </div>
-      </div>
-    );
-  }
 
   const progress = ((currentQuestion + (quizCompleted ? 1 : 0)) / questions.length) * 100;
 

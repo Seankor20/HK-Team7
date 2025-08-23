@@ -17,27 +17,21 @@ import {
   Lock,
   Brain,
   List,
-  Link
+  Link,
+  FileText
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useSupabase } from "@/hooks/use-supabase";
 import { useSearchParams } from "react-router-dom";
-
-interface Homework {
-  id: string;
-  created_at: string;
-  title: string;
-  due_date: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'overdue';
-  description: string;
-  quiz_id?: string; // Link to existing quiz
-}
 
 interface Quiz {
   id: string;
   created_at: string;
   title: string;
   description: string;
+  due_date: string;
+  status: 'pending' | 'in-progress' | 'completed' | 'overdue';
+  type: 'quiz' | 'homework';
 }
 
 interface Question {
@@ -51,14 +45,12 @@ interface Question {
 const Homework = () => {
   const { user, profile, loading: authLoading } = useSupabase();
   const [searchParams] = useSearchParams();
-  const [homework, setHomework] = useState<Homework[]>([]);
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [homework, setHomework] = useState<Quiz[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingHomework, setEditingHomework] = useState<Homework | null>(null);
+  const [editingHomework, setEditingHomework] = useState<Quiz | null>(null);
   const [isQuizMode, setIsQuizMode] = useState(false);
-  const [selectedQuizId, setSelectedQuizId] = useState<string>('');
   
   // Form state
   const [formData, setFormData] = useState({
@@ -116,7 +108,7 @@ const Homework = () => {
     );
   }
 
-  // Fetch homework from Supabase
+  // Fetch homework from Supabase (filtered by type = 'homework')
   useEffect(() => {
     fetchHomework();
   }, []);
@@ -125,12 +117,23 @@ const Homework = () => {
     setLoading(true);
     try {
       console.log('Fetching homework from Supabase...');
+      
+      // First, let's see what's in the quiz table
+      const { data: allQuizzes, error: allError } = await supabase
+        .from('quiz')
+        .select('*');
+      
+      console.log('All quizzes in table:', { allQuizzes, allError });
+      
+      // Now filter for homework
       const { data, error } = await supabase
-        .from('homework')
+        .from('quiz')
         .select('*')
+        .eq('type', 'homework')
         .order('due_date', { ascending: true });
       
-      console.log('Supabase response:', { data, error });
+      console.log('Filtered homework response:', { data, error });
+      console.log('SQL query: SELECT * FROM quiz WHERE type = \'homework\' ORDER BY due_date ASC');
       
       if (error) {
         console.error('Error fetching homework:', error);
@@ -146,32 +149,7 @@ const Homework = () => {
     }
   };
 
-  // Fetch quizzes for linking to homework
-  useEffect(() => {
-    if (canManageHomework) {
-      fetchQuizzes();
-    }
-  }, [canManageHomework]);
-
-  const fetchQuizzes = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('quiz')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching quizzes:', error);
-        return;
-      }
-      
-      setQuizzes(data || []);
-    } catch (error) {
-      console.error('Error fetching quizzes:', error);
-    }
-  };
-
-  // Fetch questions for a specific quiz
+  // Fetch questions for a specific quiz/homework
   const fetchQuizQuestions = async (quizId: string) => {
     try {
       const { data, error } = await supabase
@@ -194,7 +172,7 @@ const Homework = () => {
     }
   };
 
-  // Create new homework (can link to existing quiz)
+  // Create new homework (stored in quiz table with type = 'homework')
   const createHomework = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -204,14 +182,18 @@ const Homework = () => {
         description: formData.description,
         due_date: formData.due_date,
         status: 'pending',
-        ...(isQuizMode && selectedQuizId && { quiz_id: selectedQuizId })
+        type: 'homework' as const
       };
 
+      console.log('Creating homework with data:', homeworkData);
+
       const { data, error } = await supabase
-        .from('homework')
+        .from('quiz')
         .insert([homeworkData])
         .select()
         .single();
+      
+      console.log('Insert response:', { data, error });
       
       if (error) {
         console.error('Error creating homework:', error);
@@ -219,9 +201,9 @@ const Homework = () => {
       }
       
       if (data) {
+        console.log('Successfully created homework:', data);
         setHomework(prev => [data, ...prev]);
         setFormData({ title: '', description: '', due_date: '' });
-        setSelectedQuizId('');
         setIsQuizMode(false);
         setShowCreateForm(false);
       }
@@ -231,10 +213,10 @@ const Homework = () => {
   };
 
   // Update homework status
-  const updateHomeworkStatus = async (homeworkId: string, newStatus: Homework['status']) => {
+  const updateHomeworkStatus = async (homeworkId: string, newStatus: Quiz['status']) => {
     try {
       const { data, error } = await supabase
-        .from('homework')
+        .from('quiz')
         .update({ status: newStatus })
         .eq('id', homeworkId)
         .select()
@@ -261,7 +243,7 @@ const Homework = () => {
     
     try {
       const { error } = await supabase
-        .from('homework')
+        .from('quiz')
         .delete()
         .eq('id', homeworkId);
       
@@ -283,7 +265,7 @@ const Homework = () => {
     
     try {
       const { data, error } = await supabase
-        .from('homework')
+        .from('quiz')
         .update({
           title: formData.title,
           description: formData.description,
@@ -310,7 +292,7 @@ const Homework = () => {
     }
   };
 
-  const startEditing = (hw: Homework) => {
+  const startEditing = (hw: Quiz) => {
     setEditingHomework(hw);
     setFormData({
       title: hw.title,
@@ -449,33 +431,14 @@ const Homework = () => {
                 <div className="space-y-4 border rounded-lg p-4 bg-muted/50">
                   <h3 className="text-lg font-semibold">Select Quiz</h3>
                   
-                  {quizzes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No quizzes available. Create quizzes first in the Quiz section.
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {quizzes.map((quiz) => (
-                        <div key={quiz.id} className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            id={`quiz-${quiz.id}`}
-                            name="selected-quiz"
-                            value={quiz.id}
-                            checked={selectedQuizId === quiz.id}
-                            onChange={(e) => setSelectedQuizId(e.target.value)}
-                            className="rounded"
-                          />
-                          <Label htmlFor={`quiz-${quiz.id}`} className="flex-1 cursor-pointer">
-                            <div className="font-medium">{quiz.title}</div>
-                            <div className="text-sm text-muted-foreground">{quiz.description}</div>
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* This section is no longer needed as quizzes are not directly linked here */}
+                  {/* It's kept for now, but the logic for selecting a quiz is removed */}
+                  {/* <p className="text-sm text-muted-foreground">
+                    No quizzes available. Create quizzes first in the Quiz section.
+                  </p> */}
                   
-                  {selectedQuizId && (
+                  {/* The selectedQuizId state and its logic are removed */}
+                  {/* {selectedQuizId && (
                     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
                       <p className="text-sm text-blue-800">
                         <strong>Selected Quiz:</strong> {quizzes.find(q => q.id === selectedQuizId)?.title}
@@ -484,7 +447,7 @@ const Homework = () => {
                         Students will take this quiz to complete the homework assignment.
                       </p>
                     </div>
-                  )}
+                  )} */}
                 </div>
               )}
               
@@ -519,29 +482,24 @@ const Homework = () => {
         ) : homework.length === 0 ? (
           <div className="text-center py-8">
             <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-lg text-muted-foreground">No homework assignments yet!</p>
-            <p className="text-sm text-muted-foreground">Create your first homework assignment to get started.</p>
+            <p className="text-lg text-muted-foreground">No homework assignments created yet!</p>
+            <p className="text-sm text-muted-foreground">
+              Create your first homework assignment to get started.
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {homework.map((hw) => (
-              <Card key={hw.id} className="hover:shadow-lg transition-all duration-300">
+              <Card key={hw.id} className="hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-primary/20">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-lg">{hw.title}</CardTitle>
-                      <CardDescription className="text-sm">
-                        Created: {new Date(hw.created_at).toLocaleDateString()}
+                      <CardTitle className="text-lg font-semibold text-gray-900 mb-2">{hw.title}</CardTitle>
+                      <CardDescription className="text-sm text-gray-600 leading-relaxed">
+                        {hw.description}
                       </CardDescription>
-                      {/* Quiz Mode Indicator */}
-                      {hw.quiz_id && (
-                        <Badge variant="outline" className="mt-2 text-xs">
-                          <Brain className="h-3 w-3 mr-1" />
-                          Linked Quiz
-                        </Badge>
-                      )}
                     </div>
-                    <Badge className={getStatusColor(hw.status)}>
+                    <Badge className={`ml-2 ${getStatusColor(hw.status)}`}>
                       <div className="flex items-center gap-1">
                         {getStatusIcon(hw.status)}
                         {hw.status}
@@ -551,52 +509,49 @@ const Homework = () => {
                 </CardHeader>
                 
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">{hw.description}</p>
-                  
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    Due: {new Date(hw.due_date).toLocaleDateString()}
+                  {/* Due Date */}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Due:</span>
+                    <span className="text-gray-700">{new Date(hw.due_date).toLocaleDateString()}</span>
                   </div>
 
-                  {/* Quiz Link Info */}
-                  {hw.quiz_id && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Link className="h-4 w-4" />
-                      Linked to Quiz
-                    </div>
-                  )}
+                  {/* Created Date */}
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Clock className="h-4 w-4" />
+                    <span>Created: {new Date(hw.created_at).toLocaleDateString()}</span>
+                  </div>
+
+                  {/* Type Badge */}
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      <FileText className="h-3 w-3 mr-1" />
+                      {hw.type === 'homework' ? 'Homework' : 'Quiz'}
+                    </Badge>
+                  </div>
                   
-                  <div className="flex gap-2">
-                    {/* Quiz Mode - Take Quiz Button */}
-                    {hw.quiz_id ? (
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    {/* Status Update Button */}
+                    {hw.status === 'completed' ? (
                       <Button 
-                        size="sm"
-                        onClick={() => window.location.href = `/quiz/${hw.quiz_id}`}
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => updateHomeworkStatus(hw.id, 'in-progress')}
                         className="flex-1"
                       >
-                        <Brain className="h-4 w-4 mr-2" />
-                        {hw.status === 'completed' ? 'Review Quiz' : 'Take Quiz'}
+                        <Clock className="h-4 w-4 mr-2" />
+                        Mark In Progress
                       </Button>
                     ) : (
-                      /* Regular Homework - Status Update */
-                      hw.status === 'completed' ? (
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => updateHomeworkStatus(hw.id, 'in-progress')}
-                          className="flex-1"
-                        >
-                          Mark In Progress
-                        </Button>
-                      ) : (
-                        <Button 
-                          size="sm"
-                          onClick={() => updateHomeworkStatus(hw.id, 'completed')}
-                          className="flex-1"
-                        >
-                          {hw.status === 'in-progress' ? 'Mark Complete' : 'Start'}
-                        </Button>
-                      )
+                      <Button 
+                        size="sm"
+                        onClick={() => updateHomeworkStatus(hw.id, 'completed')}
+                        className="flex-1"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        {hw.status === 'in-progress' ? 'Mark Complete' : 'Start'}
+                      </Button>
                     )}
                     
                     {/* Management Buttons - Only for Teachers/NGOs */}
@@ -606,6 +561,7 @@ const Homework = () => {
                           size="sm" 
                           variant="outline"
                           onClick={() => startEditing(hw)}
+                          className="text-blue-600 hover:text-blue-700"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>

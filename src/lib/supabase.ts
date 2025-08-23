@@ -68,6 +68,35 @@ export interface Database {
           created_at?: string
         }
       }
+      quiz: {
+        Row: {
+          id: string
+          created_at: string
+          title: string
+          description: string
+          due_date: string
+          status: 'pending' | 'in-progress' | 'completed' | 'overdue'
+          type: 'quiz' | 'homework' // To distinguish between quiz and homework
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          title: string
+          description: string
+          due_date: string
+          status?: 'pending' | 'in-progress' | 'completed' | 'overdue'
+          type: 'quiz' | 'homework'
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          title?: string
+          description?: string
+          due_date?: string
+          status?: 'pending' | 'in-progress' | 'completed' | 'overdue'
+          type?: 'quiz' | 'homework'
+        }
+      }
       quizzes: {
         Row: {
           id: string
@@ -115,35 +144,6 @@ export interface Database {
           message?: string
           response?: string
           created_at?: string
-        }
-      }
-      homework: {
-        Row: {
-          id: string
-          created_at: string
-          title: string
-          due_date: string
-          status: 'pending' | 'in-progress' | 'completed' | 'overdue'
-          description: string
-          quiz_id?: string
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          title: string
-          due_date: string
-          status?: 'pending' | 'in-progress' | 'completed' | 'overdue'
-          description: string
-          quiz_id?: string
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          title?: string
-          due_date?: string
-          status?: 'pending' | 'in-progress' | 'completed' | 'overdue'
-          description?: string
-          quiz_id?: string
         }
       }
       completed_materials: {

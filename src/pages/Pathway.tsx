@@ -20,7 +20,9 @@ import {
   Lightbulb,
   Palette,
   Edit,
-  Trash2
+  Trash2,
+  FileText,
+  CheckCircle
 } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
 import { supabase } from "@/lib/supabase";
@@ -33,6 +35,7 @@ interface Homework {
   due_date: string;
   status: 'pending' | 'in-progress' | 'completed' | 'overdue';
   description: string;
+  type: 'quiz' | 'homework';
 }
 
 interface CompletedMaterial {
@@ -50,7 +53,7 @@ interface CompletedMaterial {
 
 const Pathway = () => {
   const { t } = useI18n();
-  const { profile } = useSupabase();
+  const { user, profile, loading: authLoading } = useSupabase();
   const [activeTab, setActiveTab] = useState<'materials' | 'homework' | 'quiz'>('materials');
   const [homework, setHomework] = useState<Homework[]>([]);
   const [completedMaterials, setCompletedMaterials] = useState<CompletedMaterial[]>([]);
@@ -60,8 +63,19 @@ const Pathway = () => {
   // Check if user has access to homework management
   const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
 
-  // Fetch homework from Supabase
+  // Log authentication state
   useEffect(() => {
+    console.log('Authentication state:', { 
+      user: user?.id, 
+      profile: profile, 
+      authLoading, 
+      canManageHomework 
+    });
+  }, [user, profile, authLoading, canManageHomework]);
+
+  // Fetch homework from Supabase (filtered by type = 'homework')
+  useEffect(() => {
+    // Temporarily allow fetching without authentication for testing
     fetchHomework();
   }, []);
 
@@ -69,15 +83,38 @@ const Pathway = () => {
     setLoading(true);
     try {
       console.log('Fetching homework from Supabase...');
+      console.log('Current user:', user?.id);
+      console.log('Current session:', user ? 'Authenticated' : 'Not authenticated');
+      
+      // First, let's see what's in the quiz table
+      const { data: allQuizzes, error: allError } = await supabase
+        .from('quiz')
+        .select('*');
+      
+      console.log('All quizzes in table:', { allQuizzes, allError });
+      
+      // Let's also check the structure of each quiz
+      if (allQuizzes && allQuizzes.length > 0) {
+        console.log('First quiz structure:', allQuizzes[0]);
+        console.log('All quiz types:', allQuizzes.map(q => ({ id: q.id, title: q.title, type: q.type, status: q.status })));
+      }
+      
+      // Now filter for homework
       const { data, error } = await supabase
-        .from('homework')
+        .from('quiz')
         .select('*')
+        .eq('type', 'homework')
         .order('due_date', { ascending: true });
       
-      console.log('Supabase response:', { data, error });
+      console.log('Filtered homework response:', { data, error });
+      console.log('SQL query: SELECT * FROM quiz WHERE type = \'homework\' ORDER BY due_date ASC');
       
       if (error) {
         console.error('Error fetching homework:', error);
+        // Check if it's an RLS error
+        if (error.message.includes('RLS') || error.message.includes('permission')) {
+          console.error('This looks like an RLS (Row Level Security) error');
+        }
         return;
       }
       
@@ -90,37 +127,10 @@ const Pathway = () => {
     }
   };
 
-  // Fetch completed materials from Supabase
-  useEffect(() => {
-    fetchCompletedMaterials();
-  }, []);
-
-  const fetchCompletedMaterials = async () => {
-    setMaterialsLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('completed_materials')
-        .select('*')
-        .order('completed_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching completed materials:', error);
-        return;
-      }
-      
-      setCompletedMaterials(data || []);
-    } catch (error) {
-      console.error('Error fetching completed materials:', error);
-    } finally {
-      setMaterialsLoading(false);
-    }
-  };
-
-  // Handle homework status updates
   const handleStatusUpdate = async (homeworkId: string, newStatus: Homework['status']) => {
     try {
       const { data, error } = await supabase
-        .from('homework')
+        .from('quiz')
         .update({ status: newStatus })
         .eq('id', homeworkId)
         .select()
@@ -141,7 +151,6 @@ const Pathway = () => {
     }
   };
 
-  // Delete homework (only for teachers/NGOs)
   const deleteHomework = async (homeworkId: string) => {
     if (!canManageHomework) return;
     
@@ -149,7 +158,7 @@ const Pathway = () => {
     
     try {
       const { error } = await supabase
-        .from('homework')
+        .from('quiz')
         .delete()
         .eq('id', homeworkId);
       
@@ -164,8 +173,9 @@ const Pathway = () => {
     }
   };
 
-  const totalXP = completedMaterials.reduce((sum, unit) => sum + (unit.xp_reward || 0), 0);
-  const progressPercentage = completedMaterials.length > 0 ? (completedMaterials.length / 8) * 100 : 0; // Assuming 8 total units
+  const completedHomework = homework.filter(hw => hw.status === 'completed');
+  const totalXP = completedHomework.length * 100; // 100 XP per completed homework
+  const progressPercentage = homework.length > 0 ? (completedHomework.length / homework.length) * 100 : 0;
 
 
   const getHomeworkStatusColor = (status: string) => {
@@ -197,40 +207,40 @@ const Pathway = () => {
         </div>
         
         {/* Enhanced Progress Stats with Graphics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-          <Card className="text-center bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-3">
-                <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full">
-                  <Trophy className="h-8 w-8 text-white" />
+        <div className="flex justify-center items-center gap-4 max-w-5xl mx-auto">
+          <Card className="text-center bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200 flex-1 max-w-[200px]">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-center mb-2">
+                <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full">
+                  <Trophy className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <div className="text-3xl font-bold text-primary">{totalXP}</div>
-              <div className="text-sm text-muted-foreground">Total XP</div>
+              <div className="text-xl font-bold text-primary">{totalXP}</div>
+              <div className="text-xs text-muted-foreground">Total XP</div>
             </CardContent>
           </Card>
           
-          <Card className="text-center bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-3">
-                <div className="p-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full">
-                  <Target className="h-8 w-8 text-white" />
+          <Card className="text-center bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 flex-1 max-w-[200px]">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-center mb-2">
+                <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full">
+                  <Target className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <div className="text-3xl font-bold text-primary">{completedMaterials.length}</div>
-              <div className="text-sm text-muted-foreground">Completed</div>
+              <div className="text-xl font-bold text-primary">{completedHomework.length}</div>
+              <div className="text-xs text-muted-foreground">Completed</div>
             </CardContent>
           </Card>
           
-          <Card className="text-center bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-3">
-                <div className="p-3 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full">
-                  <TrendingUp className="h-8 w-8 text-white" />
+          <Card className="text-center bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 flex-1 max-w-[200px]">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-center mb-2">
+                <div className="p-2 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full">
+                  <TrendingUp className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <div className="text-3xl font-bold text-primary">{Math.round(progressPercentage)}%</div>
-              <div className="text-sm text-muted-foreground">Progress</div>
+              <div className="text-xl font-bold text-primary">{Math.round(progressPercentage)}%</div>
+              <div className="text-xs text-muted-foreground">Progress</div>
             </CardContent>
           </Card>
         </div>
@@ -244,7 +254,7 @@ const Pathway = () => {
           <Progress value={progressPercentage} className="h-3" />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>0</span>
-            <span>8 units</span>
+            <span>{homework.length} units</span>
           </div>
         </div>
       </div>
@@ -258,7 +268,7 @@ const Pathway = () => {
             onClick={() => setActiveTab('materials')}
             className="rounded-md"
           >
-            <Book className="h-4 w-4 mr-2" />
+            <Book className="h-4 w-4 mr-1" />
             Learning Materials
           </Button>
           <Button
@@ -267,8 +277,8 @@ const Pathway = () => {
             onClick={() => setActiveTab('homework')}
             className="rounded-md"
           >
-            <PenTool className="h-4 w-4 mr-2" />
-            {canManageHomework ? 'Homework' : 'My Homework'}
+            <PenTool className="h-4 w-4 mr-1" />
+            Homework
           </Button>
           <Button
             variant={activeTab === 'quiz' ? 'default' : 'ghost'}
@@ -276,7 +286,7 @@ const Pathway = () => {
             onClick={() => setActiveTab('quiz')}
             className="rounded-md"
           >
-            <Brain className="h-4 w-4 mr-2" />
+            <Brain className="h-4 w-4 mr-1" />
             Quiz
           </Button>
         </div>
@@ -290,67 +300,19 @@ const Pathway = () => {
               Learning Materials
             </h2>
             <p className="text-lg text-muted-foreground">
-              Track your completed lessons and earn XP! 📚
+              Track your completed homework and earn XP! 📚
             </p>
           </div>
 
-          {materialsLoading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-2 text-muted-foreground">Loading materials...</p>
-            </div>
-          ) : completedMaterials.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No materials completed yet!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {completedMaterials.map((unit) => (
-                <Card key={unit.id} className="group hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden">
-                  <div className={`h-32 ${unit.color} flex items-center justify-center`}>
-                    <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                      {unit.icon}
-                    </span>
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{unit.title}</CardTitle>
-                        <CardDescription className="text-primary font-medium">
-                          {unit.type.charAt(0).toUpperCase() + unit.type.slice(1)}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {unit.estimated_time}m
-                      </span>
-                      <span className="text-muted-foreground flex items-center">
-                        <Star className="h-4 w-4 mr-1" />
-                        {unit.xp_reward} XP
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                      </div>
-                      
-                      <Button 
-                        size="sm"
-                        variant="outline"
-                        className="hover:scale-105 transition-transform"
-                      >
-                        Review
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+          <div className="text-center py-8">
+            <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <p className="text-lg text-muted-foreground">
+              Learning materials tracking coming soon!
+            </p>
+            <p className="text-sm text-muted-foreground">
+              For now, focus on completing your homework assignments.
+            </p>
+          </div>
         </div>
       )}
 
@@ -401,33 +363,46 @@ const Pathway = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {homework.map((hw) => (
-                <Card key={hw.id} className="hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-white to-gray-50">
+                <Card key={hw.id} className="hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-primary/20">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-base">{hw.title}</CardTitle>
-                        <CardDescription className="text-primary font-medium text-xs">
-                          Created: {new Date(hw.created_at).toLocaleDateString()}
+                      <div className="flex-1">
+                        <CardTitle className="text-lg font-semibold text-gray-900 mb-2">{hw.title}</CardTitle>
+                        <CardDescription className="text-sm text-gray-600 leading-relaxed">
+                          {hw.description}
                         </CardDescription>
                       </div>
-                      <Badge className={getHomeworkStatusColor(hw.status)}>
+                      <Badge className={`ml-2 ${getHomeworkStatusColor(hw.status)}`}>
                         {hw.status}
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3 p-4">
-                    <p className="text-xs text-muted-foreground leading-relaxed">{hw.description}</p>
-                    
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground flex items-center">
-                        <Calendar className="h-3 w-3 mr-1" />
-                        Due: {new Date(hw.due_date).toLocaleDateString()}
-                      </span>
+                  
+                  <CardContent className="space-y-4">
+                    {/* Due Date */}
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <span className="font-medium">Due:</span>
+                      <span className="text-gray-700">{new Date(hw.due_date).toLocaleDateString()}</span>
                     </div>
 
-                    <div className="flex gap-2">
+                    {/* Created Date */}
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Clock className="h-4 w-4" />
+                      <span>Created: {new Date(hw.created_at).toLocaleDateString()}</span>
+                    </div>
+
+                    {/* Type Badge */}
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        <FileText className="h-3 w-3 mr-1" />
+                        {hw.type === 'homework' ? 'Homework' : 'Quiz'}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex gap-2 pt-2">
                       {/* Status Update Button - Available for all users */}
                       {hw.status === 'completed' ? (
                         <Button 
@@ -436,6 +411,7 @@ const Pathway = () => {
                           onClick={() => handleStatusUpdate(hw.id, 'in-progress')}
                           className="flex-1"
                         >
+                          <Clock className="h-4 w-4 mr-2" />
                           Mark In Progress
                         </Button>
                       ) : (
@@ -444,6 +420,7 @@ const Pathway = () => {
                           onClick={() => handleStatusUpdate(hw.id, 'completed')}
                           className="flex-1"
                         >
+                          <CheckCircle className="h-4 w-4 mr-2" />
                           {hw.status === 'in-progress' ? 'Mark Complete' : 'Start'}
                         </Button>
                       )}
@@ -455,6 +432,7 @@ const Pathway = () => {
                             size="sm" 
                             variant="outline"
                             onClick={() => window.location.href = `/homework?edit=${hw.id}`}
+                            className="text-blue-600 hover:text-blue-700"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
