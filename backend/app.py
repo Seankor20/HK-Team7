@@ -78,28 +78,142 @@ def login():
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
     try:
-        # Define the absolute path to your data directory
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(current_dir, 'documents', 'IMG_6082.png')
+        # Get the file from the request (the field name should match what the client uses)
+        file = request.files.get('file')
+        if not file:
+            return jsonify({"error": "No file provided"}), 400
 
-        # Read the file as bytes
-        with open(image_path, "rb") as f:
-            file_bytes = f.read()
+        # Check if the uploaded file is a PDF
+        if file.content_type != "application/pdf":
+            return jsonify({"error": "Only PDF files are allowed"}), 400
 
-        # Define the path in Supabase storage (e.g. "IMG_6082.png")
-        upload_path = 'IMG_6082.png'
+        file_bytes = file.read()          # Read the PDF file as bytes
+        upload_path = file.filename       # Use the original filename or customize as desired
 
-        # Upload file with correct mimetype (for PNG: "image/png")
+        # Upload the PDF to Supabase Storage with correct mimetype
         response = supabase.storage.from_('docs/pdfs').upload(
             upload_path,
             file_bytes,
-            {"content-type": "image/png"}
+            {"content-type": "application/pdf"}
+        )
+
+        return jsonify({"message": "PDF uploaded successfully", "response": response}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    try:
+        # Get the file from the request (the field name should match what the client uses)
+        file = request.files.get('file')
+        if not file:
+            return jsonify({"error": "No file provided"}), 400
+
+        # Check if the uploaded file is a PDF
+        print(file.content_type)
+        if file.content_type not in ["image/jpeg", "image/png"]:
+            return jsonify({"error": "Only jpeg and png files are allowed"}), 400
+
+        file_bytes = file.read()          # Read the PDF file as bytes
+        upload_path = file.filename       # Use the original filename or customize as desired
+
+        # Upload the PDF to Supabase Storage with correct mimetype
+        response = supabase.storage.from_('docs/images').upload(
+            upload_path,
+            file_bytes,
+            {"content-type": file.content_type}
         )
 
         return jsonify({"message": "Image uploaded successfully", "response": response}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
+@app.route('/upload_video', methods=['POST'])
+def upload_video():
+    try:
+        # Get the file from the request (the field name should match what the client uses)
+        file = request.files.get('file')
+        if not file:
+            return jsonify({"error": "No file provided"}), 400
+
+        # Check if the uploaded file is a video
+        if file.content_type not in ["video/mp4", "video/x-msvideo"]:
+            return jsonify({"error": "Only mp4 and avi files are allowed"}), 400
+
+        file_bytes = file.read()          # Read the PDF file as bytes
+        upload_path = file.filename       # Use the original filename or customize as desired
+
+        # Upload the PDF to Supabase Storage with correct mimetype
+        response = supabase.storage.from_('docs/videos').upload(
+            upload_path,
+            file_bytes,
+            {"content-type": file.content_type}
+        )
+
+        return jsonify({"message": "Video uploaded successfully", "response": response}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_images', methods=['GET'])
+def get_images():
+    try:
+        response = supabase.storage.from_('docs').list('images')
+        files = response  # List of file objects
+        print(files)
+
+        file_urls = []
+        for file_info in files:
+            # For files inside a folder, the path is "images/filename"
+            file_path = f"images/{file_info['name']}"
+            url_data = supabase.storage.from_('docs').get_public_url(file_path)
+            file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
+
+        # Return URLs to frontend
+        return jsonify({"image_urls": file_urls}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/get_videos', methods=['GET'])
+def get_videos():
+    try:
+        response = supabase.storage.from_('docs').list('videos')
+        files = response  # List of file objects
+        print(files)
+
+        file_urls = []
+        for file_info in files:
+            # For files inside a folder, the path is "videos/filename"
+            file_path = f"videos/{file_info['name']}"
+            url_data = supabase.storage.from_('docs').get_public_url(file_path)
+            file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
+
+        # Return URLs to frontend
+        return jsonify({"video_urls": file_urls}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/get_pdfs', methods=['GET'])
+def get_pdfs():
+    try:
+        response = supabase.storage.from_('docs').list('pdfs')
+        files = response  # List of file objects
+        print(files)
+
+        file_urls = []
+        for file_info in files:
+            # For files inside a folder, the path is "pdfs/filename"
+            file_path = f"pdfs/{file_info['name']}"
+            url_data = supabase.storage.from_('docs').get_public_url(file_path)
+            file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
+
+        # Return URLs to frontend
+        return jsonify({"pdf_urls": file_urls}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
