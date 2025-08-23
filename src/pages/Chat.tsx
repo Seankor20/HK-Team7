@@ -1,142 +1,118 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Users, MessageCircle, Search } from "lucide-react";
+import { MessageCircle, Search, ArrowRight, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { createClient } from "@/lib/supabase/client";
 
 interface ChatRoom {
-  id: number;
+  id: string;
   name: string;
   type: "parent" | "teacher" | "general";
-  lastMessage: string;
-  lastTime: string;
-  unreadCount: number;
-  participants: number;
+  last_message?: string;
+  participant_count?: number;
+  created_at: string;
 }
 
-interface Message {
-  id: number;
-  sender: string;
-  avatar: string;
-  message: string;
-  time: string;
-  isMe: boolean;
-  senderType: "parent" | "teacher";
+interface User {
+  id: string;
+  name: string;
+  role: string;
+  school: string;
+  created_at: string;
 }
-
-const chatRooms: ChatRoom[] = [
-  {
-    id: 1,
-    name: "Miss Sarah's Class",
-    type: "teacher",
-    lastMessage: "Great progress this week everyone!",
-    lastTime: "2 min ago",
-    unreadCount: 2,
-    participants: 15
-  },
-  {
-    id: 2,
-    name: "Math Learning Parents",
-    type: "parent",
-    lastMessage: "Has anyone tried the new counting games?",
-    lastTime: "15 min ago",
-    unreadCount: 0,
-    participants: 8
-  },
-  {
-    id: 3,
-    name: "Reading Together",
-    type: "parent",
-    lastMessage: "My daughter loves the new stories!",
-    lastTime: "1 hour ago",
-    unreadCount: 3,
-    participants: 12
-  },
-  {
-    id: 4,
-    name: "General Announcements",
-    type: "general",
-    lastMessage: "New learning materials available",
-    lastTime: "2 hours ago",
-    unreadCount: 1,
-    participants: 25
-  }
-];
-
-const messages: Message[] = [
-  {
-    id: 1,
-    sender: "Miss Sarah",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616c26ca924?w=50&h=50&fit=crop&crop=face",
-    message: "Good morning parents! I wanted to share that the children have been doing wonderfully with their number recognition exercises.",
-    time: "9:30 AM",
-    isMe: false,
-    senderType: "teacher"
-  },
-  {
-    id: 2,
-    sender: "Emma's Mom",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
-    message: "Thank you Miss Sarah! Emma has been practicing at home and she's so excited about counting.",
-    time: "9:45 AM",
-    isMe: false,
-    senderType: "parent"
-  },
-  {
-    id: 3,
-    sender: "You",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face",
-    message: "That's wonderful to hear! My child has been asking about the math games. Are there any you'd recommend for home practice?",
-    time: "10:00 AM",
-    isMe: true,
-    senderType: "parent"
-  },
-  {
-    id: 4,
-    sender: "Miss Sarah",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616c26ca924?w=50&h=50&fit=crop&crop=face",
-    message: "Absolutely! I'll share some interactive counting games in our learning materials section. They're perfect for reinforcing what we learn in class.",
-    time: "10:15 AM",
-    isMe: false,
-    senderType: "teacher"
-  },
-  {
-    id: 5,
-    sender: "Noah's Dad",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
-    message: "This is so helpful! Love how engaged the kids are with learning.",
-    time: "10:30 AM",
-    isMe: false,
-    senderType: "parent"
-  }
-];
 
 const Chat = () => {
-  const [selectedRoom, setSelectedRoom] = useState(chatRooms[0]);
-  const [newMessage, setNewMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newRoomName, setNewRoomName] = useState("");
+  const [newRoomType, setNewRoomType] = useState<"parent" | "teacher" | "general">("parent");
+  const [chatRoomsList, setChatRoomsList] = useState<ChatRoom[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const supabase = createClient();
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      // In a real app, this would send the message to the backend
-      console.log("Sending message:", newMessage);
-      setNewMessage("");
-    }
-  };
+  // Load current user and chat rooms
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setError(null);
+        
+        // Get current user from auth
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError) {
+          console.error('Auth error:', userError);
+          setError('Authentication error');
+          return;
+        }
 
-  const getRoomIcon = (type: string) => {
-    switch (type) {
-      case "teacher":
-        return "👩‍🏫";
-      case "parent":
-        return "👨‍👩‍👧‍👦";
-      default:
-        return "📢";
-    }
-  };
+        if (!user) {
+          setError('No authenticated user found');
+          setLoading(false);
+          return;
+        }
+
+        // Get user profile from user table
+        const { data: userData, error: profileError } = await supabase
+          .from('user')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Profile error:', profileError);
+          // If user profile doesn't exist, create one
+          const { data: newUser, error: createError } = await supabase
+            .from('user')
+            .insert({
+              id: user.id,
+              name: user.email || 'Unknown User',
+              role: 'parent',
+              school: 'Unknown School'
+            })
+            .select()
+            .single();
+
+          if (createError) {
+            console.error('Error creating user profile:', createError);
+            setError('Failed to create user profile');
+            return;
+          }
+          
+          setCurrentUser(newUser);
+        } else {
+          setCurrentUser(userData);
+        }
+
+        // Load chat rooms
+        const { data: rooms, error: roomsError } = await supabase
+          .from('chatRooms')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (roomsError) {
+          console.error('Rooms error:', roomsError);
+          setError('Failed to load chat rooms');
+          return;
+        }
+        
+        setChatRoomsList(rooms || []);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        setError('Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [supabase]);
 
   const getBadgeColor = (type: string) => {
     switch (type) {
@@ -149,20 +125,102 @@ const Chat = () => {
     }
   };
 
-  const filteredRooms = chatRooms.filter(room =>
+  const handleRoomSelect = (room: ChatRoom) => {
+    navigate(`/chat/${room.id}`);
+  };
+
+  const handleCreateRoom = async () => {
+    if (!newRoomName.trim() || !currentUser) return;
+
+    try {
+      // Create new chat room
+      const { data: newRoom, error: roomError } = await supabase
+        .from('chatRooms')
+        .insert({
+          name: newRoomName.trim(),
+          type: newRoomType,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (roomError) {
+        console.error('Error creating room:', roomError);
+        throw roomError;
+      }
+
+      // Add current user as participant
+      const { error: participantError } = await supabase
+        .from('roomParticipants')
+        .insert({
+          roomId: newRoom.id,
+          userId: currentUser.id
+        });
+
+      if (participantError) {
+        console.error('Error adding participant:', participantError);
+        // Delete the room if we can't add the participant
+        await supabase.from('chatRooms').delete().eq('id', newRoom.id);
+        throw participantError;
+      }
+
+      // Update local state
+      setChatRoomsList(prev => [newRoom, ...prev]);
+      setNewRoomName("");
+      setNewRoomType("parent");
+      setIsCreateDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating room:', error);
+      setError('Failed to create chat room');
+    }
+  };
+
+  const filteredRooms = chatRoomsList.filter(room =>
     room.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (loading) {
+    return (
+      <div className="p-4 md:p-8">
+        <div className="max-w-4xl mx-auto">
+          <Card>
+            <CardContent className="p-8">
+              <div className="text-center">Loading chat rooms...</div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 md:p-8">
+        <div className="max-w-4xl mx-auto">
+          <Card>
+            <CardContent className="p-8">
+              <div className="text-center text-red-600">
+                <p className="mb-4">Error: {error}</p>
+                <Button onClick={() => window.location.reload()}>Retry</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-8rem)]">
-        {/* Chat Rooms List */}
-        <Card className="lg:col-span-1">
+      <div className="max-w-4xl mx-auto">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              Chat Rooms
-            </CardTitle>
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                Chat Rooms
+              </CardTitle>
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -174,117 +232,166 @@ const Chat = () => {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[400px]">
-              <div className="space-y-1 p-4">
-                {filteredRooms.map((room) => (
-                  <div
-                    key={room.id}
-                    onClick={() => setSelectedRoom(room)}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                      selectedRoom.id === room.id
-                        ? "bg-primary/10 border border-primary/20"
-                        : "hover:bg-muted/50"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">{getRoomIcon(room.type)}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-sm truncate">{room.name}</h3>
-                          {room.unreadCount > 0 && (
-                            <Badge className="bg-destructive text-destructive-foreground h-5 w-5 text-xs p-0 flex items-center justify-center">
-                              {room.unreadCount}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground truncate mb-1">
-                          {room.lastMessage}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">{room.lastTime}</span>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Users className="h-3 w-3" />
-                            {room.participants}
+            <div className="space-y-6 p-4">
+              {/* General Announcements Section */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-muted-foreground">General Announcements</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-1">
+                    {filteredRooms
+                      .filter(room => room.type === "general")
+                      .map((room) => (
+                        <div
+                          key={room.id}
+                          onClick={() => handleRoomSelect(room)}
+                          className="p-4 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 border border-transparent hover:border-border"
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h3 className="font-semibold text-lg">{room.name}</h3>
+                              </div>
+                              {room.last_message && (
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  {room.last_message}
+                                </p>
+                              )}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                  <span>{room.participant_count || 0} participants</span>
+                                </div>
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                                  <ArrowRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      ))}
                   </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+                </CardContent>
+              </Card>
 
-        {/* Chat Messages */}
-        <Card className="lg:col-span-2 flex flex-col">
-          <CardHeader className="flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="text-2xl">{getRoomIcon(selectedRoom.type)}</div>
-              <div>
-                <CardTitle>{selectedRoom.name}</CardTitle>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge className={getBadgeColor(selectedRoom.type)}>
-                    {selectedRoom.type === "teacher" ? "Teacher Chat" : 
-                     selectedRoom.type === "parent" ? "Parent Group" : 
-                     "Announcements"}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">
-                    {selectedRoom.participants} participants
-                  </span>
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent className="flex-1 flex flex-col p-0">
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex gap-3 ${message.isMe ? "flex-row-reverse" : ""}`}
-                  >
-                    <Avatar className="h-8 w-8 flex-shrink-0">
-                      <AvatarImage src={message.avatar} alt={message.sender} />
-                      <AvatarFallback>{message.sender.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    <div className={`max-w-[70%] ${message.isMe ? "text-right" : ""}`}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-sm font-semibold ${
-                          message.senderType === "teacher" ? "text-primary" : "text-foreground"
-                        }`}>
-                          {message.sender}
-                        </span>
-                        <span className="text-xs text-muted-foreground">{message.time}</span>
-                      </div>
-                      <div className={`p-3 rounded-lg ${
-                        message.isMe 
-                          ? "bg-primary text-primary-foreground" 
-                          : "bg-muted"
-                      }`}>
-                        <p className="text-sm">{message.message}</p>
-                      </div>
-                    </div>
+              {/* Teacher Chat Section */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-muted-foreground">Teacher Chat</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-1">
+                    {filteredRooms
+                      .filter(room => room.type === "teacher")
+                      .map((room) => (
+                        <div
+                          key={room.id}
+                          onClick={() => handleRoomSelect(room)}
+                          className="p-4 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 border border-transparent hover:border-border"
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h3 className="font-semibold text-lg">{room.name}</h3>
+                              </div>
+                              {room.last_message && (
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  {room.last_message}
+                                </p>
+                              )}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                  <span>{room.participant_count || 0} participants</span>
+                                </div>
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                                  <ArrowRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                   </div>
-                ))}
-              </div>
-            </ScrollArea>
+                </CardContent>
+              </Card>
 
-            {/* Message Input */}
-            <div className="p-4 border-t border-border">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Type your message..."
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                  className="flex-1"
-                />
-                <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
+              {/* Parents Chat Section */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg text-muted-foreground">Parents Chat</CardTitle>
+                    <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="flex items-center gap-2">
+                          <Plus className="h-4 w-4" />
+                          Create Room
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Create New Parent Chat Room</DialogTitle>
+                          <DialogDescription>
+                            Create a new chat room for parents to discuss and share experiences.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="room-name">Room Name</Label>
+                            <Input
+                              id="room-name"
+                              placeholder="Enter room name..."
+                              value={newRoomName}
+                              onChange={(e) => setNewRoomName(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleCreateRoom} disabled={!newRoomName.trim()}>
+                            Create Room
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-1">
+                    {filteredRooms
+                      .filter(room => room.type === "parent")
+                      .map((room) => (
+                        <div
+                          key={room.id}
+                          onClick={() => handleRoomSelect(room)}
+                          className="p-4 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 border border-transparent hover:border-border"
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h3 className="font-semibold text-lg">{room.name}</h3>
+                              </div>
+                              {room.last_message && (
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  {room.last_message}
+                                </p>
+                              )}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                  <span>{room.participant_count || 0} participants</span>
+                                </div>
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                                  <ArrowRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </CardContent>
         </Card>

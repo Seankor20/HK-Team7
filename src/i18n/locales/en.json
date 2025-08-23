@@ -24,7 +24,8 @@
     "previous": "Previous",
     "today": "Today",
     "yesterday": "Yesterday",
-    "download": "Download"
+    "download": "Download",
+    "pathway": "Learning Path"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -66,6 +67,42 @@
       "letterRecognition": "Letter Recognition Guide",
       "creativeArts": "Creative Arts & Crafts",
       "watchNow": "Watch Now"
+    }
+  },
+  "pathway": {
+    "title": "Learning Pathway",
+    "subtitle": "Your journey to becoming a super learner! 🌟",
+    "totalXP": "Total XP",
+    "completed": "Completed",
+    "progress": "Progress",
+    "learningPath": "Learning Path",
+    "materials": "Materials",
+    "homework": "Homework",
+    "learningJourney": "Your Learning Journey",
+    "journeyDescription": "Complete lessons to unlock new topics and earn XP!",
+    "learningMaterials": "Learning Materials",
+    "materialsDescription": "Access all your completed lessons and resources",
+    "homeworkAssignments": "Homework & Assignments",
+    "homeworkDescription": "Track your assignments and learning tasks",
+    "review": "Review",
+    "continue": "Continue",
+    "start": "Start",
+    "locked": "Locked",
+    "xpEarned": "XP earned",
+    "due": "Due",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "pending": "Pending",
+      "overdue": "Overdue"
     }
   },
   "quiz": {

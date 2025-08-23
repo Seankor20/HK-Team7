@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useSupabase } from "@/hooks/use-supabase";
 import { 
   User, 
   Mail, 
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 
 const Profile = () => {
+  const { profile } = useSupabase();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     parentName: "Sarah Johnson",
@@ -86,6 +88,14 @@ const Profile = () => {
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Profile</h1>
           <p className="text-muted-foreground">Manage your family's learning journey</p>
+          {/* Role Display */}
+          {profile && (
+            <div className="mt-2">
+              <Badge variant="secondary" className="text-sm">
+                Role: {profile.role || 'student'}
+              </Badge>
+            </div>
+          )}
         </div>
         <Button
           onClick={() => setIsEditing(!isEditing)}
