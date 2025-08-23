@@ -15,43 +15,34 @@ interface Profile {
 export const useSupabase = () => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
+  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
   // Fetch user profile
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
-      
-      if (error) {
-        console.error('Error fetching profile:', error)
-        return null
-      }
-      
-      return data
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-      return null
+  const fetchProfile = async () => {
+    // Use Supabase Auth to get current user info
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error('Error fetching auth user:', error);
+      return null;
     }
-  }
+    return data.user; // has fields id, email, etc.
+  };
+
+
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
       if (session?.user) {
-        const userProfile = await fetchProfile(session.user.id)
-        setProfile(userProfile)
+        fetchProfile().then(authUser => {
+          console.log("Auth User fetched:", authUser);
+          setProfile(authUser);
+        });
       }
-      
-      setLoading(false)
-    })
+      setLoading(false);
+    });
 
     // Listen for auth changes
     const {
@@ -61,7 +52,7 @@ export const useSupabase = () => {
       setUser(session?.user ?? null)
       
       if (session?.user) {
-        const userProfile = await fetchProfile(session.user.id)
+        const userProfile = await fetchProfile()
         setProfile(userProfile)
       } else {
         setProfile(null)
@@ -91,6 +82,7 @@ export const useSupabase = () => {
       email,
       password,
     })
+    console.log(data)
     return { data, error }
   }
 

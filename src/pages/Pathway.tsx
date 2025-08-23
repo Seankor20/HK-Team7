@@ -71,13 +71,14 @@ const Pathway = () => {
       authLoading, 
       canManageHomework 
     });
+    fetchHomework();
   }, [user, profile, authLoading, canManageHomework]);
 
-  // Fetch homework from Supabase (filtered by type = 'homework')
-  useEffect(() => {
-    // Temporarily allow fetching without authentication for testing
-    fetchHomework();
-  }, []);
+  // // Fetch homework from Supabase (filtered by type = 'homework')
+  // useEffect(() => {
+  //   // Temporarily allow fetching without authentication for testing
+  //   fetchHomework();
+  // }, []);
 
   const fetchHomework = async () => {
     setLoading(true);
