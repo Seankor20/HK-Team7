@@ -11,23 +11,23 @@ import { Send } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface RealtimeChatProps {
-  roomName: string
-  username: string
+  roomId: string
+  userId: string
   onMessage?: (messages: ChatMessage[]) => void
   messages?: ChatMessage[]
 }
 
 /**
  * Realtime chat component
- * @param roomName - The name of the room to join. Each room is a unique chat.
- * @param username - The username of the user
+ * @param roomId - The ID of the room to join. Each room is a unique chat.
+ * @param userId - The ID of the user
  * @param onMessage - The callback function to handle the messages. Useful if you want to store the messages in a database.
  * @param messages - The messages to display in the chat. Useful if you want to display messages from a database.
  * @returns The chat component
  */
 export const RealtimeChat = ({
-  roomName,
-  username,
+  roomId,
+  userId,
   onMessage,
   messages: initialMessages = [],
 }: RealtimeChatProps) => {
@@ -38,8 +38,8 @@ export const RealtimeChat = ({
     sendMessage,
     isConnected,
   } = useRealtimeChat({
-    roomName,
-    username,
+    roomId,
+    userId,
   })
   const [newMessage, setNewMessage] = useState('')
 
@@ -51,7 +51,7 @@ export const RealtimeChat = ({
       (message, index, self) => index === self.findIndex((m) => m.id === message.id)
     )
     // Sort by creation date
-    const sortedMessages = uniqueMessages.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    const sortedMessages = uniqueMessages.sort((a, b) => a.created_at.localeCompare(b.created_at))
 
     return sortedMessages
   }, [initialMessages, realtimeMessages])
@@ -90,7 +90,7 @@ export const RealtimeChat = ({
         <div className="space-y-1">
           {allMessages.map((message, index) => {
             const prevMessage = index > 0 ? allMessages[index - 1] : null
-            const showHeader = !prevMessage || prevMessage.user.name !== message.user.name
+            const showHeader = !prevMessage || prevMessage.userId !== message.userId
 
             return (
               <div
@@ -99,7 +99,7 @@ export const RealtimeChat = ({
               >
                 <ChatMessageItem
                   message={message}
-                  isOwnMessage={message.user.name === username}
+                  isOwnMessage={message.userId === userId}
                   showHeader={showHeader}
                 />
               </div>
