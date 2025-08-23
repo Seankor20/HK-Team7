@@ -1,7 +1,8 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo, use } from 'react'
+import { useSupabase } from '@/lib/supabase-context'
 
 interface UseRealtimeChatProps {
   roomId: string
@@ -14,65 +15,69 @@ export interface ChatMessage {
   userId: string
   roomId: string
   created_at: string
-  user?: {
-    id: string
-    name: string
-    role: string
-    school: string
-  }
+  displayName?: string
 }
 
 const EVENT_MESSAGE_TYPE = 'message'
 
 export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
-  const supabase = createClient()
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const supabase = useSupabase();
+  const [messages, setMessages] = useState([])
   const [channel, setChannel] = useState<ReturnType<typeof supabase.channel> | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  // Load existing messages from database
+  // Generate a random display name for this user (per session)
+  const displayName = useMemo(() => {
+    // e.g. User1234
+    return 'User' + Math.floor(1000 + Math.random() * 9000)
+  }, [])
+
+  // Load existing messages from database (no user info join)
   useEffect(() => {
     const loadMessages = async () => {
       if (!roomId) return
-      
       try {
         setLoading(true)
         const { data, error } = await supabase
           .from('Messages')
-          .select(`
-            *,
-            participant:RoomParticipants!user_room_id(
-              id,
-              roomId,
-              userId,
-              user:user(id, raw_user_meta_data)
-            )
-          `)
-          .eq('participant.roomId', roomId)  // Filter by room ID from RoomParticipant   // Filter by user ID from RoomParticipant
+          .select('id, content, user_room_id, created_at, participant:RoomParticipants!user_room_id(id, roomId, userId)')
+          .eq('participant.roomId', roomId)
           .order('created_at', { ascending: true })
-
         if (error) {
           console.error('Error loading messages:', error)
           return
         }
-        
-        setMessages(data || [])
+        // Flatten for UI: attach displayName for current user, else show as 'Anonymous'
+        setMessages((data || []).map((msg) => {
+          const participant = Array.isArray(msg.participant) ? msg.participant[0] : msg.participant;
+          return {
+            id: msg.id,
+            content: msg.content,
+            userId: participant?.userId,
+            roomId: participant?.roomId,
+            created_at: msg.created_at,
+            displayName: participant?.userId === userId ? displayName : 'Anonymous',
+          }
+        }))
       } catch (error) {
         console.error('Error loading messages:', error)
       } finally {
         setLoading(false)
       }
     }
-
     loadMessages()
-  }, [roomId, supabase])
+  }, [roomId, supabase, userId, displayName])
 
   useEffect(() => {
-    if (!roomId) return
+    if (!roomId) {
+      console.log('No room ID provided')
+      return
+    }
+        
 
     const newChannel = supabase.channel(`room:${roomId}`)
-
+    console.log('Subscribing to channel:', newChannel)
     newChannel
       .on('broadcast', { event: EVENT_MESSAGE_TYPE }, (payload) => {
         console.log('Received broadcast message:', payload)
@@ -103,20 +108,37 @@ export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
 
       try {
         console.log('Sending message:', content)
-        
-        // First, save message to database
-        const { data, error } = await supabase
-          .from('messages')
+        // Check if participant exists
+        let { data: participantData, error: participantError } = await supabase
+          .from('RoomParticipants')
+          .select('*')
+          .eq('roomId', roomId)
+          .eq('userId', userId)
+          .single()
+        // If not, insert participant
+        if (participantError || !participantData) {
+          const { data: newParticipant, error: insertError } = await supabase
+            .from('RoomParticipants')
+            .insert({ roomId, userId })
+            .select('*')
+            .single()
+          if (insertError) {
+            console.error('Error adding participant:', insertError)
+            throw insertError
+          }
+          participantData = newParticipant
+        }
+
+
+        // Save message to database (no user info join)
+        const { data: inserted, error } = await supabase
+          .from('Messages')
           .insert({
             content: content.trim(),
-            roomId: roomId,
-            userId: userId,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            user_room_id: participantData.id,
           })
-          .select(`
-            *,
-            user:user(id, name, role, school)
-          `)
+          .select('id, content, created_at, user_room_id, participant:RoomParticipants!user_room_id(id, roomId, userId)')
           .single()
 
         if (error) {
@@ -124,14 +146,22 @@ export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
           throw error
         }
 
-        console.log('Message saved to database:', data)
+        // Flatten the message for UI
+        const participant = Array.isArray(inserted.participant) ? inserted.participant[0] : inserted.participant;
+        const message = {
+          id: inserted.id,
+          content: inserted.content,
+          userId: participant?.userId,
+          roomId: participant?.roomId,
+          created_at: inserted.created_at,
+          displayName,
+        }
 
-        // Update local state immediately
-        setMessages((current) => [...current, data])
+        setMessages((current) => [...current, message])
 
         // Update room's last_message
         await supabase
-          .from('chatRooms')
+          .from('ChatRooms')
           .update({
             last_message: content.trim()
           })
@@ -141,7 +171,7 @@ export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
         const broadcastResult = await channel.send({
           type: 'broadcast',
           event: EVENT_MESSAGE_TYPE,
-          payload: data
+          payload: message
         })
 
         console.log('Broadcast result:', broadcastResult)

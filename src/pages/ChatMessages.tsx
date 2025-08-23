@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users } from "lucide-react";
 import { RealtimeChat } from "@/components/realtime-chat";
 import { createClient } from "@/lib/supabase/client";
+import { useSupabase } from "@/lib/supabase-context"
 
 interface ChatRoom {
   id: string;
@@ -24,7 +25,7 @@ const ChatMessages = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
+  const supabase = useSupabase();
 
   useEffect(() => {
     const loadRoomAndUser = async () => {
@@ -161,7 +162,7 @@ const ChatMessages = () => {
         <Card className="h-full">
           <CardContent className="h-full p-0">
             <RealtimeChat
-              roomId={room.id}
+              roomId={roomId}
               userId={currentUser.id}
             />
           </CardContent>

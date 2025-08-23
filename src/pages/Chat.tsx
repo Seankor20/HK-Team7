@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
+import { useSupabase } from "@/lib/supabase-context";
 
 interface ChatRoom {
   id: string;
@@ -28,7 +29,7 @@ const Chat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const supabase = createClient();
+  const supabase = useSupabase();
 
   // Load current user and chat rooms
 
