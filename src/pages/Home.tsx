@@ -14,7 +14,7 @@ const Home = () => {
       title: t('home.progress.sarahMath'),
       duration: "2:30",
       date: t('common.today'),
-      videoUrl: "../Sample Parent Instruction Video.mp4"
+      videoUrl: "./Sample Parent Instruction Video.mp4"
     }
   ];
 
@@ -134,7 +134,7 @@ const Home = () => {
           {progressVideos.map((video) => (
             <Card key={video.id} className="group hover:shadow-hover transition-all duration-300 cursor-pointer">
               <div className="relative">
-                <video width="750" height="500" controls poster="../Screenshot 2025-08-24 at 1.38.32 AM.png">
+                <video width="750" height="500" controls poster="./screenshot.png">
                   <source src={video.videoUrl} type="video/mp4"/>
                 </video>
                 {/* <Button 
@@ -200,7 +200,7 @@ const Home = () => {
                 >
                   {material.type === t('home.materials.pdfDocument') ? (
                     <>
-                      <a href="../HK-TEAM7/public/Zi Yang PANG - CV.pdf" download className="flex items-center">
+                      <a href="./Study Material.pdf" download className="flex items-center">
                        <Download className="h-4 w-4 mr-2" />
                        Download
                      </a>
