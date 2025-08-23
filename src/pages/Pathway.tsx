@@ -343,13 +343,30 @@ const Pathway = () => {
           {/* Overlay for readability */}
           {/* <div className="absolute inset-0 bg-black/50 rounded-lg"></div> */}
 
+          {/* Floating banner over the path background */}
+          <div className="absolute left-1/2 top-6 -translate-x-1/2 z-40 w-[90%] max-w-xl">
+            <div className="text-center mt-6 p-6 bg-gradient-to-r from-blue-50 via-purple-50 to-green-50 rounded-2xl border-2 border-blue-200 shadow-lg">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-2xl">🏰</span>
+                <span className="text-2xl">👑</span>
+                <span className="text-2xl">⭐</span>
+              </div>
+              <p className="text-sm font-medium text-gray-700">
+                Complete homework to unlock the chest!
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Follow the arrow! 🎯
+              </p>
+            </div>
+          </div>
+
           {/* Image buttons along the path (explicit, no map) */}
           {/* Start Here */}
           <button
             aria-label="Start Here"
             onClick={() => alert('Welcome! Start your journey here.')}
             className="absolute -translate-x-1/2 -translate-y-1/2 group z-20"
-            style={{ top: '60%', left: '40%' }}
+            style={{ top: '50%', left: '40%' }}
           >
             <div className="hop-interval relative z-10">
               <img
