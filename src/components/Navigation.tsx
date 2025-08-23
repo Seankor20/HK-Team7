@@ -6,7 +6,8 @@ import {
   BookOpen, 
   Trophy, 
   MessageCircle, 
-  User 
+  User,
+  Map
 } from "lucide-react";
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -16,6 +17,7 @@ const Navigation = () => {
 
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
+    { path: "/pathway", label: "Learning Path", icon: Map },
     { path: "/quiz", label: t('common.quiz'), icon: BookOpen },
     { path: "/leaderboard", label: t('common.leaderboard'), icon: Trophy },
     { path: "/chat", label: t('common.chat'), icon: MessageCircle },
