@@ -147,17 +147,26 @@ const ChatMessages = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex-1">
-                <CardTitle className="text-lg">{room.name}</CardTitle>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge className={getBadgeColor(room.type)}>
-                    {room.type === "teacher" ? "Teacher Chat" : 
-                     room.type === "parent" ? "Parent Group" : 
-                     "Announcements"}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    {room.participant_count || 0} participants
-                  </span>
+                <CardTitle className="text-lg">
+                  {room.type === "teacher" && <span role="img" aria-label="Teacher" className="mr-2">👩‍🏫</span>}
+                  {room.type === "parent" && <span role="img" aria-label="Parents" className="mr-2">👨‍👩‍👧‍👦</span>}
+                  {room.type === "general" && <span role="img" aria-label="Announcements" className="mr-2">📢</span>}
+                  {room.name}
+                </CardTitle>
+                <div className="grid grid-cols-2 gap-2 mt-1 items-center">
+                  <div className="flex justify-start">
+                    <Badge className={getBadgeColor(room.type)}>
+                      {room.type === "teacher" ? "Teacher Chat" : 
+                      room.type === "parent" ? "Parent Group" : 
+                      "Announcements"}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-end">
+                    <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      {room.participant_count || 0} participants
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
