@@ -43,6 +43,7 @@ export const ChatMessageItem = ({ message, isOwnMessage, showHeader }: ChatMessa
             })}
           >
             <span className={'font-medium'}>{getRandomName(message.userId)}</span>
+
             <span className="text-foreground/50 text-xs">
               {new Date(message.created_at).toLocaleTimeString('en-US', {
                 hour: '2-digit',
