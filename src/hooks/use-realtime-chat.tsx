@@ -39,12 +39,17 @@ export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
       try {
         setLoading(true)
         const { data, error } = await supabase
-          .from('messages')
+          .from('Messages')
           .select(`
             *,
-            user:user(id, name, role, school)
+            participant:RoomParticipants!user_room_id(
+              id,
+              roomId,
+              userId,
+              user:user(id, raw_user_meta_data)
+            )
           `)
-          .eq('roomId', roomId)
+          .eq('participant.roomId', roomId)  // Filter by room ID from RoomParticipant   // Filter by user ID from RoomParticipant
           .order('created_at', { ascending: true })
 
         if (error) {
