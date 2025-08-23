@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useCallback, useEffect, useState, useMemo, use } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
 
 interface UseRealtimeChatProps {
