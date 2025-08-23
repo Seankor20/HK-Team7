@@ -3,21 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Download, Calendar, Star } from "lucide-react";
 import heroImage from "@/assets/hero-learning.jpg";
+import { useI18n } from "@/hooks/use-i18n";
 
 const Home = () => {
+  const { t } = useI18n();
+
   const progressVideos = [
     {
       id: 1,
-      title: "Sarah's Math Progress",
+      title: t('home.progress.sarahMath'),
       duration: "2:30",
-      date: "Today",
+      date: t('common.today'),
       thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop"
     },
     {
       id: 2,
-      title: "Reading Achievement",
+      title: t('home.progress.readingAchievement'),
       duration: "1:45",
-      date: "Yesterday",
+      date: t('common.yesterday'),
       thumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop"
     }
   ];
@@ -25,26 +28,26 @@ const Home = () => {
   const learningMaterials = [
     {
       id: 1,
-      title: "Numbers & Counting",
-      type: "Video",
+      title: t('home.materials.numbersCounting'),
+      type: t('home.materials.video'),
       duration: "15:30",
-      difficulty: "Beginner",
+      difficulty: t('home.materials.beginner'),
       thumbnail: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?w=300&h=200&fit=crop"
     },
     {
       id: 2,
-      title: "Letter Recognition Guide",
-      type: "PDF Document",
+      title: t('home.materials.letterRecognition'),
+      type: t('home.materials.pdfDocument'),
       size: "2.4 MB",
-      difficulty: "Beginner",
+      difficulty: t('home.materials.beginner'),
       thumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop"
     },
     {
       id: 3,
-      title: "Creative Arts & Crafts",
-      type: "Video",
+      title: t('home.materials.creativeArts'),
+      type: t('home.materials.video'),
       duration: "20:15",
-      difficulty: "Intermediate",
+      difficulty: t('home.materials.intermediate'),
       thumbnail: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=200&fit=crop"
     }
   ];
@@ -55,20 +58,19 @@ const Home = () => {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-primary p-8 md:p-12">
         <div className="relative z-10">
           <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">
-            Oh, welcome back! 👋
+            {t('home.hero.welcomeBack')} 👋
           </h1>
           <p className="text-lg md:text-xl text-primary-foreground/90 mb-6 max-w-2xl">
-            We're so excited to see you continue this amazing learning journey with your little one. 
-            Every moment you spend learning together creates memories that last a lifetime.
+            {t('home.hero.description')}
           </p>
           <Button size="lg" variant="secondary" className="shadow-hover">
-            Continue Learning
+            {t('home.hero.continueLearning')}
           </Button>
         </div>
         <div className="absolute right-0 top-0 w-1/2 h-full opacity-20">
           <img 
             src={heroImage} 
-            alt="Family learning together" 
+            alt={t('home.hero.imageAlt')}
             className="w-full h-full object-cover"
           />
         </div>
@@ -79,15 +81,15 @@ const Home = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Your Child's Progress
+              {t('home.progress.title')}
             </h2>
             <p className="text-muted-foreground mt-1">
-              See how amazing your little learner is doing!
+              {t('home.progress.subtitle')}
             </p>
           </div>
           <Badge variant="secondary" className="bg-success/10 text-success border-success/20">
             <Star className="h-3 w-3 mr-1" />
-            Great Progress!
+            {t('home.progress.greatProgress')}
           </Badge>
         </div>
 
@@ -127,10 +129,10 @@ const Home = () => {
       <section className="space-y-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            Learning Materials
+            {t('home.materials.title')}
           </h2>
           <p className="text-muted-foreground mt-1">
-            Teacher presentations and helpful resources for learning together
+            {t('home.materials.subtitle')}
           </p>
         </div>
 
@@ -145,7 +147,7 @@ const Home = () => {
                 />
                 <Badge 
                   className={`absolute top-3 left-3 ${
-                    material.difficulty === 'Beginner' ? 'bg-success' : 'bg-accent'
+                    material.difficulty === t('home.materials.beginner') ? 'bg-success' : 'bg-accent'
                   }`}
                 >
                   {material.difficulty}
@@ -160,17 +162,17 @@ const Home = () => {
               <CardContent className="pt-0">
                 <Button 
                   className="w-full"
-                  variant={material.type === "PDF Document" ? "outline" : "default"}
+                  variant={material.type === t('home.materials.pdfDocument') ? "outline" : "default"}
                 >
-                  {material.type === "PDF Document" ? (
+                  {material.type === t('home.materials.pdfDocument') ? (
                     <>
                       <Download className="h-4 w-4 mr-2" />
-                      Download
+                      {t('common.download')}
                     </>
                   ) : (
                     <>
                       <Play className="h-4 w-4 mr-2" />
-                      Watch Now
+                      {t('home.materials.watchNow')}
                     </>
                   )}
                 </Button>

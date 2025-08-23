@@ -1,0 +1,102 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "home": "Home",
+    "profile": "Profile",
+    "chat": "Chat",
+    "quiz": "Quiz",
+    "leaderboard": "Leaderboard",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "search": "Search",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "download": "Download"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "progress": "Progress",
+    "achievements": "Achievements"
+  },
+  "home": {
+    "hero": {
+      "title": "Learn and Grow",
+      "subtitle": "Discover new skills and advance your career",
+      "cta": "Get Started",
+      "welcomeBack": "Oh, welcome back!",
+      "description": "We're so excited to see you continue this amazing learning journey with your little one. Every moment you spend learning together creates memories that last a lifetime.",
+      "continueLearning": "Continue Learning",
+      "imageAlt": "Family learning together"
+    },
+    "features": {
+      "title": "Why Choose Us",
+      "feature1": "Interactive Learning",
+      "feature2": "Expert Instructors",
+      "feature3": "Flexible Schedule"
+    },
+    "progress": {
+      "title": "Your Child's Progress",
+      "subtitle": "See how amazing your little learner is doing!",
+      "greatProgress": "Great Progress!",
+      "sarahMath": "Sarah's Math Progress",
+      "readingAchievement": "Reading Achievement"
+    },
+    "materials": {
+      "title": "Learning Materials",
+      "subtitle": "Teacher presentations and helpful resources for learning together",
+      "video": "Video",
+      "pdfDocument": "PDF Document",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "numbersCounting": "Numbers & Counting",
+      "letterRecognition": "Letter Recognition Guide",
+      "creativeArts": "Creative Arts & Crafts",
+      "watchNow": "Watch Now"
+    }
+  },
+  "quiz": {
+    "title": "Test Your Knowledge",
+    "start": "Start Quiz",
+    "question": "Question",
+    "of": "of",
+    "correct": "Correct!",
+    "incorrect": "Incorrect!",
+    "score": "Score",
+    "timeLeft": "Time Left"
+  },
+  "chat": {
+    "title": "AI Learning Assistant",
+    "placeholder": "Ask me anything about your studies...",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "newChat": "New Chat"
+  },
+  "profile": {
+    "title": "Your Profile",
+    "personalInfo": "Personal Information",
+    "learningStats": "Learning Statistics",
+    "achievements": "Achievements",
+    "editProfile": "Edit Profile"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "rank": "Rank",
+    "name": "Name",
+    "score": "Score",
+    "level": "Level"
+  }
+}
