@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { useCallback, useEffect, useState, useMemo, use } from 'react'
-import { useSupabase } from '@/lib/supabase-context'
+import { supabase } from '@/lib/supabase'
 
 interface UseRealtimeChatProps {
   roomId: string
@@ -21,7 +21,6 @@ export interface ChatMessage {
 const EVENT_MESSAGE_TYPE = 'message'
 
 export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
-  const supabase = useSupabase();
   const [messages, setMessages] = useState([])
   const [channel, setChannel] = useState<ReturnType<typeof supabase.channel> | null>(null)
   const [isConnected, setIsConnected] = useState(false)
@@ -39,17 +38,28 @@ export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
       if (!roomId) return
       try {
         setLoading(true)
-        const { data, error } = await supabase
+        const { data: participants, error: participantsError } = await supabase
+          .from('RoomParticipants')
+          .select('id')
+          .eq('roomId', roomId);
+
+        if (participantsError) {
+          // handle error
+          return;
+        }
+        const participantIds = (participants || []).map(p => p.id);
+        const { data: res, error: messagesError } = await supabase
           .from('Messages')
           .select('id, content, user_room_id, created_at, participant:RoomParticipants!user_room_id(id, roomId, userId)')
-          .eq('participant.roomId', roomId)
-          .order('created_at', { ascending: true })
-        if (error) {
-          console.error('Error loading messages:', error)
-          return
+          .in('user_room_id', participantIds)
+          .order('created_at', { ascending: true });
+
+        if (messagesError) {
+          // handle error
+          return;
         }
         // Flatten for UI: attach displayName for current user, else show as 'Anonymous'
-        setMessages((data || []).map((msg) => {
+        setMessages((res || []).map((msg) => {
           const participant = Array.isArray(msg.participant) ? msg.participant[0] : msg.participant;
           return {
             id: msg.id,
@@ -163,7 +173,7 @@ export function useRealtimeChat({ roomId, userId }: UseRealtimeChatProps) {
         await supabase
           .from('ChatRooms')
           .update({
-            last_message: content.trim()
+            last_message: content.trim(),
           })
           .eq('id', roomId)
 

@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users } from "lucide-react";
 import { RealtimeChat } from "@/components/realtime-chat";
-import { createClient } from "@/lib/supabase/client";
-import { useSupabase } from "@/lib/supabase-context"
+import { supabase } from "@/lib/supabase";
 
 interface ChatRoom {
   id: string;
@@ -25,7 +24,6 @@ const ChatMessages = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = useSupabase();
 
   useEffect(() => {
     const loadRoomAndUser = async () => {
@@ -33,9 +31,20 @@ const ChatMessages = () => {
         navigate("/chat");
         return;
       }
-      setRoom(roomId)
       try {
         setError(null);
+
+        // Fetch room details from ChatRooms
+        const { data: roomData, error: roomError } = await supabase
+          .from('ChatRooms')
+          .select('id, name, type, participant_count, created_at')
+          .eq('id', roomId)
+          .single();
+        if (roomError || !roomData) {
+          setError('Chat room not found');
+          return;
+        }
+        setRoom(roomData);
 
         // Get current user from auth
         const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -50,7 +59,6 @@ const ChatMessages = () => {
           navigate("/chat");
           return;
         }
-          
         setCurrentUser(user);
 
       } catch (error) {
