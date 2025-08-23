@@ -13,33 +13,27 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export interface Database {
   public: {
     Tables: {
-      profiles: {
+      user: {
         Row: {
           id: string
-          email: string
-          full_name: string
-          avatar_url?: string
-          role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at: string
-          updated_at: string
+          name: string
+          school: string
+          role: 'student' | 'teacher' | 'ngo' | 'admin'
         }
         Insert: {
           id: string
-          email: string
-          full_name: string
-          avatar_url?: string
-          role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at?: string
-          updated_at?: string
+          name: string
+          school: string
+          role: 'student' | 'teacher' | 'ngo' | 'admin'
         }
         Update: {
           id?: string
-          email?: string
-          full_name?: string
-          avatar_url?: string
-          role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at?: string
-          updated_at?: string
+          name?: string
+          school?: string
+          role?: 'student' | 'teacher' | 'ngo' | 'admin'
         }
       }
       question: {

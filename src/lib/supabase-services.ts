@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import type { Database } from './supabase'
 
-type Profile = Database['public']['Tables']['profiles']['Row']
+type User = Database['public']['Tables']['user']['Row']
 type Question = Database['public']['Tables']['question']['Row']
 type Quiz = Database['public']['Tables']['quizzes']['Row']
 type ChatMessage = Database['public']['Tables']['chat_messages']['Row']
@@ -63,58 +63,8 @@ export const questionService = {
   }
 }
 
-// Profile Services
-export const profileService = {
-  async getProfile(userId: string): Promise<Profile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-    
-    if (error) {
-      console.error('Error fetching profile:', error)
-      return null
-    }
-    
-    return data
-  },
 
-  async updateProfile(userId: string, updates: Partial<Profile>): Promise<Profile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', userId)
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Error updating profile:', error)
-      return null
-    }
-    
-    return data
-  },
 
-  async createProfile(userId: string, email: string, fullName: string): Promise<Profile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .insert({
-        id: userId,
-        email,
-        full_name: fullName,
-      })
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Error creating profile:', error)
-      return null
-    }
-    
-    return data
-  }
-}
 
 // Quiz Services
 export const quizService = {
@@ -153,14 +103,14 @@ export const quizService = {
     return data || []
   },
 
-  async getLeaderboard(): Promise<Array<Quiz & { profiles: Profile }>> {
+  async getLeaderboard(): Promise<Array<Quiz & { user: User }>> {
     const { data, error } = await supabase
       .from('quizzes')
       .select(`
         *,
-        profiles (
-          full_name,
-          avatar_url
+        user (
+          name,
+          school
         )
       `)
       .order('score', { ascending: false })
