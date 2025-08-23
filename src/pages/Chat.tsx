@@ -7,8 +7,7 @@ import { MessageCircle, Search, ArrowRight, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
-import { useSupabase } from "@/lib/supabase-context";
+import { supabase } from "@/lib/supabase";
 
 interface ChatRoom {
   id: string;
@@ -29,7 +28,6 @@ const Chat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const supabase = useSupabase();
 
   // Load current user and chat rooms
 
