@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="sunCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="60%" stop-color="#FFC94A"/>
+      <stop offset="100%" stop-color="#FFB703"/>
+    </radialGradient>
+    <linearGradient id="rayGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD166" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFB703" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rays -->
+  <g opacity="0.9">
+    <!-- 16 rays -->
+    <g transform="translate(100,100)">
+      <!-- one ray shape -->
+      <g id="ray">
+        <polygon points="-6,-90 0,-120 6,-90" fill="url(#rayGrad)" />
+      </g>
+      <!-- rotate and reuse -->
+      <use href="#ray" transform="rotate(22.5)" />
+      <use href="#ray" transform="rotate(45)" />
+      <use href="#ray" transform="rotate(67.5)" />
+      <use href="#ray" transform="rotate(90)" />
+      <use href="#ray" transform="rotate(112.5)" />
+      <use href="#ray" transform="rotate(135)" />
+      <use href="#ray" transform="rotate(157.5)" />
+      <use href="#ray" transform="rotate(180)" />
+      <use href="#ray" transform="rotate(202.5)" />
+      <use href="#ray" transform="rotate(225)" />
+      <use href="#ray" transform="rotate(247.5)" />
+      <use href="#ray" transform="rotate(270)" />
+      <use href="#ray" transform="rotate(292.5)" />
+      <use href="#ray" transform="rotate(315)" />
+      <use href="#ray" transform="rotate(337.5)" />
+    </g>
+  </g>
+
+  <!-- Core -->
+  <circle cx="100" cy="100" r="44" fill="url(#sunCore)" />
+</svg>

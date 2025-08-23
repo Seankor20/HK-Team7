@@ -130,3 +130,122 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Shiny rotating border for circular images/buttons */
+@layer components {
+  /* Utility: slow spin using Tailwind's default spin keyframes */
+  .spin-slow {
+    animation: spin 12s linear infinite;
+  }
+
+  /* Keyframes: quick horizontal shake during first 12% of cycle, rest idle */
+  @keyframes book-shake {
+    0% { transform: translateX(0); }
+    2% { transform: translateX(-3px); }
+    4% { transform: translateX(3px); }
+    6% { transform: translateX(-3px); }
+    8% { transform: translateX(3px); }
+    10% { transform: translateX(-1px); }
+    12% { transform: translateX(0); }
+    100% { transform: translateX(0); }
+  }
+
+  /* Wrapper class to apply shake without conflicting with inner img scale */
+  .shake-interval {
+    display: inline-block;
+    animation: book-shake 3s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  /* Keyframes: quick hop up 10px and return, then idle for rest of 3s cycle */
+  @keyframes chest-hop {
+    0% { transform: translateY(0); }
+    4% { transform: translateY(-10px); }
+    8% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+  }
+
+  .hop-interval {
+    display: inline-block;
+    animation: chest-hop 3s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  /* Arrow horizontal sway: 1s left, 1s right (alternate) */
+  @keyframes arrow-sway {
+    from { transform: translateX(-10px); }
+    to   { transform: translateX(10px); }
+  }
+
+  .sway-x {
+    display: inline-block;
+    animation: arrow-sway 1s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes shiny-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .shiny-border {
+    position: relative;
+    display: inline-block;
+    border-radius: 9999px; /* full */
+  }
+
+  /* Rotating gradient ring (only border area visible) */
+  .shiny-border::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* full size of wrapper */
+    border-radius: inherit;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 25%,
+      hsl(var(--secondary)) 50%,
+      hsl(var(--accent)) 75%,
+      hsl(var(--primary)) 100%
+    );
+    animation: shiny-rotate 6s linear infinite;
+    /* Show only a ring by masking the center */
+    padding: 3px; /* border thickness */
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Sun-like rotating rays outside the circle */
+  .shiny-border::after {
+    content: "";
+    position: absolute;
+    inset: -8px; /* extend outside to show rays */
+    border-radius: inherit;
+    background: repeating-conic-gradient(
+      from 0deg,
+      hsla(var(--accent), 0) 0deg 8deg,
+      hsla(var(--accent), 0.45) 8deg 12deg,
+      hsla(var(--primary), 0) 12deg 20deg
+    );
+    animation: shiny-rotate 12s linear infinite;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 10px hsl(var(--accent) / 0.35));
+    /* Hide inner area so rays don't cover the image */
+    -webkit-mask: radial-gradient(circle, transparent 52%, #000 55%);
+            mask: radial-gradient(circle, transparent 52%, #000 55%);
+    pointer-events: none;
+  }
+
+  /* Keep image above the ring and ensure it remains static */
+  .shiny-border > img,
+  .shiny-border > .shiny-inner {
+    position: relative;
+    z-index: 1;
+    display: block;
+    border-radius: 9999px;
+    background: white; /* fallback bg behind transparent images */
+  }
+}
