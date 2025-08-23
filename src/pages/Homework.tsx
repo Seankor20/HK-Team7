@@ -43,7 +43,7 @@ interface Question {
 }
 
 const Homework = () => {
-  const { user, profile, loading: authLoading } = useSupabase();
+  const { user, loading: authLoading } = useSupabase();
   const [searchParams] = useSearchParams();
   const [homework, setHomework] = useState<Quiz[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -60,7 +60,7 @@ const Homework = () => {
   });
 
   // Check if user has access to homework management
-  const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
+  const canManageHomework = false;
 
   // Check for edit parameter in URL
   useEffect(() => {

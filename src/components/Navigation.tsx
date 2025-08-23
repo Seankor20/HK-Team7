@@ -17,10 +17,10 @@ import { Badge } from "./ui/badge";
 const Navigation = () => {
   const location = useLocation();
   const { t } = useTranslation();
-  const { user, profile } = useSupabase();
+  const { user } = useSupabase();
 
-  // Check if user has access to homework management
-  const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
+  // Check if user has access to homework management (default to false for now)
+  const canManageHomework = false;
 
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
@@ -29,7 +29,7 @@ const Navigation = () => {
     ...(canManageHomework ? [{ path: "/homework", label: "Homework", icon: PenTool }] : []),
     { path: "/leaderboard", label: t('common.leaderboard'), icon: Trophy },
     { path: "/chat", label: t('common.chat'), icon: MessageCircle },
-    { path: "/profile", label: t('common.profile'), icon: User },
+    // { path: "/profile", label: t('common.profile'), icon: User },
   ];
 
   return (
@@ -59,14 +59,7 @@ const Navigation = () => {
                 <p className="text-sm text-muted-foreground mt-1">
                   Learning Together
                 </p>
-                {/* Role Display */}
-                {profile && (
-                  <div className="mt-2">
-                    <Badge variant="secondary" className="text-xs">
-                      Role: {profile.role || 'student'}
-                    </Badge>
-                  </div>
-                )}
+
               </div>
               <LanguageSwitcher />
             </div>
