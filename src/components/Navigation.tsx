@@ -17,14 +17,14 @@ import { Badge } from "./ui/badge";
 const Navigation = () => {
   const location = useLocation();
   const { t } = useTranslation();
-  const { user, profile } = useSupabase();
+  const { user } = useSupabase();
 
   // Check if user has access to homework management
-  const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
+  const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
 
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
-    { path: "/pathway", label: "Learning Path", icon: Map },
+    ...(!canManageHomework ? [{ path: "/pathway", label: "Learning Path", icon: Map }] : []),
     // Only show homework for teachers, NGOs, and admins
     ...(canManageHomework ? [{ path: "/homework", label: "Homework", icon: PenTool }] : []),
     { path: "/leaderboard", label: t('common.leaderboard'), icon: Trophy },
@@ -60,10 +60,10 @@ const Navigation = () => {
                   Learning Together
                 </p>
                 {/* Role Display */}
-                {profile && (
+                {user && (
                   <div className="mt-2">
                     <Badge variant="secondary" className="text-xs">
-                      Role: {profile.role || 'student'}
+                      Role: {user.user_metadata?.role || 'student'}
                     </Badge>
                   </div>
                 )}

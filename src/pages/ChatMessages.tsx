@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users } from "lucide-react";
 import { RealtimeChat } from "@/components/realtime-chat";
-import { createClient } from "@/lib/supabase/client";
-import { useSupabase } from "@/lib/supabase-context"
+import { supabase } from "@/lib/supabase";
 
 interface ChatRoom {
   id: string;
@@ -25,7 +24,6 @@ const ChatMessages = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = useSupabase();
 
   useEffect(() => {
     const loadRoomAndUser = async () => {
@@ -33,9 +31,20 @@ const ChatMessages = () => {
         navigate("/chat");
         return;
       }
-      setRoom(roomId)
       try {
         setError(null);
+
+        // Fetch room details from ChatRooms
+        const { data: roomData, error: roomError } = await supabase
+          .from('ChatRooms')
+          .select('id, name, type, participant_count, created_at')
+          .eq('id', roomId)
+          .single();
+        if (roomError || !roomData) {
+          setError('Chat room not found');
+          return;
+        }
+        setRoom(roomData);
 
         // Get current user from auth
         const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -50,7 +59,6 @@ const ChatMessages = () => {
           navigate("/chat");
           return;
         }
-          
         setCurrentUser(user);
 
       } catch (error) {
@@ -139,17 +147,26 @@ const ChatMessages = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex-1">
-                <CardTitle className="text-lg">{room.name}</CardTitle>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge className={getBadgeColor(room.type)}>
-                    {room.type === "teacher" ? "Teacher Chat" : 
-                     room.type === "parent" ? "Parent Group" : 
-                     "Announcements"}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    {room.participant_count || 0} participants
-                  </span>
+                <CardTitle className="text-lg">
+                  {room.type === "teacher" && <span role="img" aria-label="Teacher" className="mr-2">👩‍🏫</span>}
+                  {room.type === "parent" && <span role="img" aria-label="Parents" className="mr-2">👨‍👩‍👧‍👦</span>}
+                  {room.type === "general" && <span role="img" aria-label="Announcements" className="mr-2">📢</span>}
+                  {room.name}
+                </CardTitle>
+                <div className="grid grid-cols-2 gap-2 mt-1 items-center">
+                  <div className="flex justify-start">
+                    <Badge className={getBadgeColor(room.type)}>
+                      {room.type === "teacher" ? "Teacher Chat" : 
+                      room.type === "parent" ? "Parent Group" : 
+                      "Announcements"}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-end">
+                    <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      {room.participant_count || 0} participants
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

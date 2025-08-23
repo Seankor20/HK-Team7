@@ -7,8 +7,7 @@ import { MessageCircle, Search, ArrowRight, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
-import { useSupabase } from "@/lib/supabase-context";
+import { supabase } from "@/lib/supabase";
 
 interface ChatRoom {
   id: string;
@@ -29,7 +28,6 @@ const Chat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const supabase = useSupabase();
 
   // Load current user and chat rooms
 
@@ -148,7 +146,7 @@ const Chat = () => {
               {/* General Announcements Section */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-muted-foreground">General Announcements</CardTitle>
+              <CardTitle className="text-lg text-muted-foreground">📢&nbsp;&nbsp;General Announcements</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
@@ -192,7 +190,7 @@ const Chat = () => {
               {/* Teacher Chat Section */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-muted-foreground">Teacher Chat</CardTitle>
+              <CardTitle className="text-lg text-muted-foreground">👩‍🏫&nbsp;&nbsp;Teacher Chat</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
@@ -237,7 +235,7 @@ const Chat = () => {
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg text-muted-foreground">Parents Chat</CardTitle>
+                  <CardTitle className="text-lg text-muted-foreground">👨‍👩‍👧‍👦&nbsp;&nbsp;Parents Chat</CardTitle>
                     <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                       <DialogTrigger asChild>
                         <Button size="sm" className="flex items-center gap-2">
@@ -273,7 +271,7 @@ const Chat = () => {
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                  </div>
+                    </div>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">

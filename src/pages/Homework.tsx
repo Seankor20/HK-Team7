@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,7 @@ import { supabase } from "@/lib/supabase";
 import { useSupabase } from "@/hooks/use-supabase";
 import { useSearchParams } from "react-router-dom";
 
+
 interface Quiz {
   id: string;
   created_at: string;
@@ -43,11 +44,12 @@ interface Question {
 }
 
 const Homework = () => {
-  const { user, profile, loading: authLoading } = useSupabase();
+  const { user, loading: authLoading } = useSupabase();
   const [searchParams] = useSearchParams();
   const [homework, setHomework] = useState<Quiz[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pdfProcessing, setPdfProcessing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingHomework, setEditingHomework] = useState<Quiz | null>(null);
   const [isQuizMode, setIsQuizMode] = useState(false);
@@ -56,11 +58,14 @@ const Homework = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    due_date: ''
+    due_date: '',
+    pdfFile: undefined as File | undefined
   });
 
   // Check if user has access to homework management
-  const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
+  const canManageHomework = useMemo(() => {
+    return user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
+  }, [user?.user_metadata?.role]);
 
   // Check for edit parameter in URL
   useEffect(() => {
@@ -73,57 +78,18 @@ const Homework = () => {
     }
   }, [searchParams, homework, canManageHomework]);
 
-  // Redirect unauthorized users
-  if (!authLoading && !canManageHomework) {
-    return (
-      <div className="p-4 md:p-8 space-y-6">
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <Lock className="h-12 w-12 text-red-600" />
-          </div>
-          <h1 className="text-3xl font-bold text-red-600">Access Denied</h1>
-          <p className="text-lg text-muted-foreground">
-            You don't have permission to access the Homework Manager.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Only teachers, NGO staff, and administrators can manage homework assignments.
-          </p>
-          <Button onClick={() => window.history.back()} variant="outline">
-            Go Back
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while checking authentication
-  if (authLoading) {
-    return (
-      <div className="p-4 md:p-8 space-y-6">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Checking permissions...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Fetch homework from Supabase (filtered by type = 'homework')
-  useEffect(() => {
-    fetchHomework();
-  }, []);
-
-  const fetchHomework = async () => {
+  const fetchHomework = useCallback(async () => {
     setLoading(true);
     try {
       console.log('Fetching homework from Supabase...');
       
-      // First, let's see what's in the quiz table
-      const { data: allQuizzes, error: allError } = await supabase
+      // First, let's see what's in the quiz table (which contains both homework and quiz assignments)
+      const { data: allAssignments, error: allError } = await supabase
         .from('quiz')
         .select('*');
       
-      console.log('All quizzes in table:', { allQuizzes, allError });
+      console.log('All assignments in quiz table:', { allAssignments, allError });
       
       // Now filter for homework
       const { data, error } = await supabase
@@ -147,7 +113,15 @@ const Homework = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (canManageHomework) {
+      fetchHomework();
+    }
+  }, [canManageHomework, fetchHomework]);
+
+
 
   // Fetch questions for a specific quiz/homework
   const fetchQuizQuestions = async (quizId: string) => {
@@ -177,6 +151,7 @@ const Homework = () => {
     e.preventDefault();
     
     try {
+      // First, create the homework assignment
       const homeworkData = {
         title: formData.title,
         description: formData.description,
@@ -202,8 +177,47 @@ const Homework = () => {
       
       if (data) {
         console.log('Successfully created homework:', data);
+        
+        // If PDF is uploaded and auto-generate questions is enabled, process the PDF
+        if (formData.pdfFile && isQuizMode) {
+          try {
+            setPdfProcessing(true);
+            console.log('Processing PDF and generating questions...');
+            
+            // Create FormData to send PDF file to backend
+            const formDataToSend = new FormData();
+            formDataToSend.append('pdf_file', formData.pdfFile);
+            formDataToSend.append('homework_id', data.id);
+            formDataToSend.append('title', formData.title);
+            
+            // Call your backend API to process PDF and generate questions
+            // TODO: Update this URL to match your actual backend endpoint
+            const response = await fetch('/api/process-pdf', {
+              method: 'POST',
+              body: formDataToSend,
+            });
+            
+            if (!response.ok) {
+              throw new Error(`Backend error: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('PDF processed successfully:', result);
+            
+            // Show success message
+            alert('Homework created successfully! PDF processed and questions generated.');
+            
+          } catch (pdfError) {
+            console.error('Error processing PDF:', pdfError);
+            // Show warning but don't fail the homework creation
+            alert('Homework created successfully, but there was an error processing the PDF. Please check the console for details.');
+          } finally {
+            setPdfProcessing(false);
+          }
+        }
+        
         setHomework(prev => [data, ...prev]);
-        setFormData({ title: '', description: '', due_date: '' });
+        setFormData({ title: '', description: '', due_date: '', pdfFile: undefined });
         setIsQuizMode(false);
         setShowCreateForm(false);
       }
@@ -284,7 +298,7 @@ const Homework = () => {
         setHomework(prev => prev.map(hw => 
           hw.id === editingHomework.id ? data : hw
         ));
-        setFormData({ title: '', description: '', due_date: '' });
+        setFormData({ title: '', description: '', due_date: '', pdfFile: undefined });
         setEditingHomework(null);
       }
     } catch (error) {
@@ -297,13 +311,14 @@ const Homework = () => {
     setFormData({
       title: hw.title,
       description: hw.description,
-      due_date: hw.due_date
+      due_date: hw.due_date,
+      pdfFile: undefined
     });
   };
 
   const cancelEditing = () => {
     setEditingHomework(null);
-    setFormData({ title: '', description: '', due_date: '' });
+    setFormData({ title: '', description: '', due_date: '', pdfFile: undefined });
   };
 
   const getStatusColor = (status: string) => {
@@ -403,26 +418,77 @@ const Homework = () => {
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Describe the homework assignment"
+                  placeholder=" Describe the homework assignment"
                   rows={3}
                   required
                 />
               </div>
 
-              {/* Quiz Mode Toggle */}
-              {!editingHomework && (
-                <div className="flex items-center space-x-2">
+              {/* PDF Upload Section */}
+              <div className="space-y-3">
+                <Label htmlFor="pdf-upload">Attach PDF (Optional)</Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                  <input
+                    type="file"
+                    id="pdf-upload"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setFormData(prev => ({ ...prev, pdfFile: file }));
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  <label htmlFor="pdf-upload" className="cursor-pointer">
+                    <div className="space-y-2">
+                      <FileText className="h-8 w-8 mx-auto text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">
+                          {formData.pdfFile ? formData.pdfFile.name : 'Click to upload PDF'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formData.pdfFile ? 'PDF file selected' : 'PDF files only'}
+                        </p>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+                {formData.pdfFile && (
+                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <FileText className="h-4 w-4 text-green-600" />
+                      <span className="text-sm text-green-800">{formData.pdfFile.name}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setFormData(prev => ({ ...prev, pdfFile: undefined }))}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Auto-Generate Questions from PDF Toggle */}
+              {!editingHomework && formData.pdfFile && (
+                <div className="flex items-center space-x-2 p-4 border rounded-lg bg-blue-50">
                   <input
                     type="checkbox"
-                    id="quiz-mode"
+                    id="auto-generate-questions"
                     checked={isQuizMode}
                     onChange={(e) => setIsQuizMode(e.target.checked)}
                     className="rounded"
                   />
-                  <Label htmlFor="quiz-mode" className="flex items-center gap-2">
+                  <Label htmlFor="auto-generate-questions" className="flex items-center gap-2 text-blue-800">
                     <Brain className="h-4 w-4" />
-                    Link to Existing Quiz
+                    Auto-Generate Questions from PDF
                   </Label>
+                  <p className="text-xs text-blue-600 ml-4">
+                    Your backend will process the PDF and create quiz questions automatically
+                  </p>
                 </div>
               )}
 
@@ -452,13 +518,25 @@ const Homework = () => {
               )}
               
               <div className="flex gap-2">
-                <Button type="submit" className="flex-1">
-                  {editingHomework ? 'Update Homework' : 'Create Homework'}
+                <Button 
+                  type="submit" 
+                  className="flex-1" 
+                  disabled={pdfProcessing}
+                >
+                  {pdfProcessing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing PDF...
+                    </>
+                  ) : (
+                    editingHomework ? 'Update Homework' : 'Create Homework'
+                  )}
                 </Button>
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={editingHomework ? cancelEditing : () => setShowCreateForm(false)}
+                  disabled={pdfProcessing}
                 >
                   Cancel
                 </Button>

@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SupabaseProvider from "./lib/supabase-context";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Pathway from "./pages/Pathway";
@@ -16,14 +15,13 @@ import Homework from "./pages/Homework";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import { useEffect, useState } from "react";
-import { useSupabase } from '@/lib/supabase-context'
+import { supabase } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const supabase = useSupabase();
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setAuthenticated(!!user);
@@ -39,7 +37,6 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
 }
 
 const App = () => (
-  <SupabaseProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -73,7 +70,6 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
-  </SupabaseProvider>
 );
 
 export default App;

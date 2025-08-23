@@ -69,7 +69,7 @@ interface CompletedMaterial {
 
 const Pathway = () => {
   const { t } = useI18n();
-  const { user, profile, loading: authLoading } = useSupabase();
+  const { user, loading: authLoading } = useSupabase();
   const [activeTab, setActiveTab] = useState<'materials' | 'homework' | 'quiz'>('materials');
   const [homework, setHomework] = useState<Homework[]>([]);
   const [completedMaterials, setCompletedMaterials] = useState<CompletedMaterial[]>([]);
@@ -79,18 +79,17 @@ const Pathway = () => {
   // No map: we'll place each image button explicitly in the JSX below
 
   // Check if user has access to homework management
-  const canManageHomework = profile?.role === 'teacher' || profile?.role === 'ngo' || profile?.role === 'admin';
+  const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
 
   // Log authentication state
   useEffect(() => {
     console.log('Authentication state:', { 
       user: user?.id, 
-      profile: profile, 
       authLoading, 
       canManageHomework 
     });
     fetchHomework();
-  }, [user, profile, authLoading, canManageHomework]);
+  }, [user, authLoading, canManageHomework]);
 
   // // Fetch homework from Supabase (filtered by type = 'homework')
   // useEffect(() => {
