@@ -2,7 +2,7 @@
   "common": {
     "welcome": "Welcome",
     "home": "Home",
-
+    "profile": "Profile",
     "chat": "Chat",
     "quiz": "Quiz",
     "leaderboard": "Leaderboard",
@@ -122,7 +122,13 @@
     "thinking": "Thinking...",
     "newChat": "New Chat"
   },
-
+  "profile": {
+    "title": "Your Profile",
+    "personalInfo": "Personal Information",
+    "learningStats": "Learning Statistics",
+    "achievements": "Achievements",
+    "editProfile": "Edit Profile"
+  },
   "leaderboard": {
     "title": "Leaderboard",
     "rank": "Rank",
