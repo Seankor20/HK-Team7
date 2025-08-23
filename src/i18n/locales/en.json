@@ -130,10 +130,22 @@
     "editProfile": "Edit Profile"
   },
   "leaderboard": {
-    "title": "Leaderboard",
+    "title": "Learning Leaderboard",
+    "subtitle": "Celebrating our amazing young learners!",
+    "yourChildProgress": "Your Child's Progress",
     "rank": "Rank",
     "name": "Name",
     "score": "Score",
-    "level": "Level"
+    "level": "Level",
+    "totalPoints": "Total Points",
+    "dayStreak": "Day Streak",
+    "testsDone": "Tests Done",
+    "onTime": "On Time",
+    "allLearners": "All Learners",
+    "champion": "🥇 Champion",
+    "runnerUp": "🥈 Runner-up",
+    "thirdPlace": "🥉 Third Place",
+    "rankOutOf": "Rank #{rank} out of {total}",
+    "tests": "tests"
   }
 }

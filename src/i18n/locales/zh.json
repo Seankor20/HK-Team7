@@ -130,10 +130,22 @@
     "editProfile": "编辑资料"
   },
   "leaderboard": {
-    "title": "排行榜",
+    "title": "学习排行榜",
+    "subtitle": "庆祝我们优秀的小学习者！",
+    "yourChildProgress": "你孩子的进步",
     "rank": "排名",
     "name": "姓名",
     "score": "分数",
-    "level": "等级"
+    "level": "等级",
+    "totalPoints": "总分",
+    "dayStreak": "连续天数",
+    "testsDone": "完成的测试",
+    "onTime": "按时完成",
+    "allLearners": "所有学习者",
+    "champion": "🥇 冠军",
+    "runnerUp": "🥈 亚军",
+    "thirdPlace": "🥉 季军",
+    "rankOutOf": "排名 #{rank} / {total}",
+    "tests": "测试"
   }
 }
