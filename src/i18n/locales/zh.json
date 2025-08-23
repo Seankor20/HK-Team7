@@ -24,7 +24,8 @@
     "previous": "上一步",
     "today": "今天",
     "yesterday": "昨天",
-    "download": "下载"
+    "download": "下载",
+    "pathway": "学习路径"
   },
   "navigation": {
     "dashboard": "仪表板",
@@ -66,6 +67,42 @@
       "letterRecognition": "字母识别指南",
       "creativeArts": "创意艺术与手工",
       "watchNow": "立即观看"
+    }
+  },
+  "pathway": {
+    "title": "学习路径",
+    "subtitle": "成为超级学习者的旅程！🌟",
+    "totalXP": "总经验值",
+    "completed": "已完成",
+    "progress": "进度",
+    "learningPath": "学习路径",
+    "materials": "材料",
+    "homework": "作业",
+    "learningJourney": "你的学习之旅",
+    "journeyDescription": "完成课程以解锁新主题并获得经验值！",
+    "learningMaterials": "学习材料",
+    "materialsDescription": "访问所有已完成的课程和资源",
+    "homeworkAssignments": "作业和任务",
+    "homeworkDescription": "跟踪你的作业和学习任务",
+    "review": "复习",
+    "continue": "继续",
+    "start": "开始",
+    "locked": "锁定",
+    "xpEarned": "获得经验值",
+    "due": "截止日期",
+    "difficulty": {
+      "beginner": "初学者",
+      "intermediate": "中级",
+      "advanced": "高级",
+      "easy": "简单",
+      "medium": "中等",
+      "hard": "困难"
+    },
+    "status": {
+      "completed": "已完成",
+      "inProgress": "进行中",
+      "pending": "待处理",
+      "overdue": "逾期"
     }
   },
   "quiz": {
