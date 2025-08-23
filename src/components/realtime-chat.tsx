@@ -79,9 +79,17 @@ export const RealtimeChat = ({
   )
 
   return (
-    <div className="flex flex-col h-full w-full bg-background text-foreground antialiased">
-      {/* Messages */}
-      <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col w-full bg-background text-foreground antialiased">
+
+      {/* Messages (scrollable area) */}
+      <div
+        ref={containerRef}
+        className="overflow-y-auto p-4 space-y-4 bg-background"
+        style={{
+          height: 'min(60vh, 400px)', // Responsive: 60vh or 400px max
+          maxHeight: '60vh',
+        }}
+      >
         {allMessages.length === 0 ? (
           <div className="text-center text-sm text-muted-foreground">
             No messages yet. Start the conversation!

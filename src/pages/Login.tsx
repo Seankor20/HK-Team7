@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { createClient } from "@/lib/supabase/client";
+import { useSupabase } from "@/lib/supabase-context"
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const supabase = createClient();
+  const supabase = useSupabase();
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
