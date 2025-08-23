@@ -108,9 +108,9 @@ const Home = () => {
                 >
                   <Play className="h-4 w-4" />
                 </Button> */}
-                <Badge className="absolute top-3 right-3 bg-background/90 text-foreground">
+                {/* <Badge className="absolute top-3 right-3 bg-background/90 text-foreground">
                   {video.duration}
-                </Badge>
+                </Badge> */}
               </div>
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">{video.title}</CardTitle>
