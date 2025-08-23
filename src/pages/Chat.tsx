@@ -18,90 +18,41 @@ interface ChatRoom {
   created_at: string;
 }
 
-interface User {
-  id: string;
-  name: string;
-  role: string;
-  school: string;
-  created_at: string;
-}
-
 const Chat = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomType, setNewRoomType] = useState<"parent" | "teacher" | "general">("parent");
   const [chatRoomsList, setChatRoomsList] = useState<ChatRoom[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const supabase = createClient();
 
   // Load current user and chat rooms
+
   useEffect(() => {
     const loadData = async () => {
       try {
         setError(null);
-        
         // Get current user from auth
         const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) {
-          console.error('Auth error:', userError);
-          setError('Authentication error');
+        if (userError || !user) {
+          // If no auth or JWT, redirect to home
+          navigate("/", { replace: true });
           return;
         }
-
-        if (!user) {
-          setError('No authenticated user found');
-          setLoading(false);
-          return;
-        }
-
-        // Get user profile from user table
-        const { data: userData, error: profileError } = await supabase
-          .from('user')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          console.error('Profile error:', profileError);
-          // If user profile doesn't exist, create one
-          const { data: newUser, error: createError } = await supabase
-            .from('user')
-            .insert({
-              id: user.id,
-              name: user.email || 'Unknown User',
-              role: 'parent',
-              school: 'Unknown School'
-            })
-            .select()
-            .single();
-
-          if (createError) {
-            console.error('Error creating user profile:', createError);
-            setError('Failed to create user profile');
-            return;
-          }
-          
-          setCurrentUser(newUser);
-        } else {
-          setCurrentUser(userData);
-        }
-
+        setCurrentUser(user);
         // Load chat rooms
         const { data: rooms, error: roomsError } = await supabase
-          .from('chatRooms')
+          .from('ChatRooms')
           .select('*')
           .order('created_at', { ascending: false });
 
         if (roomsError) {
-          console.error('Rooms error:', roomsError);
-          setError('Failed to load chat rooms');
           return;
         }
-        
         setChatRoomsList(rooms || []);
       } catch (error) {
         console.error('Error loading data:', error);
@@ -114,17 +65,6 @@ const Chat = () => {
     loadData();
   }, [supabase]);
 
-  const getBadgeColor = (type: string) => {
-    switch (type) {
-      case "teacher":
-        return "bg-primary text-primary-foreground";
-      case "parent":
-        return "bg-secondary text-secondary-foreground";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
-
   const handleRoomSelect = (room: ChatRoom) => {
     navigate(`/chat/${room.id}`);
   };
@@ -135,11 +75,11 @@ const Chat = () => {
     try {
       // Create new chat room
       const { data: newRoom, error: roomError } = await supabase
-        .from('chatRooms')
+        .from('ChatRooms')
         .insert({
           name: newRoomName.trim(),
           type: newRoomType,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -147,21 +87,6 @@ const Chat = () => {
       if (roomError) {
         console.error('Error creating room:', roomError);
         throw roomError;
-      }
-
-      // Add current user as participant
-      const { error: participantError } = await supabase
-        .from('roomParticipants')
-        .insert({
-          roomId: newRoom.id,
-          userId: currentUser.id
-        });
-
-      if (participantError) {
-        console.error('Error adding participant:', participantError);
-        // Delete the room if we can't add the participant
-        await supabase.from('chatRooms').delete().eq('id', newRoom.id);
-        throw participantError;
       }
 
       // Update local state
@@ -179,40 +104,26 @@ const Chat = () => {
     room.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div className="p-4 md:p-8">
-        <div className="max-w-4xl mx-auto">
-          <Card>
-            <CardContent className="p-8">
-              <div className="text-center">Loading chat rooms...</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  // Only show loading spinner overlay, not a full page block
+  const loadingOverlay = loading ? (
+    <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-50">
+      <div className="text-center">Loading chat rooms...</div>
+    </div>
+  ) : null;
 
-  if (error) {
-    return (
-      <div className="p-4 md:p-8">
-        <div className="max-w-4xl mx-auto">
-          <Card>
-            <CardContent className="p-8">
-              <div className="text-center text-red-600">
-                <p className="mb-4">Error: {error}</p>
-                <Button onClick={() => window.location.reload()}>Retry</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  // Show error as a banner, but still render the main UI
+  const errorBanner = error ? (
+    <div className="bg-red-100 text-red-700 px-4 py-2 mb-4 rounded">
+      <p className="mb-2">Error: {error}</p>
+      <Button onClick={() => window.location.reload()}>Retry</Button>
+    </div>
+  ) : null;
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-8 relative">
+      {loadingOverlay}
       <div className="max-w-4xl mx-auto">
+        {errorBanner}
         <Card>
           <CardHeader>
             <div>
@@ -240,6 +151,9 @@ const Chat = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
+                    {filteredRooms.filter(room => room.type === "general").length === 0 && (
+                      <div className="text-muted-foreground text-sm">No general announcement rooms yet.</div>
+                    )}
                     {filteredRooms
                       .filter(room => room.type === "general")
                       .map((room) => (
@@ -281,6 +195,9 @@ const Chat = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
+                    {filteredRooms.filter(room => room.type === "teacher").length === 0 && (
+                      <div className="text-muted-foreground text-sm">No teacher chat rooms yet.</div>
+                    )}
                     {filteredRooms
                       .filter(room => room.type === "teacher")
                       .map((room) => (
@@ -359,6 +276,9 @@ const Chat = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
+                    {filteredRooms.filter(room => room.type === "parent").length === 0 && (
+                      <div className="text-muted-foreground text-sm">No parent chat rooms yet.</div>
+                    )}
                     {filteredRooms
                       .filter(room => room.type === "parent")
                       .map((room) => (

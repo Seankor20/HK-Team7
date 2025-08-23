@@ -16,20 +16,12 @@ interface ChatRoom {
   created_at: string;
 }
 
-interface User {
-  id: string;
-  name: string;
-  role: string;
-  school: string;
-  created_at: string;
-}
-
 const ChatMessages = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [room, setRoom] = useState<ChatRoom | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [room, setRoom] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
@@ -40,24 +32,9 @@ const ChatMessages = () => {
         navigate("/chat");
         return;
       }
-
+      setRoom(roomId)
       try {
         setError(null);
-        
-        // Load room information
-        const { data: roomData, error: roomError } = await supabase
-          .from('chatRooms')
-          .select('*')
-          .eq('id', roomId)
-          .single();
-
-        if (roomError) {
-          console.error('Room error:', roomError);
-          setError('Failed to load chat room');
-          return;
-        }
-        
-        setRoom(roomData);
 
         // Get current user from auth
         const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -72,66 +49,8 @@ const ChatMessages = () => {
           navigate("/chat");
           return;
         }
-
-        // Get user profile from user table
-        const { data: userData, error: profileError } = await supabase
-          .from('user')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          console.error('Profile error:', profileError);
-          // If user profile doesn't exist, create one
-          const { data: newUser, error: createError } = await supabase
-            .from('user')
-            .insert({
-              id: user.id,
-              name: user.email || 'Unknown User',
-              role: 'parent',
-              school: 'Unknown School'
-            })
-            .select()
-            .single();
-
-          if (createError) {
-            console.error('Error creating user profile:', createError);
-            setError('Failed to create user profile');
-            return;
-          }
           
-          setCurrentUser(newUser);
-        } else {
-          setCurrentUser(userData);
-        }
-
-        // Check if user is a participant in this room
-        const { data: participant, error: participantError } = await supabase
-          .from('roomParticipants')
-          .select('*')
-          .eq('roomId', roomId)
-          .eq('userId', user.id)
-          .single();
-
-        if (participantError && participantError.code !== 'PGRST116') {
-          console.error('Participant check error:', participantError);
-        }
-
-        // If user is not a participant, add them
-        if (!participant) {
-          const { error: addError } = await supabase
-            .from('roomParticipants')
-            .insert({
-              roomId: roomId,
-              userId: user.id
-            });
-
-          if (addError) {
-            console.error('Error adding user to room:', addError);
-            setError('Failed to join chat room');
-            return;
-          }
-        }
+        setCurrentUser(user);
 
       } catch (error) {
         console.error('Error loading room or user:', error);

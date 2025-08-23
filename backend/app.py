@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
 from config import supabase
+from flask_cors import CORS 
 import os
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
@@ -14,6 +16,7 @@ def signup():
         data = request.json
         email = data.get('email')
         password = data.get('password')
+
         name = data.get('name')
         role = data.get('role')
         hkid = data.get('hkid')
@@ -23,6 +26,7 @@ def signup():
             {
                 "email": email,
                 "password": password,
+
                 "options": {"data": {
                     "name": name,
                     "role": role,
@@ -60,7 +64,9 @@ def login():
         # Optionally, extract other tokens as needed
         refresh_token = getattr(response.session, "refresh_token", None)
         expires_in = getattr(response.session, "expires_in", None)
+
         metadata = getattr(response.user, "user_metadata", None)
+
 
         return jsonify({
             "message": "User logged in successfully",
@@ -68,12 +74,14 @@ def login():
             "user_id": user_id,
             "access_token": access_token,
             "refresh_token": refresh_token,
+
             "expires_in": expires_in,
             "metadata": metadata
         }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
