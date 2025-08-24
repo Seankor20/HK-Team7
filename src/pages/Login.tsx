@@ -50,7 +50,7 @@ export default function Login() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
-              KidsLearn
+              Project CARE
             </h1>
           </div>
           <LanguageSwitcher />
