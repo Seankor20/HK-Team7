@@ -2,6 +2,8 @@
   "common": {
     "welcome": "Welcome",
     "home": "Home",
+    "learningPath": "Learning",
+    "homework": "Homework",
     "profile": "Profile",
     "chat": "Chat",
     "quiz": "Quiz",
@@ -43,6 +45,13 @@
       "continueLearning": "Continue Learning",
       "imageAlt": "Family learning together"
     },
+    "heroProgress": {
+      "mainTitle": "Shine Bright & Reach for the Stars",
+      "subtitle": "Every step brings you closer to your dreams!",
+      "startLabel": "Start",
+      "progressChart": "Progress Chart",
+      "motivationalMessage": "Keep going! You're doing great!"
+    },
     "features": {
       "title": "Why Choose Us",
       "feature1": "Interactive Learning",
@@ -66,7 +75,8 @@
       "numbersCounting": "Numbers & Counting",
       "letterRecognition": "Letter Recognition Guide",
       "creativeArts": "Creative Arts & Crafts",
-      "watchNow": "Watch Now"
+      "watchNow": "Watch Now",
+      "download": "Download"
     }
   },
   "pathway": {
@@ -103,7 +113,50 @@
       "inProgress": "In Progress",
       "pending": "Pending",
       "overdue": "Overdue"
-    }
+    },
+    "learningCenter": "Learning Center",
+    "totalXP": "Total XP",
+    "completed": "Completed",
+    "progress": "Progress",
+    "learningProgress": "Learning Progress",
+    "units": "units",
+    "learningMaterials": "Learning Materials",
+    "materialsSubtitle": "Track your completed homework and earn XP! 📚",
+    "materialsComingSoon": "Learning materials tracking coming soon!",
+    "materialsFocus": "For now, focus on completing your homework assignments.",
+    "homework": "Homework",
+    "quiz": "Quiz",
+    "homeworkSubtitle": "Complete homework to unlock the chest!",
+    "homeworkFollow": "Follow the arrow! 🎯",
+    "startHere": "Start Here",
+    "lockedChest": "Locked Chest",
+    "lockedChestTitle": "Locked Chest!",
+    "lockedChestDescription": "Complete your homework to unlock this chest!",
+    "quizChallenge": "Quiz Challenge",
+    "quizSubtitle": "Test your knowledge and earn XP! 🧠",
+    "readyForChallenge": "Ready for a Challenge?",
+    "quizDescription": "Take quizzes to test your knowledge and track your progress",
+    "xpPerQuiz": "XP per Quiz",
+    "unlimitedAttempts": "Unlimited Attempts",
+    "startQuiz": "Start Quiz",
+    "manageHomework": "Manage Homework",
+    "welcomeStart": "Welcome! Start your journey here.",
+    "loadingHomework": "Loading homework...",
+    "noHomeworkCreated": "No homework assignments created yet!",
+    "noHomeworkAssigned": "No homework assigned yet!",
+    "createFirstHomework": "Create your first homework assignment to get started.",
+    "checkBackLater": "Check back later for new assignments.",
+    "markInProgress": "Mark In Progress",
+    "markComplete": "Mark Complete",
+    "start": "Start",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this homework?",
+    "dueDate": "Due:",
+    "createdDate": "Created:",
+    "type": "Type",
+    "homeworkType": "Homework",
+    "quizType": "Quiz"
   },
   "quiz": {
     "title": "Test Your Knowledge",
@@ -120,7 +173,26 @@
     "placeholder": "Ask me anything about your studies...",
     "send": "Send",
     "thinking": "Thinking...",
-    "newChat": "New Chat"
+    "newChat": "New Chat",
+    "chatRooms": "Chat Rooms",
+    "searchRooms": "Search rooms...",
+    "generalAnnouncements": "📢 General Announcements",
+    "teacherChat": "👩‍🏫 Teacher Chat",
+    "parentsChat": "👨‍👩‍👧‍👦 Parents Chat",
+    "noGeneralRooms": "No general announcement rooms yet.",
+    "noTeacherRooms": "No teacher chat rooms yet.",
+    "noParentRooms": "No parent chat rooms yet.",
+    "participants": "participants",
+    "createRoom": "Create Room",
+    "createNewParentRoom": "Create New Parent Chat Room",
+    "createRoomDescription": "Create a new chat room for parents to discuss and share experiences.",
+    "roomName": "Room Name",
+    "enterRoomName": "Enter room name...",
+    "cancel": "Cancel",
+    "loadingChatRooms": "Loading chat rooms...",
+    "errorLoadingData": "Failed to load data",
+    "errorCreatingRoom": "Failed to create chat room",
+    "retry": "Retry"
   },
   "profile": {
     "title": "Your Profile",
@@ -146,6 +218,14 @@
     "runnerUp": "🥈 Runner-up",
     "thirdPlace": "🥉 Third Place",
     "rankOutOf": "Rank #{rank} out of {total}",
-    "tests": "tests"
+    "tests": "tests",
+    "castleTitle": "🏰 Castle Leaderboard 👑",
+    "castleSubtitle": "King on top • Others climbing to reach the castle",
+    "climbToBecomeKing": "Climb to become the next king of the castle!",
+    "throneAwaits": "The throne awaits the worthy! 🎯",
+    "king": "King",
+    "climbing": "Climbing",
+    "reaching": "Reaching",
+    "castle": "Castle"
   }
 }

@@ -2,6 +2,8 @@
   "common": {
     "welcome": "欢迎",
     "home": "首页",
+    "learningPath": "学习",
+    "homework": "家庭作业",
     "profile": "个人资料",
     "chat": "聊天",
     "quiz": "测验",
@@ -43,6 +45,13 @@
       "continueLearning": "继续学习",
       "imageAlt": "家庭一起学习"
     },
+    "heroProgress": {
+      "mainTitle": "闪闪发光，追逐星星",
+      "subtitle": "每一步都让你更接近梦想！",
+      "startLabel": "开始",
+      "progressChart": "进度图表",
+      "motivationalMessage": "继续加油！你做得很好！"
+    },
     "features": {
       "title": "为什么选择我们",
       "feature1": "互动学习",
@@ -66,7 +75,8 @@
       "numbersCounting": "数字与计数",
       "letterRecognition": "字母识别指南",
       "creativeArts": "创意艺术与手工",
-      "watchNow": "立即观看"
+      "watchNow": "立即观看",
+      "download": "下载"
     }
   },
   "pathway": {
@@ -77,7 +87,7 @@
     "progress": "进度",
     "learningPath": "学习路径",
     "materials": "材料",
-    "homework": "作业",
+    "homework": "家庭作业",
     "learningJourney": "你的学习之旅",
     "journeyDescription": "完成课程以解锁新主题并获得经验值！",
     "learningMaterials": "学习材料",
@@ -103,7 +113,50 @@
       "inProgress": "进行中",
       "pending": "待处理",
       "overdue": "逾期"
-    }
+    },
+    "learningCenter": "学习中心",
+    "totalXP": "总经验值",
+    "completed": "已完成",
+    "progress": "进度",
+    "learningProgress": "学习进度",
+    "units": "单元",
+    "learningMaterials": "学习材料",
+    "materialsSubtitle": "跟踪你完成的作业并获得经验值！📚",
+    "materialsComingSoon": "学习材料跟踪即将推出！",
+    "materialsFocus": "现在，专注于完成你的作业任务。",
+    "homework": "家庭作业",
+    "quiz": "测验",
+    "homeworkSubtitle": "完成作业以解锁宝箱！",
+    "homeworkFollow": "跟随箭头！🎯",
+    "startHere": "从这里开始",
+    "lockedChest": "锁定的宝箱",
+    "lockedChestTitle": "锁定的宝箱！",
+    "lockedChestDescription": "完成你的作业以解锁这个宝箱！",
+    "quizChallenge": "测验挑战",
+    "quizSubtitle": "测试你的知识并获得经验值！🧠",
+    "readyForChallenge": "准备好接受挑战了吗？",
+    "quizDescription": "参加测验以测试你的知识并跟踪你的进度",
+    "xpPerQuiz": "每次测验经验值",
+    "unlimitedAttempts": "无限尝试",
+    "startQuiz": "开始测验",
+    "manageHomework": "管理作业",
+    "welcomeStart": "欢迎！从这里开始你的旅程。",
+    "loadingHomework": "加载作业中...",
+    "noHomeworkCreated": "还没有创建作业任务！",
+    "noHomeworkAssigned": "还没有分配作业！",
+    "createFirstHomework": "创建你的第一个作业任务以开始。",
+    "checkBackLater": "稍后再查看新任务。",
+    "markInProgress": "标记为进行中",
+    "markComplete": "标记为完成",
+    "start": "开始",
+    "edit": "编辑",
+    "delete": "删除",
+    "deleteConfirm": "你确定要删除这个作业吗？",
+    "dueDate": "截止日期：",
+    "createdDate": "创建日期：",
+    "type": "类型",
+    "homeworkType": "家庭作业",
+    "quizType": "测验"
   },
   "quiz": {
     "title": "测试你的知识",
@@ -120,7 +173,26 @@
     "placeholder": "询问任何关于学习的问题...",
     "send": "发送",
     "thinking": "思考中...",
-    "newChat": "新对话"
+    "newChat": "新对话",
+    "chatRooms": "聊天室",
+    "searchRooms": "搜索聊天室...",
+    "generalAnnouncements": "📢 一般公告",
+    "teacherChat": "👩‍🏫 教师聊天",
+    "parentsChat": "👨‍👩‍👧‍👦 家长聊天",
+    "noGeneralRooms": "还没有一般公告聊天室。",
+    "noTeacherRooms": "还没有教师聊天室。",
+    "noParentRooms": "还没有家长聊天室。",
+    "participants": "参与者",
+    "createRoom": "创建聊天室",
+    "createNewParentRoom": "创建新的家长聊天室",
+    "createRoomDescription": "创建一个新的聊天室供家长讨论和分享经验。",
+    "roomName": "聊天室名称",
+    "enterRoomName": "输入聊天室名称...",
+    "cancel": "取消",
+    "loadingChatRooms": "加载聊天室中...",
+    "errorLoadingData": "加载数据失败",
+    "errorCreatingRoom": "创建聊天室失败",
+    "retry": "重试"
   },
   "profile": {
     "title": "你的个人资料",
@@ -146,6 +218,14 @@
     "runnerUp": "🥈 亚军",
     "thirdPlace": "🥉 季军",
     "rankOutOf": "排名 #{rank} / {total}",
-    "tests": "测试"
+    "tests": "测试",
+    "castleTitle": "🏰 城堡排行榜 👑",
+    "castleSubtitle": "国王在顶部 • 其他人在攀登城堡",
+    "climbToBecomeKing": "攀登成为下一个城堡之王！",
+    "throneAwaits": "王座等待着有资格的人！🎯",
+    "king": "国王",
+    "climbing": "攀登中",
+    "reaching": "到达",
+    "castle": "城堡"
   }
 }

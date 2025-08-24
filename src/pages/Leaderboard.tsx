@@ -177,8 +177,8 @@ const Leaderboard = () => {
       <div className="relative mb-8">
         {/* Castle Title */}
         <div className="text-center mb-4">
-          <h2 className="text-xl font-bold text-blue-700 mb-2">🏰 Castle Leaderboard 👑</h2>
-          <p className="text-sm text-muted-foreground">King on top • Others climbing to reach the castle</p>
+          <h2 className="text-xl font-bold text-blue-700 mb-2">{t('leaderboard.castleTitle')}</h2>
+          <p className="text-sm text-muted-foreground">{t('leaderboard.castleSubtitle')}</p>
         </div>
         
         {/* Castle Background */}
@@ -365,7 +365,7 @@ const Leaderboard = () => {
             } else {
               const climbLevel = level; 
               topPosition = 160 + (climbLevel - 1) * 40; 
-              const randomPositions = ['left-[15%]', 'left-[65%]', 'left-[25%]', 'left-[75%]', 'left-[35%]', 'left-[45%]', 'left-[55%]', 'left-[55%]', 'left-[85%]'];
+              const randomPositions = ['left-[15%]', 'left-[65%]', 'left-[25%]', 'left-[55%]', 'left-[35%]', 'left-[45%]', 'left-[55%]', 'left-[55%]', 'left-[85%]'];
               horizontalPosition = randomPositions[climbLevel - 1] || 'left-1/2';
 
             } 
@@ -486,10 +486,10 @@ const Leaderboard = () => {
             <span className="text-2xl">⭐</span>
           </div>
           <p className="text-sm font-medium text-gray-700">
-            {t('leaderboard.subtitle')} Climb to become the next king of the castle!
+            {t('leaderboard.subtitle')} {t('leaderboard.climbToBecomeKing')}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            The throne awaits the worthy! 🎯
+            {t('leaderboard.throneAwaits')}
           </p>
         </div>
       </div>

@@ -62,10 +62,10 @@ const Home = () => {
         {/* Motivational Message with Bouncy Animation */}
         <div className="z-20 flex flex-col items-center mb-2 w-full mt-4 md:mt-6">
           <h1 className="text-xl md:text-3xl font-extrabold text-pink-600 mb-1 flex items-center gap-1 animate-bounce-slow font-[Comic Sans MS,Comic Sans,cursive] drop-shadow-glow text-center w-full justify-center">
-            Shine Bright & Reach for the Stars <span className="text-yellow-400 text-2xl md:text-3xl animate-spin-slow">⭐</span>
+            {t('home.heroProgress.mainTitle')} <span className="text-yellow-400 text-2xl md:text-3xl animate-spin-slow">⭐</span>
           </h1>
           <p className="text-sm md:text-lg text-blue-700/90 max-w-xs md:max-w-md text-center font-semibold animate-bounce-slow2">
-            Every step brings you closer to your dreams!
+            {t('home.heroProgress.subtitle')}
           </p>
         </div>
         {/* SVG Line Chart with Animated Star */}
@@ -84,7 +84,7 @@ const Home = () => {
             {/* Single Star at the End (right and up) */}
             <text x="230" y="14" fontSize="20" fill="#facc15" className="font-bold">⭐</text>
             {/* Labels */}
-            <text x="-2" y="79" fontSize="10" fill="#64748b" className="font-bold">Start</text>
+            <text x="-2" y="79" fontSize="10" fill="#64748b" className="font-bold">{t('home.heroProgress.startLabel')}</text>
           </svg>
         </div>
         {/* Extra Confetti for Fun */}
@@ -202,7 +202,7 @@ const Home = () => {
                     <>
                       <a href="./Study Material.pdf" download className="flex items-center">
                        <Download className="h-4 w-4 mr-2" />
-                       Download
+                       {t('home.materials.download')}
                      </a>
                     </>
                   ) : (

@@ -24,9 +24,9 @@ const Navigation = () => {
 
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
-    ...(!canManageHomework ? [{ path: "/pathway", label: "Learning Path", icon: Map }] : []),
+    ...(!canManageHomework ? [{ path: "/pathway", label: t('common.learningPath'), icon: Map }] : []),
     // Only show homework for teachers, NGOs, and admins
-    ...(canManageHomework ? [{ path: "/homework", label: "Homework", icon: PenTool }] : []),
+    ...(canManageHomework ? [{ path: "/homework", label: t('common.homework'), icon: PenTool }] : []),
     { path: "/leaderboard", label: t('common.leaderboard'), icon: Trophy },
     { path: "/chat", label: t('common.chat'), icon: MessageCircle },
     { path: "/profile", label: t('common.profile'), icon: User },
