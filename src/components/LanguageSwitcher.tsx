@@ -16,9 +16,9 @@ const LanguageSwitcher: React.FC = () => {
       variant="ghost"
       size="sm"
       onClick={toggleLanguage}
-      className="flex items-center gap-2 h-8 md:h-9 px-2 md:px-3 text-xs md:text-sm"
+      className="flex items-center gap-2 h-8 md:h-9 px-2 md:px-3 text-xs md:text-sm bg-transparent hover:bg-transparent text-muted-foreground hover:text-foreground transition-colors duration-200"
     >
-      <Globe className="h-3 w-3 md:h-4 md:w-4" />
+      <Globe className="h-3 w-3 md:h-4 w-4" />
       <span className="hidden sm:inline">
         {i18n.language === 'en' ? '中文' : 'English'}
       </span>

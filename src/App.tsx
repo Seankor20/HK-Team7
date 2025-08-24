@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const queryClient = new QueryClient();
 
@@ -37,39 +38,41 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
 }
 
 const App = () => (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/pathway" element={<Pathway />} />
-                      <Route path="/homework" element={<Homework />} />
-                      <Route path="/quiz" element={<Quiz />} />
-                      <Route path="/leaderboard" element={<Leaderboard />} />
-                      <Route path="/chat" element={<Chat />} />
-                      <Route path="/chat/:roomId" element={<ChatMessages />} />
-                      <Route path="/profile" element={<Profile />} />
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/pathway" element={<Pathway />} />
+                        <Route path="/homework" element={<Homework />} />
+                        <Route path="/quiz" element={<Quiz />} />
+                        <Route path="/leaderboard" element={<Leaderboard />} />
+                        <Route path="/chat" element={<Chat />} />
+                        <Route path="/chat/:roomId" element={<ChatMessages />} />
+                        <Route path="/profile" element={<Profile />} />
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
 
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
 );
 
 export default App;

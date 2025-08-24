@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Medal, Award, Clock, TrendingUp } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
+import { useTheme } from "@/contexts/ThemeContext";
 import castle from "../assets/castle.jpg";
 import { useEffect, useState } from "react";
 
@@ -28,6 +29,8 @@ interface user {
   
 const Leaderboard = () => {
   const { t } = useI18n();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   
   // Animation state for level 6 student
   const [level6Score, setLevel6Score] = useState(100);
@@ -156,14 +159,24 @@ const Leaderboard = () => {
       <div className="relative mb-8">
         {/* Castle Title */}
         <div className="text-center mb-4">
-          <h2 className="text-xl font-bold text-blue-700 mb-2">{t('leaderboard.castleTitle')}</h2>
+          <h2 className={`text-xl font-bold mb-2 ${isDark ? 'text-blue-300' : 'text-blue-700'}`}>
+            {t('leaderboard.castleTitle')}
+          </h2>
           <p className="text-sm text-muted-foreground">{t('leaderboard.castleSubtitle')}</p>
         </div>
         
         {/* Castle Background */}
-        <div className="relative h-[500px] bg-gradient-to-b from-blue-900 via-blue-700 via-blue-500 to-blue-300 rounded-3xl overflow-hidden shadow-2xl">
+        <div className={`relative h-[500px] rounded-3xl overflow-hidden shadow-2xl ${
+          isDark 
+            ? 'bg-gradient-to-b from-blue-950 via-blue-900 via-blue-700 to-blue-500' 
+            : 'bg-gradient-to-b from-blue-900 via-blue-700 via-blue-500 to-blue-300'
+        }`}>
           {/* Sky with stars */}
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-blue-800 to-blue-600"></div>  
+          <div className={`absolute inset-0 ${
+            isDark 
+              ? 'bg-gradient-to-b from-indigo-950 via-blue-900 to-blue-700' 
+              : 'bg-gradient-to-b from-indigo-900 via-blue-800 to-blue-600'
+          }`}></div>  
           
           {/* Decorative clouds */}
           <div className="absolute top-8 left-8 opacity-70 animate-pulse">
@@ -187,34 +200,110 @@ const Leaderboard = () => {
             />
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-green-800 via-green-600 to-transparent"></div>
+          <div className={`absolute bottom-0 left-0 right-0 h-40 ${
+            isDark 
+              ? 'bg-gradient-to-t from-green-900 via-green-700 to-transparent' 
+              : 'bg-gradient-to-t from-green-800 via-green-600 to-transparent'
+          }`}></div>
           
-          <div className="absolute left-1/4 top-32 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse"></div>
-          <div className="absolute right-1/4 top-80 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute left-1/4 top-160 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '1s'}}></div>
-          <div className="absolute right-1/4 top-240 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute left-1/4 top-320 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '2s'}}></div>
-          <div className="absolute right-1/4 top-400 w-3 h-12 bg-gradient-to-b from-green-400 to-green-600 rounded-full opacity-90 shadow-lg shadow-green-400/50 animate-pulse" style={{animationDelay: '2.5s'}}></div>
+          <div className={`absolute left-1/4 top-32 w-3 h-12 rounded-full opacity-90 shadow-lg animate-pulse ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-500 to-green-700 shadow-green-500/50' 
+              : 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/50'
+          }`}></div>
+          <div className={`absolute right-1/4 top-80 w-3 h-12 rounded-full opacity-90 shadow-lg animate-pulse ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-500 to-green-700 shadow-green-500/50' 
+              : 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/50'
+          }`} style={{animationDelay: '0.5s'}}></div>
+          <div className={`absolute left-1/4 top-160 w-3 h-12 rounded-full opacity-90 shadow-lg animate-pulse ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-500 to-green-700 shadow-green-500/50' 
+              : 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/50'
+          }`} style={{animationDelay: '1s'}}></div>
+          <div className={`absolute right-1/4 top-240 w-3 h-12 rounded-full opacity-90 shadow-lg animate-pulse ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-500 to-green-700 shadow-green-500/50' 
+              : 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/50'
+          }`} style={{animationDelay: '1.5s'}}></div>
+          <div className={`absolute left-1/4 top-320 w-3 h-12 rounded-full opacity-90 shadow-lg animate-pulse ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-500 to-green-700 shadow-green-500/50' 
+              : 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/50'
+          }`} style={{animationDelay: '2s'}}></div>
+          <div className={`absolute right-1/4 top-400 w-3 h-12 rounded-full opacity-90 shadow-lg animate-pulse ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-500 to-green-700 shadow-green-500/50' 
+              : 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/50'
+          }`} style={{animationDelay: '2.5s'}}></div>
           
-          <div className="absolute left-1/3 top-200 w-2 h-8 bg-gradient-to-b from-green-300 to-green-500 rounded-full opacity-70 shadow-md shadow-green-300/40"></div>
-          <div className="absolute right-1/3 top-280 w-2 h-8 bg-gradient-to-b from-green-300 to-green-500 rounded-full opacity-70 shadow-md shadow-green-300/40"></div>
-          <div className="absolute left-1/3 top-360 w-2 h-8 bg-gradient-to-b from-green-300 to-green-500 rounded-full opacity-70 shadow-md shadow-green-300/40"></div>
+          <div className={`absolute left-1/3 top-200 w-2 h-8 rounded-full opacity-70 shadow-md ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/40' 
+              : 'bg-gradient-to-b from-green-300 to-green-500 shadow-green-300/40'
+          }`}></div>
+          <div className={`absolute right-1/3 top-280 w-2 h-8 rounded-full opacity-70 shadow-md ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/40' 
+              : 'bg-gradient-to-b from-green-300 to-green-500 shadow-green-300/40'
+          }`}></div>
+          <div className={`absolute left-1/3 top-360 w-2 h-8 rounded-full opacity-70 shadow-md ${
+            isDark 
+              ? 'bg-gradient-to-b from-green-400 to-green-600 shadow-green-400/40' 
+              : 'bg-gradient-to-b from-green-300 to-green-500 shadow-green-300/40'
+          }`}></div>
           
-          <div className="absolute left-1/6 top-48 w-4 h-4 bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-yellow-300/50"></div>
-          <div className="absolute right-1/6 top-120 w-3 h-3 bg-gradient-to-r from-blue-300 to-blue-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-blue-300/50" style={{animationDelay: '1s'}}></div>
-          <div className="absolute left-1/6 top-200 w-3 h-3 bg-gradient-to-r from-purple-300 to-purple-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-purple-300/50" style={{animationDelay: '2s'}}></div>
-          <div className="absolute right-1/6 top-280 w-4 h-4 bg-gradient-to-r from-pink-300 to-pink-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-pink-300/50" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute left-1/2 top-160 w-3 h-3 bg-gradient-to-r from-green-300 to-green-400 rounded-full animate-pulse opacity-80 shadow-lg shadow-green-300/50" style={{animationDelay: '1.5s'}}></div>
+          <div className={`absolute left-1/6 top-48 w-4 h-4 rounded-full animate-pulse opacity-80 shadow-lg ${
+            isDark 
+              ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-yellow-400/50' 
+              : 'bg-gradient-to-r from-yellow-300 to-yellow-400 shadow-yellow-300/50'
+          }`}></div>
+          <div className={`absolute right-1/6 top-120 w-3 h-3 rounded-full animate-pulse opacity-80 shadow-lg ${
+            isDark 
+              ? 'bg-gradient-to-r from-blue-400 to-blue-500 shadow-blue-400/50' 
+              : 'bg-gradient-to-r from-blue-300 to-blue-400 shadow-blue-300/50'
+          }`} style={{animationDelay: '1s'}}></div>
+          <div className={`absolute left-1/6 top-200 w-3 h-3 rounded-full animate-pulse opacity-80 shadow-lg ${
+            isDark 
+              ? 'bg-gradient-to-r from-purple-400 to-purple-500 shadow-purple-400/50' 
+              : 'bg-gradient-to-r from-purple-300 to-purple-400 shadow-purple-300/50'
+          }`} style={{animationDelay: '2s'}}></div>
+          <div className={`absolute right-1/6 top-280 w-4 h-4 rounded-full animate-pulse opacity-80 shadow-lg ${
+            isDark 
+              ? 'bg-gradient-to-r from-pink-400 to-pink-500 shadow-pink-400/50' 
+              : 'bg-gradient-to-r from-pink-300 to-pink-400 shadow-pink-300/50'
+          }`} style={{animationDelay: '0.5s'}}></div>
+          <div className={`absolute left-1/2 top-160 w-3 h-3 rounded-full animate-pulse opacity-80 shadow-lg ${
+            isDark 
+              ? 'bg-gradient-to-r from-green-400 to-green-500 shadow-green-400/50' 
+              : 'bg-gradient-to-r from-green-300 to-green-400 shadow-green-300/50'
+          }`} style={{animationDelay: '1.5s'}}></div>
           
-          <div className="absolute left-1/5 top-180 w-2 h-2 bg-gray-600 rounded-full opacity-60"></div>
-          <div className="absolute right-1/5 top-220 w-1.5 h-1.5 bg-gray-500 rounded-full opacity-60"></div>
-          <div className="absolute left-1/5 top-260 w-1.5 h-1.5 bg-gray-600 rounded-full opacity-60"></div>
-          <div className="absolute right-1/5 top-300 w-2 h-2 bg-gray-500 rounded-full opacity-60"></div>
+          <div className={`absolute left-1/5 top-180 w-2 h-2 rounded-full opacity-60 ${
+            isDark ? 'bg-gray-400' : 'bg-gray-600'
+          }`}></div>
+          <div className={`absolute right-1/5 top-220 w-1.5 h-1.5 rounded-full opacity-60 ${
+            isDark ? 'bg-gray-300' : 'bg-gray-500'
+          }`}></div>
+          <div className={`absolute left-1/5 top-260 w-1.5 h-1.5 rounded-full opacity-60 ${
+            isDark ? 'bg-gray-400' : 'bg-gray-600'
+          }`}></div>
+          <div className={`absolute right-1/5 top-300 w-2 h-2 rounded-full opacity-60 ${
+            isDark ? 'bg-gray-300' : 'bg-gray-500'
+          }`}></div>
           
-          <div className="absolute left-1/6 top-140 w-3 h-3 bg-green-700 rounded-full opacity-70"></div>
-          <div className="absolute right-1/6 top-180 w-2.5 h-2.5 bg-green-700 rounded-full opacity-70"></div>
-          <div className="absolute left-1/6 top-320 w-2.5 h-2.5 bg-green-700 rounded-full opacity-70"></div>
-          <div className="absolute right-1/6 top-360 w-3 h-3 bg-green-700 rounded-full opacity-70"></div>
+          <div className={`absolute left-1/6 top-140 w-3 h-3 rounded-full opacity-70 ${
+            isDark ? 'bg-green-500' : 'bg-green-700'
+          }`}></div>
+          <div className={`absolute right-1/6 top-180 w-2.5 h-2.5 rounded-full opacity-70 ${
+            isDark ? 'bg-green-500' : 'bg-green-700'
+          }`}></div>
+          <div className={`absolute left-1/6 top-320 w-2.5 h-2.5 rounded-full opacity-70 ${
+            isDark ? 'bg-green-500' : 'bg-green-700'
+          }`}></div>
+          <div className={`absolute right-1/6 top-360 w-3 h-3 rounded-full opacity-70 ${
+            isDark ? 'bg-green-500' : 'bg-green-700'
+          }`}></div>
           
           {students.slice(0, 8).map((student, index) => {
             const currentRank = student.rank;
@@ -300,7 +389,11 @@ const Leaderboard = () => {
                   
                   {/* Trophy/Medal positioned between avatar and rank */}
                   <div className="mt-2 text-center">
-                    <div className="text-xs font-medium text-white bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 transition-all duration-1000">
+                    <div className={`text-xs font-medium rounded-full px-2 py-1 transition-all duration-1000 backdrop-blur-sm ${
+                      isDark 
+                        ? 'text-white bg-black/50' 
+                        : 'text-white bg-black/30'
+                    }`}>
                       #{currentRank} / {student.score}XP
                     </div>
                   </div>
@@ -312,13 +405,17 @@ const Leaderboard = () => {
     
         
         {/* Enhanced motivational message */}
-        <div className="text-center mt-6 p-6 bg-gradient-to-r from-blue-50 via-purple-50 to-green-50 rounded-2xl border-2 border-blue-200 shadow-lg">
+        <div className={`text-center mt-6 p-6 rounded-2xl border-2 shadow-lg transition-colors duration-300 ${
+          isDark 
+            ? 'bg-gradient-to-r from-blue-950/50 via-purple-950/50 to-green-950/50 border-blue-700/50' 
+            : 'bg-gradient-to-r from-blue-50 via-purple-50 to-green-50 border-blue-200'
+        }`}>
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-2xl">🏰</span>
             <span className="text-2xl">👑</span>
             <span className="text-2xl">⭐</span>
           </div>
-          <p className="text-sm font-medium text-gray-700">
+          <p className={`text-sm font-medium ${isDark ? 'text-blue-100' : 'text-gray-700'}`}>
             {t('leaderboard.subtitle')} {t('leaderboard.climbToBecomeKing')}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -328,8 +425,16 @@ const Leaderboard = () => {
       </div>
 
       {/* Full Leaderboard - Gamified Table */}
-      <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50to-blue-50">
-        <CardHeader className="bg-gradient-to-r from-green-600 rounded-t-md to-blue-600 text-white">
+      <Card className={`border-2 transition-colors duration-300 ${
+        isDark 
+          ? 'border-green-700/50 bg-gradient-to-br from-green-950/30 to-blue-950/30' 
+          : 'border-green-200 bg-gradient-to-br from-green-50 to-blue-50'
+      }`}>
+        <CardHeader className={`bg-gradient-to-r rounded-t-md text-white transition-colors duration-300 ${
+          isDark 
+            ? 'from-green-700 to-blue-700' 
+            : 'from-green-600 to-blue-600'
+        }`}>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-yellow-300" />
             {t('leaderboard.allLearners')}
@@ -338,17 +443,17 @@ const Leaderboard = () => {
         <CardContent className="p-0">
           <div className="space-y-1">
             {students.map((student, index) => (
-              <div 
-                key={student.id}
-                className={`flex items-center gap-4 p-4 hover:bg-green-100/50 transition-all duration-200 ${
-                  student.name === "Your Child" ? "bg-primary/10 border-l-4 border-primary shadow-md" : ""
-                } ${
-                  index === 0 ? "bg-gradient-to-r from-yellow-50 to-yellow-100 border-l-4 border-yellow-400" :
-                  index === 1 ? "bg-gradient-to-r from-gray-50 to-gray-100 border-l-4 border-gray-400" :
-                  index === 2 ? "bg-gradient-to-r from-amber-50 to-amber-100 border-l-4 border-amber-400" :
-                  "hover:shadow-sm"
-                }`}
-              >
+                          <div 
+              key={student.id}
+              className={`flex items-center gap-4 p-4 transition-all duration-200 ${
+                student.name === "Your Child" ? "bg-primary/10 border-l-4 border-primary shadow-md" : ""
+              } ${
+                index === 0 ? (isDark ? "bg-gradient-to-r from-yellow-950/30 to-yellow-900/30 border-l-4 border-yellow-500" : "bg-gradient-to-r from-yellow-50 to-yellow-100 border-l-4 border-yellow-400") :
+                index === 1 ? (isDark ? "bg-gradient-to-r from-gray-950/30 to-gray-900/30 border-l-4 border-gray-500" : "bg-gradient-to-r from-gray-50 to-gray-100 border-l-4 border-gray-400") :
+                index === 2 ? (isDark ? "bg-gradient-to-r from-amber-950/30 to-amber-900/30 border-l-4 border-amber-500" : "bg-gradient-to-r from-amber-50 to-amber-100 border-l-4 border-amber-400") :
+                isDark ? "hover:bg-muted/20" : "hover:bg-green-100/50 hover:shadow-sm"
+              }`}
+            >
                 <div className="w-12 flex justify-center">
                   <div className={`relative ${index < 3 ? 'scale-110' : ''}`}>
                     {getRankIcon(student.rank)}
@@ -380,9 +485,9 @@ const Leaderboard = () => {
                 {/* Score and stats */}
                 <div className="text-right">
                   <div className={`text-2xl font-bold ${
-                    index === 0 ? 'text-yellow-600' :
-                    index === 1 ? 'text-gray-600' :
-                    index === 2 ? 'text-amber-600' :
+                    index === 0 ? (isDark ? 'text-yellow-300' : 'text-yellow-600') :
+                    index === 1 ? (isDark ? 'text-gray-300' : 'text-gray-600') :
+                    index === 2 ? (isDark ? 'text-amber-300' : 'text-amber-600') :
                     'text-primary'
                   }`}>
                     {student.score}

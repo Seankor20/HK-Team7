@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useI18n } from "@/hooks/use-i18n";
 import { supabase } from "@/lib/supabase";
 
@@ -47,7 +48,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-background transition-colors duration-300">
       <div className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-40 p-3">
         <div className="flex items-center justify-between">
           <div>
@@ -55,12 +56,15 @@ export default function Login() {
               {t('auth.projectName')}
             </h1>
           </div>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
-      <form onSubmit={handleAuth} className="bg-background p-8 rounded-lg shadow-lg w-full max-w-md space-y-6">
-        <h1 className="text-2xl font-bold text-center mb-2">{isLogin ? t('auth.login') : t('auth.signup')}</h1>
-        {error && <div className="text-red-600 text-center">{error}</div>}
+      <form onSubmit={handleAuth} className="bg-card/80 backdrop-blur-sm p-8 rounded-lg shadow-lg w-full max-w-md space-y-6 border border-border transition-all duration-300">
+        <h1 className="text-2xl font-bold text-center mb-2 text-foreground">{isLogin ? t('auth.login') : t('auth.signup')}</h1>
+        {error && <div className="text-destructive text-center">{error}</div>}
         <Input
           type="email"
           placeholder={t('auth.email')}
@@ -81,7 +85,7 @@ export default function Login() {
         <div className="text-center">
           <button
             type="button"
-            className="text-primary underline"
+            className="text-primary underline hover:text-primary/80 transition-colors"
             onClick={() => setIsLogin(l => !l)}
           >
             {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}
