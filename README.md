@@ -1,4 +1,4 @@
-# HK-Team7 Homework Manager
+# HK-Team7 Project CARE
 
 ## Overview
 HK-Team7 is a web application for teachers and students to manage, create, and complete homework assignments. It features PDF-based question generation, real-time chat, and Supabase integration for authentication and storage.
