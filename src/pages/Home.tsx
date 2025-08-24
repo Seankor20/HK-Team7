@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Download, Calendar, Star } from "lucide-react";
 import heroImage from "@/assets/hero-learning.jpg";
+import goodnightSpacemanImage from "@/assets/GoodnightSpaceman.jpeg";
+import teacherChinImage from "@/assets/teacherChin.jpg";
+import letterRecognitionImage from "@/assets/recognition.jpg";
 import { useI18n } from "@/hooks/use-i18n";
 import React, { useEffect, useState } from "react";
 
@@ -115,7 +118,7 @@ const Home = () => {
       type: t('home.materials.video'),
       duration: "15:30",
       difficulty: t('home.materials.beginner'),
-      thumbnail: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?w=300&h=200&fit=crop"
+      thumbnail: teacherChinImage
     },
     {
       id: 2,
@@ -123,7 +126,7 @@ const Home = () => {
       type: t('home.materials.pdfDocument'),
       size: "2.4 MB",
       difficulty: t('home.materials.beginner'),
-      thumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop"
+      thumbnail: letterRecognitionImage
     },
     {
       id: 3,
@@ -131,7 +134,7 @@ const Home = () => {
       type: t('home.materials.video'),
       duration: "20:15",
       difficulty: t('home.materials.intermediate'),
-      thumbnail: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=200&fit=crop"
+      thumbnail: goodnightSpacemanImage
     }
   ];
 
