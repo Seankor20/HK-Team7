@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import dino from "@/assets/dino.jpg";
 type Question = Database['public']['Tables']['question']['Row'];
 
 const Quiz = () => {
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,6 +104,24 @@ const Quiz = () => {
     setQuizCompleted(false);
   };
 
+  const goToLearning = () => {
+    // Store quiz completion data in localStorage for progress tracking
+    const quizData = {
+      completed: true,
+      score: score,
+      totalQuestions: questions.length,
+      percentage: Math.round((score / questions.length) * 100),
+      completedAt: new Date().toISOString(),
+      type: 'quiz',
+      xpEarned: Math.round((score / questions.length) * 100) // XP based on score percentage
+    };
+    
+    localStorage.setItem('lastQuizCompletion', JSON.stringify(quizData));
+    
+    // Navigate to learning pathway page
+    navigate('/pathway');
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -183,9 +203,10 @@ const Quiz = () => {
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>
-              <Button>
-                Next Lesson
-              </Button>
+                              <Button onClick={goToLearning}>
+                  <Trophy className="h-4 w-4 mr-2" />
+                  View Progress
+                </Button>
             </div>
           </CardContent>
         </Card>

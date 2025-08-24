@@ -15,7 +15,7 @@ export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
 export interface Database {
   public: {
     Tables: {
-      profiles: {
+      user: {
         Row: {
           id: string
           email: string
@@ -24,6 +24,10 @@ export interface Database {
           role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at: string
           updated_at: string
+          last_login_date?: string
+          login_count?: number
+          current_streak?: number
+          longest_streak?: number
         }
         Insert: {
           id: string
@@ -33,6 +37,10 @@ export interface Database {
           role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at?: string
           updated_at?: string
+          last_login_date?: string
+          login_count?: number
+          current_streak?: number
+          longest_streak?: number
         }
         Update: {
           id?: string
@@ -42,6 +50,10 @@ export interface Database {
           role?: 'student' | 'teacher' | 'ngo' | 'admin'
           created_at?: string
           updated_at?: string
+          last_login_date?: string
+          login_count?: number
+          current_streak?: number
+          longest_streak?: number
         }
       }
       question: {

@@ -75,10 +75,8 @@ const Pathway = () => {
   const [completedMaterials, setCompletedMaterials] = useState<CompletedMaterial[]>([]);
   const [loading, setLoading] = useState(false);
   const [materialsLoading, setMaterialsLoading] = useState(false);
+  const [recentQuizCompletion, setRecentQuizCompletion] = useState<any>(null);
   
-  // No map: we'll place each image button explicitly in the JSX below
-
-  // Check if user has access to homework management
   const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
 
   // Log authentication state
@@ -89,6 +87,7 @@ const Pathway = () => {
       canManageHomework 
     });
     fetchHomework();
+    checkRecentQuizCompletion();
   }, [user, authLoading, canManageHomework]);
 
   // // Fetch homework from Supabase (filtered by type = 'homework')
@@ -192,7 +191,8 @@ const Pathway = () => {
   };
 
   const completedHomework = homework.filter(hw => hw.status === 'completed');
-  const totalXP = completedHomework.length * 100; // 100 XP per completed homework
+  const quizXP = recentQuizCompletion ? recentQuizCompletion.xpEarned : 0;
+  const totalXP = (completedHomework.length * 100) + quizXP; // 100 XP per completed homework + quiz XP
   const progressPercentage = homework.length > 0 ? (completedHomework.length / homework.length) * 100 : 0;
 
 
@@ -211,10 +211,48 @@ const Pathway = () => {
     }
   };
 
+  // Check for recent quiz completion and update progress
+  const checkRecentQuizCompletion = () => {
+    const quizData = localStorage.getItem('lastQuizCompletion');
+    if (quizData) {
+      const parsed = JSON.parse(quizData);
+      setRecentQuizCompletion(parsed);
+      
+      // Clear the localStorage after reading to avoid showing old data
+      localStorage.removeItem('lastQuizCompletion');
+    }
+  };
+
   return (
     <div className="p-4 md:p-8 space-y-6">
       {/* Enhanced Header with Progress Overview */}
       <div className="text-center space-y-6">
+        {/* Quiz Completion Celebration Banner */}
+        {recentQuizCompletion && (
+          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 animate-pulse">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center mb-4">
+                <Trophy className="h-8 w-8 text-green-600 mr-3" />
+                <Star className="h-8 w-8 text-yellow-500" />
+              </div>
+              <h3 className="text-xl font-bold text-green-700 mb-2">
+                🎉 Quiz Completed! 🎉
+              </h3>
+              <p className="text-green-600 mb-3">
+                You scored {recentQuizCompletion.score} out of {recentQuizCompletion.totalQuestions} ({recentQuizCompletion.percentage}%)
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <Badge className="bg-green-100 text-green-800 border-green-300">
+                  +{recentQuizCompletion.xpEarned} XP Earned
+                </Badge>
+                <Badge className="bg-blue-100 text-blue-800 border-blue-300">
+                  {recentQuizCompletion.completedAt ? new Date(recentQuizCompletion.completedAt).toLocaleDateString() : 'Today'}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="relative">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
             {t('pathway.learningCenter')}
@@ -235,6 +273,11 @@ const Pathway = () => {
               </div>
               <div className="text-xl font-bold text-primary">{totalXP}</div>
               <div className="text-xs text-muted-foreground">{t('pathway.totalXP')}</div>
+              {quizXP > 0 && (
+                <div className="text-xs text-green-600 mt-1">
+                  +{quizXP} from quiz
+                </div>
+              )}
             </CardContent>
           </Card>
           
