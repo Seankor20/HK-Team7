@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface ChatRoom {
   id: string;
@@ -19,6 +20,7 @@ interface ChatRoom {
 }
 
 const Chat = () => {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
@@ -55,7 +57,7 @@ const Chat = () => {
         setChatRoomsList(rooms || []);
       } catch (error) {
         console.error('Error loading data:', error);
-        setError('Failed to load data');
+        setError(t('chat.errorLoadingData'));
       } finally {
         setLoading(false);
       }
@@ -95,7 +97,7 @@ const Chat = () => {
       setIsCreateDialogOpen(false);
     } catch (error) {
       console.error('Error creating room:', error);
-      setError('Failed to create chat room');
+      setError(t('chat.errorCreatingRoom'));
     }
   };
 
@@ -106,7 +108,7 @@ const Chat = () => {
   // Only show loading spinner overlay, not a full page block
   const loadingOverlay = loading ? (
     <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-50">
-      <div className="text-center">Loading chat rooms...</div>
+      <div className="text-center">{t('chat.loadingChatRooms')}</div>
     </div>
   ) : null;
 
@@ -114,7 +116,7 @@ const Chat = () => {
   const errorBanner = error ? (
     <div className="bg-red-100 text-red-700 px-4 py-2 mb-4 rounded">
       <p className="mb-2">Error: {error}</p>
-      <Button onClick={() => window.location.reload()}>Retry</Button>
+      <Button onClick={() => window.location.reload()}>{t('chat.retry')}</Button>
     </div>
   ) : null;
 
@@ -128,13 +130,13 @@ const Chat = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
-                Chat Rooms
+                {t('chat.chatRooms')}
               </CardTitle>
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search rooms..."
+                placeholder={t('chat.searchRooms')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -146,12 +148,12 @@ const Chat = () => {
               {/* General Announcements Section */}
               <Card>
                 <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-muted-foreground">📢&nbsp;&nbsp;General Announcements</CardTitle>
+              <CardTitle className="text-lg text-muted-foreground">{t('chat.generalAnnouncements')}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
                     {filteredRooms.filter(room => room.type === "general").length === 0 && (
-                      <div className="text-muted-foreground text-sm">No general announcement rooms yet.</div>
+                      <div className="text-muted-foreground text-sm">{t('chat.noGeneralRooms')}</div>
                     )}
                     {filteredRooms
                       .filter(room => room.type === "general")
@@ -173,7 +175,7 @@ const Chat = () => {
                               )}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                  <span>{room.participant_count || 0} participants</span>
+                                  <span>{room.participant_count || 0} {t('chat.participants')}</span>
                                 </div>
                                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                                   <ArrowRight className="h-4 w-4" />
@@ -190,12 +192,12 @@ const Chat = () => {
               {/* Teacher Chat Section */}
               <Card>
                 <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-muted-foreground">👩‍🏫&nbsp;&nbsp;Teacher Chat</CardTitle>
+              <CardTitle className="text-lg text-muted-foreground">{t('chat.teacherChat')}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
                     {filteredRooms.filter(room => room.type === "teacher").length === 0 && (
-                      <div className="text-muted-foreground text-sm">No teacher chat rooms yet.</div>
+                      <div className="text-muted-foreground text-sm">{t('chat.noTeacherRooms')}</div>
                     )}
                     {filteredRooms
                       .filter(room => room.type === "teacher")
@@ -206,24 +208,24 @@ const Chat = () => {
                           className="p-4 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 border border-transparent hover:border-border"
                         >
                           <div className="flex items-start gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h3 className="font-semibold text-lg">{room.name}</h3>
-                              </div>
-                              {room.last_message && (
-                                <p className="text-sm text-muted-foreground mb-2">
-                                  {room.last_message}
-                                </p>
-                              )}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                  <span>{room.participant_count || 0} participants</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h3 className="font-semibold text-lg">{room.name}</h3>
                                 </div>
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                  <ArrowRight className="h-4 w-4" />
-                                </Button>
+                                {room.last_message && (
+                                  <p className="text-sm text-muted-foreground mb-2">
+                                    {room.last_message}
+                                  </p>
+                                )}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                    <span>{room.participant_count || 0} {t('chat.participants')}</span>
+                                  </div>
+                                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                                    <ArrowRight className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
                           </div>
                         </div>
                       ))}
@@ -235,27 +237,27 @@ const Chat = () => {
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg text-muted-foreground">👨‍👩‍👧‍👦&nbsp;&nbsp;Parents Chat</CardTitle>
+                  <CardTitle className="text-lg text-muted-foreground">{t('chat.parentsChat')}</CardTitle>
                     <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                       <DialogTrigger asChild>
                         <Button size="sm" className="flex items-center gap-2">
                           <Plus className="h-4 w-4" />
-                          Create Room
+                          {t('chat.createRoom')}
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Create New Parent Chat Room</DialogTitle>
+                          <DialogTitle>{t('chat.createNewParentRoom')}</DialogTitle>
                           <DialogDescription>
-                            Create a new chat room for parents to discuss and share experiences.
+                            {t('chat.createRoomDescription')}
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                           <div>
-                            <Label htmlFor="room-name">Room Name</Label>
+                            <Label htmlFor="room-name">{t('chat.roomName')}</Label>
                             <Input
                               id="room-name"
-                              placeholder="Enter room name..."
+                              placeholder={t('chat.enterRoomName')}
                               value={newRoomName}
                               onChange={(e) => setNewRoomName(e.target.value)}
                             />
@@ -263,10 +265,10 @@ const Chat = () => {
                         </div>
                         <DialogFooter>
                           <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                            Cancel
+                            {t('chat.cancel')}
                           </Button>
                           <Button onClick={handleCreateRoom} disabled={!newRoomName.trim()}>
-                            Create Room
+                            {t('chat.createRoom')}
                           </Button>
                         </DialogFooter>
                       </DialogContent>
@@ -276,7 +278,7 @@ const Chat = () => {
                 <CardContent className="pt-0">
                   <div className="space-y-1">
                     {filteredRooms.filter(room => room.type === "parent").length === 0 && (
-                      <div className="text-muted-foreground text-sm">No parent chat rooms yet.</div>
+                      <div className="text-muted-foreground text-sm">{t('chat.noParentRooms')}</div>
                     )}
                     {filteredRooms
                       .filter(room => room.type === "parent")
@@ -298,7 +300,7 @@ const Chat = () => {
                               )}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                  <span>{room.participant_count || 0} participants</span>
+                                  <span>{room.participant_count || 0} {t('chat.participants')}</span>
                                 </div>
                                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                                   <ArrowRight className="h-4 w-4" />

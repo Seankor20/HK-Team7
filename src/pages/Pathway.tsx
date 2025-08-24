@@ -217,7 +217,7 @@ const Pathway = () => {
       <div className="text-center space-y-6">
         <div className="relative">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Learning Center
+            {t('pathway.learningCenter')}
           </h1>
           <div className="absolute -top-2 -right-2">
             <Rocket className="h-8 w-8 text-primary animate-bounce" />
@@ -234,7 +234,7 @@ const Pathway = () => {
                 </div>
               </div>
               <div className="text-xl font-bold text-primary">{totalXP}</div>
-              <div className="text-xs text-muted-foreground">Total XP</div>
+              <div className="text-xs text-muted-foreground">{t('pathway.totalXP')}</div>
             </CardContent>
           </Card>
           
@@ -246,7 +246,7 @@ const Pathway = () => {
                 </div>
               </div>
               <div className="text-xl font-bold text-primary">{completedHomework.length}</div>
-              <div className="text-xs text-muted-foreground">Completed</div>
+              <div className="text-xs text-muted-foreground">{t('pathway.completed')}</div>
             </CardContent>
           </Card>
           
@@ -258,7 +258,7 @@ const Pathway = () => {
                 </div>
               </div>
               <div className="text-xl font-bold text-primary">{Math.round(progressPercentage)}%</div>
-              <div className="text-xs text-muted-foreground">Progress</div>
+              <div className="text-xs text-muted-foreground">{t('pathway.progress')}</div>
             </CardContent>
           </Card>
         </div>
@@ -266,13 +266,13 @@ const Pathway = () => {
         {/* Overall Progress Bar */}
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-muted-foreground">Learning Progress</span>
+            <span className="text-sm font-medium text-muted-foreground">{t('pathway.learningProgress')}</span>
             <span className="text-sm font-medium text-primary">{Math.round(progressPercentage)}%</span>
           </div>
           <Progress value={progressPercentage} className="h-3" />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>0</span>
-            <span>{homework.length} units</span>
+            <span>{homework.length} {t('pathway.units')}</span>
           </div>
         </div>
       </div>
@@ -287,7 +287,7 @@ const Pathway = () => {
             className="rounded-md"
           >
             <Book className="h-4 w-4 mr-1" />
-            Learning Materials
+            {t('pathway.learningMaterials')}
           </Button>
           <Button
             variant={activeTab === 'homework' ? 'default' : 'ghost'}
@@ -296,7 +296,7 @@ const Pathway = () => {
             className="rounded-md"
           >
             <PenTool className="h-4 w-4 mr-1" />
-            Homework
+            {t('pathway.homework')}
           </Button>
           <Button
             variant={activeTab === 'quiz' ? 'default' : 'ghost'}
@@ -305,7 +305,7 @@ const Pathway = () => {
             className="rounded-md"
           >
             <Brain className="h-4 w-4 mr-1" />
-            Quiz
+            {t('pathway.quiz')}
           </Button>
         </div>
       </div>
@@ -315,20 +315,20 @@ const Pathway = () => {
         <div className="space-y-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Learning Materials
+              {t('pathway.learningMaterials')}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Track your completed homework and earn XP! 📚
+              {t('pathway.materialsSubtitle')}
             </p>
           </div>
 
           <div className="text-center py-8">
             <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <p className="text-lg text-muted-foreground">
-              Learning materials tracking coming soon!
+              {t('pathway.materialsComingSoon')}
             </p>
             <p className="text-sm text-muted-foreground">
-              For now, focus on completing your homework assignments.
+              {t('pathway.materialsFocus')}
             </p>
           </div>
         </div>
@@ -352,10 +352,10 @@ const Pathway = () => {
                 <span className="text-2xl">⭐</span>
               </div>
               <p className="text-sm font-medium text-gray-700">
-                Complete homework to unlock the chest!
+                {t('pathway.homeworkSubtitle')}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Follow the arrow! 🎯
+                {t('pathway.homeworkFollow')}
               </p>
             </div>
           </div>
@@ -364,7 +364,7 @@ const Pathway = () => {
           {/* Start Here */}
           <button
             aria-label="Start Here"
-            onClick={() => alert('Welcome! Start your journey here.')}
+            onClick={() => alert(t('pathway.welcomeStart'))}
             className="absolute -translate-x-1/2 -translate-y-1/2 group z-20"
             style={{ top: '50%', left: '40%' }}
           >
@@ -378,7 +378,7 @@ const Pathway = () => {
               />
             </div>
             <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 py-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md shadow opacity-0 group-hover:opacity-100 whitespace-nowrap" style={{ marginTop: '0.5rem' }}>
-              Start Here
+              {t('pathway.startHere')}
             </span>
           </button>
 
@@ -403,15 +403,15 @@ const Pathway = () => {
                   </div>
                 </div>
                 <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 px-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                  Locked Chest
+                  {t('pathway.lockedChest')}
                 </span>
               </button>
             </DialogTrigger>
             <DialogContent className="rounded-xl sm:rounded-2xl md:mx-6 left-1/2 top-1/2 -translate-y-1/2 w-full max-w-md">
               <DialogHeader>
-                <DialogTitle>Locked Chest!</DialogTitle>
+                <DialogTitle>{t('pathway.lockedChestTitle')}</DialogTitle>
                 <DialogDescription>
-                  Complete your homework to unlock this chest!
+                  {t('pathway.lockedChestDescription')}
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
@@ -419,7 +419,7 @@ const Pathway = () => {
 
           <button
             aria-label="Start Here"
-            onClick={() => alert('Welcome! Start your journey here.')}
+            onClick={() => alert(t('pathway.welcomeStart'))}
             className="absolute -translate-x-1/2 -translate-y-1/2 group z-20"
             style={{ top: '72%', left: '50%' }}
           >
@@ -433,7 +433,7 @@ const Pathway = () => {
               />
             </div>
             <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 py-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md shadow opacity-0 group-hover:opacity-100 whitespace-nowrap" style={{ marginTop: '0.5rem' }}>
-              Start Here
+              {t('pathway.startHere')}
             </span>
           </button>
 
@@ -454,7 +454,7 @@ const Pathway = () => {
               />
             </div>
             <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 py-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md shadow opacity-0 group-hover:opacity-100 whitespace-nowrap" style={{ marginTop: '0.35rem' }}>
-              Quiz
+              {t('pathway.quiz')}
             </span>
           </button>
 
@@ -478,7 +478,7 @@ const Pathway = () => {
                 className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
               >
                 <PenTool className="h-5 w-5 mr-2" />
-                Manage Homework
+                {t('pathway.manageHomework')}
               </Button>
             </div>
           )}
@@ -598,10 +598,10 @@ const Pathway = () => {
         <div className="space-y-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-              Quiz Challenge
+              {t('pathway.quizChallenge')}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Test your knowledge and earn XP! 🧠
+              {t('pathway.quizSubtitle')}
             </p>
           </div>
 
@@ -611,20 +611,20 @@ const Pathway = () => {
                 <div className="mx-auto mb-4 p-4 bg-gradient-to-br from-red-400 to-pink-500 rounded-full w-20 h-20 flex items-center justify-center">
                   <Brain className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl text-red-700">Ready for a Challenge?</CardTitle>
+                <CardTitle className="text-2xl text-red-700">{t('pathway.readyForChallenge')}</CardTitle>
                 <CardDescription className="text-lg text-red-600">
-                  Take quizzes to test your knowledge and track your progress
+                  {t('pathway.quizDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                   <div className="p-4 bg-white rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-red-600">100</div>
-                    <div className="text-sm text-muted-foreground">XP per Quiz</div>
+                                      <div className="text-2xl font-bold text-red-600">100</div>
+                  <div className="text-sm text-muted-foreground">{t('pathway.xpPerQuiz')}</div>
                   </div>
                   <div className="p-4 bg-white rounded-lg shadow-sm">
-                    <div className="text-2xl font-bold text-red-600">∞</div>
-                    <div className="text-sm text-muted-foreground">Unlimited Attempts</div>
+                                      <div className="text-2xl font-bold text-red-600">∞</div>
+                  <div className="text-sm text-muted-foreground">{t('pathway.unlimitedAttempts')}</div>
                   </div>
                 </div>
                 
@@ -635,7 +635,7 @@ const Pathway = () => {
                     onClick={() => window.location.href = '/quiz'}
                   >
                     <Play className="h-5 w-5 mr-2" />
-                    Start Quiz
+                    {t('pathway.startQuiz')}
                   </Button>
                 </div>
               </CardContent>
