@@ -328,7 +328,7 @@ const Homework = () => {
       {pdfProcessing ? (
         <div className="flex flex-col items-center justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-6"></div>
-          <p className="text-xl font-semibold text-blue-700">Processing uploaded PDF...</p>
+          <p className="text-xl font-semibold text-blue-700">Processing uploaded file...</p>
         </div>
       ) : (
         <>
@@ -393,7 +393,7 @@ const Homework = () => {
 
                   {/* PDF Upload Section */}
                   <div className="space-y-3">
-                    <Label htmlFor="pdf-upload">Attach PDF (Optional)</Label>
+                    <Label htmlFor="pdf-upload">Attach File (Optional)</Label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                       <input
                         type="file"
@@ -412,10 +412,10 @@ const Homework = () => {
                           <FileText className="h-8 w-8 mx-auto text-gray-400" />
                           <div>
                             <p className="text-sm font-medium text-gray-600">
-                              {formData.pdfFile ? formData.pdfFile.name : 'Click to upload PDF'}
+                              {formData.pdfFile ? formData.pdfFile.name : 'Click to upload file'}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {formData.pdfFile ? 'PDF file selected' : 'PDF files only'}
+                              {formData.pdfFile ? 'File selected' : 'No file selected'}
                             </p>
                           </div>
                         </div>
