@@ -8,7 +8,7 @@
                 "wrong_ans": [
                     "tiger",
                     "bear",
-                    "cat"
+                    "zebra"
                 ]
             },
             {
@@ -32,7 +32,7 @@
                 "wrong_ans": [
                     "four",
                     "six",
-                    "three"
+                    "seven"
                 ]
             },
             {
@@ -88,15 +88,15 @@
                 "wrong_ans": [
                     "two",
                     "four",
-                    "one"
+                    "five"
                 ]
             },
             {
                 "right_ans": "pencil",
                 "wrong_ans": [
+                    "pen",
                     "crayon",
-                    "marker",
-                    "pen"
+                    "marker"
                 ]
             }
         ]

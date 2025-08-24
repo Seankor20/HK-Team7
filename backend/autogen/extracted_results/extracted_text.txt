@@ -1,6 +1,6 @@
 PDF Text Extraction Results
-PDF File: /Users/ziyangpang/HK-Team7/backend/autogen/clean_pdf-2 2.pdf
-Extraction Date: 2025-08-24 16:53:21
+PDF File: /Users/ziyangpang/HK-Team7/backend/autogen/homework.pdf
+Extraction Date: 2025-08-24 20:17:49
 ============================================================
 
 

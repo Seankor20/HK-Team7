@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if len(sys.argv) > 1:
     PDF_PATH = sys.argv[1]
 else:
-    PDF_PATH = os.path.join(BASE_DIR, "clean_pdf-2 2.pdf")
+    PDF_PATH = os.path.join(BASE_DIR, "homework.pdf")
 
 PROMPT_PATH = os.path.join(BASE_DIR, "prompt.txt")
 EXTRACTED_DATA_PATH = os.path.join(BASE_DIR, "extracted_results", "extracted_results.json")

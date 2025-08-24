@@ -8,7 +8,7 @@
                 "wrong_ans": [
                     "tiger",
                     "bear",
-                    "cat"
+                    "zebra"
                 ],
                 "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_12.jpeg"
             },
@@ -80,16 +80,16 @@
                 "wrong_ans": [
                     "two",
                     "four",
-                    "one"
+                    "five"
                 ],
                 "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_3.jpeg"
             },
             {
                 "right_ans": "pencil",
                 "wrong_ans": [
+                    "pen",
                     "crayon",
-                    "marker",
-                    "pen"
+                    "marker"
                 ],
                 "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_11.jpeg"
             }

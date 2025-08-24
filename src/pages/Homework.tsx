@@ -100,9 +100,6 @@ const Homework = () => {
         .eq('type', 'homework')
         .order('due_date', { ascending: true });
       
-      console.log('Filtered homework response:', { data, error });
-      console.log('SQL query: SELECT * FROM quiz WHERE type = \'homework\' ORDER BY due_date ASC');
-      
       if (error) {
         console.error('Error fetching homework:', error);
         return;
@@ -122,31 +119,6 @@ const Homework = () => {
       fetchHomework();
     }
   }, [canManageHomework, fetchHomework]);
-
-
-
-  // Fetch questions for a specific quiz/homework
-  const fetchQuizQuestions = async (quizId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('quiz_questions')
-        .select(`
-          *,
-          question:question_id(*)
-        `)
-        .eq('quiz_id', quizId);
-      
-      if (error) {
-        console.error('Error fetching quiz questions:', error);
-        return;
-      }
-      
-      const questionData = data?.map(item => item.question).filter(Boolean) || [];
-      setQuestions(questionData);
-    } catch (error) {
-      console.error('Error fetching quiz questions:', error);
-    }
-  };
 
   // Create new homework (stored in quiz table with type = 'homework')
   const createHomework = async (e: React.FormEvent) => {
@@ -176,7 +148,6 @@ const Homework = () => {
       }
 
       if (data) {
-        setHomework(prev => [data, ...prev]);
         setFormData({ title: '', description: '', due_date: '', pdfFile: undefined });
         setIsQuizMode(false);
 
@@ -207,7 +178,8 @@ const Homework = () => {
       const data = await res.json();
       console.log(data);
       if (data.success) {
-        setGeneratedQuestions(data.results);
+        setGeneratedQuestions(data.results[0].text_image_pairs);
+        console.log(generatedQuestions);
         setShowGeneratedQuestions(true);
       } else {
         alert(data.error || 'Failed to process PDF');
@@ -506,21 +478,35 @@ const Homework = () => {
       )}
 
       {/* Generated Questions Section */}
-      {showGeneratedQuestions && (
-        <div className="max-w-2xl mx-auto my-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+      {showGeneratedQuestions && Array.isArray(generatedQuestions) && generatedQuestions.length > 0 && (
+        <div className="max-w-2xl mx-auto my-8 p-6 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-primary/20 rounded-lg">
           <h2 className="text-xl font-bold mb-4 text-yellow-800">Generated Questions</h2>
-          <ol className="space-y-6 list-decimal list-inside">
-            {(Array.isArray(generatedQuestions) ? generatedQuestions : []).map((q, idx) => (
-              <li key={idx} className="bg-white rounded-lg p-4 shadow-sm">
+          <ol className="space-y-8 list-decimal list-inside">
+            {generatedQuestions.map((q, idx) => (
+              <li key={idx} className="bg-white rounded-lg p-4 shadow-md">
+                {q.image_link && (
+                  <div className="mb-3 flex justify-center">
+                    <img
+                      src={(() => {
+                        // Remove everything up to and including /HK-Team7
+                        const idx = q.image_link.indexOf('/HK-Team7');
+                        return idx !== -1 ? '.' + q.image_link.substring(idx + '/HK-Team7'.length) : q.image_link;
+                      })()}
+                      alt={`Question ${idx + 1} image`}
+                      className="max-h-48 max-w-xs object-contain rounded border"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="font-semibold text-gray-800 mb-2">{q.question}</div>
-                <ul className="pl-4 space-y-1">
-                  {(Array.isArray(q.options) ? q.options : []).map((opt: string, i: number) => (
-                    <li key={i} className={
-                      'flex items-center gap-2 ' +
-                      (i === q.correct ? 'text-green-700 font-bold' : 'text-gray-700')
-                    }>
+                <ul className="space-y-2 mb-2">
+                  {[q.right_ans, ...(Array.isArray(q.wrong_ans) ? q.wrong_ans.slice(0, 3) : [])].map((opt, i) => (
+                    <li key={i} className={i === 0 ? 'font-bold text-green-700 flex items-center gap-2' : 'text-gray-700 flex items-center gap-2'}>
+                      <span className="inline-block px-3 py-1 rounded border mr-2 bg-gray-50">
+                        {String.fromCharCode(65 + i)}.
+                      </span>
                       <span>{opt}</span>
-                      {i === q.correct && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Correct Answer</span>}
+                      {i === 0 && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Correct</span>}
                     </li>
                   ))}
                 </ul>
@@ -530,6 +516,10 @@ const Homework = () => {
               </li>
             ))}
           </ol>
+          <div className="flex gap-4 mt-6 justify-end">
+            <Button variant="outline">Edit</Button>
+            <Button className="bg-blue-600 text-white">Submit</Button>
+          </div>
         </div>
       )}
 
