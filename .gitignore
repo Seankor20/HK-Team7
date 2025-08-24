@@ -27,3 +27,5 @@ dist-ssr
 backend/__pycache__/
 *.pyc
 package-lock.json
+backend/autogen/deepseek_api_key
+backend/.env
