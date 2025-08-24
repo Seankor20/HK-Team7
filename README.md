@@ -40,9 +40,6 @@ HK-Team7 is a web application for teachers and students to manage, create, and c
    cd backend
    pip install -r requirements.txt
    ```
-4. **Configure environment variables:**
-   - Copy `.env.example` to `.env` in the `backend/` folder and fill in your Supabase credentials.
-   - Ensure `.env` is NOT committed to git (already in .gitignore).
 
 ### Running the App
 **Frontend:**
