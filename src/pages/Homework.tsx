@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { 
-  Plus, 
   Calendar,
   BookOpen,
   CheckCircle,
@@ -14,10 +13,6 @@ import {
   Edit,
   Trash2,
   PlusCircle,
-  Lock,
-  Brain,
-  List,
-  Link,
   FileText
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -518,7 +513,11 @@ const Homework = () => {
           </ol>
           <div className="flex gap-4 mt-6 justify-end">
             <Button variant="outline">Edit</Button>
-            <Button className="bg-blue-600 text-white">Submit</Button>
+            <Button className="bg-blue-600 text-white" onClick={() => {
+              setShowGeneratedQuestions(false);
+              fetchHomework();
+            }
+            }>Submit</Button>
           </div>
         </div>
       )}
