@@ -4,19 +4,97 @@ import { Badge } from "@/components/ui/badge";
 import { Play, Download, Calendar, Star } from "lucide-react";
 import heroImage from "@/assets/hero-learning.jpg";
 import { useI18n } from "@/hooks/use-i18n";
+import React, { useEffect, useState } from "react";
 
 const Home = () => {
   const { t } = useI18n();
 
-  const progressVideos = [
-    {
-      id: 1,
-      title: t('home.progress.sarahMath'),
-      duration: "2:30",
-      date: t('common.today'),
-      videoUrl: "./Sample Parent Instruction Video.mp4"
-    }
-  ];
+
+  type ProgressVideo = {
+    id: number;
+    title: string;
+    duration: string;
+    date: string;
+    videoUrl: string;
+  } | null;
+  const [progressVideo, setProgressVideo] = useState<ProgressVideo>(null);
+  const [loadingVideos, setLoadingVideos] = useState(true);
+  const [videoError, setVideoError] = useState<string | null>(null);
+
+  const [image, setImage] = useState<string | null>(null);
+  const [loadingImages, setLoadingImages] = useState(true);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const [pdf, setPdf] = useState<string | null>(null);
+  const [loadingPdfs, setLoadingPdfs] = useState(true);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      setLoadingVideos(true);
+      setVideoError(null);
+      try {
+        const response = await fetch("http://127.0.0.1:5000/get_videos");
+        if (!response.ok) throw new Error("Failed to fetch videos");
+        const data = await response.json();
+        // Only get the video with filename 'Sample Parent Instruction Video.mp4' in 'public/'
+        const filtered = (data.video_urls || []).filter((item: any) => {
+          const name = item.name || item.file_name || item.path || item.public_url || item.publicURL || item.url || item;
+          return (
+            typeof name === 'string' &&
+            (name.includes('Sample Parent Instruction Video.mp4'))
+          );
+        });
+        const video = filtered.length > 0 ? {
+          id: 1,
+          title: t('home.progress.sarahMath'),
+          duration: "-",
+          date: t('common.today'),
+          videoUrl: filtered[0].public_url || filtered[0].publicURL || filtered[0].url || filtered[0],
+        } : null;
+        setProgressVideo(video);
+      } catch (err: any) {
+        setVideoError(err.message || "Unknown error");
+      } finally {
+        setLoadingVideos(false);
+      }
+    };
+
+    const fetchImages = async () => {
+      setLoadingImages(true);
+      setImageError(null);
+      try {
+        const response = await fetch("http://127.0.0.1:5000/get_images");
+        if (!response.ok) throw new Error("Failed to fetch images");
+        const data = await response.json();
+        setImage((data.image_urls && data.image_urls.length > 0) ? data.image_urls[0] : null);
+      } catch (err: any) {
+        setImageError(err.message || "Unknown error");
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    const fetchPdfs = async () => {
+      setLoadingPdfs(true);
+      setPdfError(null);
+      try {
+        const response = await fetch("http://127.0.0.1:5000/get_pdfs");
+        if (!response.ok) throw new Error("Failed to fetch pdfs");
+        const data = await response.json();
+        setPdf((data.pdf_urls && data.pdf_urls.length > 0) ? data.pdf_urls[0] : null);
+      } catch (err: any) {
+        setPdfError(err.message || "Unknown error");
+      } finally {
+        setLoadingPdfs(false);
+      }
+    };
+
+    fetchVideos();
+    fetchImages();
+    fetchPdfs();
+    // eslint-disable-next-line
+  }, []);
 
   const learningMaterials = [
     {
@@ -131,31 +209,28 @@ const Home = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {progressVideos.map((video) => (
-            <Card key={video.id} className="group hover:shadow-hover transition-all duration-300 cursor-pointer">
+          {loadingVideos ? (
+            <div className="col-span-full text-center py-8 text-blue-500 font-semibold">Loading videos...</div>
+          ) : videoError ? (
+            <div className="col-span-full text-center py-8 text-red-500 font-semibold">{videoError}</div>
+          ) : !progressVideo ? (
+            <div className="col-span-full text-center py-8 text-gray-500 font-semibold">No videos found.</div>
+          ) : (
+            <Card key={progressVideo.id} className="group hover:shadow-hover transition-all duration-300 cursor-pointer">
               <div className="relative">
                 <video width="750" height="500" controls poster="./screenshot.png">
-                  <source src={video.videoUrl} type="video/mp4"/>
+                  <source src={progressVideo.videoUrl} type="video/mp4"/>
                 </video>
-                {/* <Button 
-                  size="sm" 
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/90 hover:bg-primary shadow-glow"
-                >
-                  <Play className="h-4 w-4" />
-                </Button> */}
-                {/* <Badge className="absolute top-3 right-3 bg-background/90 text-foreground">
-                  {video.duration}
-                </Badge> */}
               </div>
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{video.title}</CardTitle>
+                <CardTitle className="text-lg">{progressVideo.title}</CardTitle>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  {video.date}
+                  {progressVideo.date}
                 </div>
               </CardHeader>
             </Card>
-          ))}
+          )}
         </div>
       </section>
 
