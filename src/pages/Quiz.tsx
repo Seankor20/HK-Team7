@@ -75,7 +75,7 @@ const Quiz = () => {
   };
 
   const handleNextQuestion = () => {
-    if (selectedAnswer === null) return;
+    if (selectedAnswer === null || showResult) return; // Prevent multiple calls
 
     const newAnswers = [...answers, selectedAnswer];
     setAnswers(newAnswers);
@@ -84,6 +84,11 @@ const Quiz = () => {
       setScore(score + 1);
     }
 
+    // Show result first
+    setShowResult(true);
+  };
+
+  const handleContinue = () => {
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
@@ -91,8 +96,6 @@ const Quiz = () => {
     } else {
       setQuizCompleted(true);
     }
-
-    setShowResult(true);
   };
 
   const resetQuiz = () => {
@@ -107,6 +110,7 @@ const Quiz = () => {
   const goToLearning = () => {
     // Store quiz completion data in localStorage for progress tracking
     const quizData = {
+      id: `quiz_${Date.now()}`, // Unique quiz completion ID
       completed: true,
       score: score,
       totalQuestions: questions.length,
@@ -338,12 +342,15 @@ const Quiz = () => {
             )}
 
             <Button 
-              onClick={handleNextQuestion}
+              onClick={showResult ? handleContinue : handleNextQuestion}
               disabled={selectedAnswer === null}
               className="w-full"
               size="lg"
             >
-              {currentQuestion + 1 === questions.length ? "Finish Quiz" : "Next Question"}
+              {showResult 
+                ? (currentQuestion + 1 === questions.length ? "Finish Quiz" : "Next Question")
+                : "Submit Answer"
+              }
             </Button>
           </CardContent>
         </Card>

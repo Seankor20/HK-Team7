@@ -154,49 +154,6 @@ const Leaderboard = () => {
         </p>
       </div>
 
-      {/* Your Child's Stats */}
-      {myChild && (
-        <Card className="border-primary/20 bg-gradient-primary/5 shadow-glow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              {t('leaderboard.yourChildProgress')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4 mb-4">
-              <Avatar className="h-16 w-16 border-2 border-primary">
-                <AvatarImage src={myChild.avatar} alt={myChild.name} />
-                <AvatarFallback>{myChild.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold">{myChild.name}</h3>
-                <p className="text-muted-foreground">{t('leaderboard.rankOutOf', { rank: myChild.rank, total: students.length })}</p>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-primary">{myChild.score}</div>
-                <p className="text-sm text-muted-foreground">{t('leaderboard.totalPoints')}</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-lg font-semibold text-secondary">{myChild.streak}</div>
-                <p className="text-xs text-muted-foreground">{t('leaderboard.dayStreak')}</p>
-              </div>
-              <div>
-                <div className="text-lg font-semibold text-accent">{myChild.testsCompleted}</div>
-                <p className="text-xs text-muted-foreground">{t('leaderboard.testsDone')}</p>
-              </div>
-              <div>
-                <div className="text-lg font-semibold text-success">{myChild.onTimeSubmissions}</div>
-                <p className="text-xs text-muted-foreground">{t('leaderboard.onTime')}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Mountain Castle Leaderboard */}
       <div className="relative mb-8">
         {/* Castle Title */}
@@ -206,9 +163,9 @@ const Leaderboard = () => {
         </div>
         
         {/* Castle Background */}
-        <div className="relative h-[500px] bg-gradient-to-b from-blue-900 via-blue-700 via-blue-500 to-blue-300 rounded-t-3xl overflow-hidden shadow-2xl">
+        <div className="relative h-[500px] bg-gradient-to-b from-blue-900 via-blue-700 via-blue-500 to-blue-300 rounded-3xl overflow-hidden shadow-2xl">
           {/* Sky with stars */}
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-blue-800 to-blue-600"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-blue-800 to-blue-600"></div>  
           
           {/* Decorative clouds */}
           <div className="absolute top-8 left-8 opacity-70 animate-pulse">
@@ -373,8 +330,8 @@ const Leaderboard = () => {
       </div>
 
       {/* Full Leaderboard - Gamified Table */}
-      <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-blue-50">
-        <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+      <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50to-blue-50">
+        <CardHeader className="bg-gradient-to-r from-green-600 rounded-t-md to-blue-600 text-white">
           <CardTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-yellow-300" />
             {t('leaderboard.allLearners')}
@@ -419,17 +376,6 @@ const Leaderboard = () => {
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg">{student.name}</h3>
                   <div className="flex items-center gap-2 mt-1">
-                    {/* <div className="flex-1 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-all duration-500 ${
-                          index === 0 ? 'bg-yellow-500' :
-                          index === 1 ? 'bg-gray-500' :
-                          index === 2 ? 'bg-amber-500' :
-                          'bg-green-500'
-                        }`}
-                        style={{ width: `${(student.score / students[0].score) * 100}%` }}
-                      ></div>
-                    </div> */}
                   </div>
                 </div>
                 

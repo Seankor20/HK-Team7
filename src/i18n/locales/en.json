@@ -156,7 +156,14 @@
     "createdDate": "Created:",
     "type": "Type",
     "homeworkType": "Homework",
-    "quizType": "Quiz"
+    "quizType": "Quiz",
+    "quizCompletion": {
+      "title": "🎉 Quiz Completed! 🎉",
+      "score": "You scored {{score}} out of {{total}} ({{percentage}}%)",
+      "xpEarned": "+{{xp}} XP Earned",
+      "completedToday": "Today",
+      "fromQuiz": "from quiz"
+    }
   },
   "quiz": {
     "title": "Test Your Knowledge",
