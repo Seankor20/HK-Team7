@@ -27,6 +27,22 @@ import {
 import { useI18n } from "@/hooks/use-i18n";
 import { supabase } from "@/lib/supabase";
 import { useSupabase } from "@/hooks/use-supabase";
+import pathBg from "@/assets/path.jpg";
+import educationIcons from "@/assets/education-icons.jpg";
+import heroLearning from "@/assets/hero-learning.jpg";
+import chest from "@/assets/chest.png";
+import star from "@/assets/star.png";
+import book from "@/assets/book.png";
+import brown_book from "@/assets/brown_book.png";
+import arrow from "@/assets/arrow.png";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Homework {
   id: string;
@@ -59,6 +75,8 @@ const Pathway = () => {
   const [completedMaterials, setCompletedMaterials] = useState<CompletedMaterial[]>([]);
   const [loading, setLoading] = useState(false);
   const [materialsLoading, setMaterialsLoading] = useState(false);
+  
+  // No map: we'll place each image button explicitly in the JSX below
 
   // Check if user has access to homework management
   const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
@@ -318,9 +336,130 @@ const Pathway = () => {
 
       {/* Homework Tab */}
       {activeTab === 'homework' && (
-        <div className="space-y-8">
+        <div 
+          className="space-y-20 p-16 rounded-lg relative bg-cover bg-center h-[75vh]" 
+          style={{ backgroundImage: `url(${pathBg})` }}
+        >
+          {/* Overlay for readability */}
+          {/* <div className="absolute inset-0 bg-black/50 rounded-lg"></div> */}
+
+          {/* Floating banner over the path background */}
+          <div className="absolute left-1/2 top-6 -translate-x-1/2 z-40 w-[90%] max-w-xl">
+            <div className="text-center mt-6 p-6 bg-gradient-to-r from-blue-50 via-purple-50 to-green-50 rounded-2xl border-2 border-blue-200 shadow-lg">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-2xl">🏰</span>
+                <span className="text-2xl">👑</span>
+                <span className="text-2xl">⭐</span>
+              </div>
+              <p className="text-sm font-medium text-gray-700">
+                Complete homework to unlock the chest!
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Follow the arrow! 🎯
+              </p>
+            </div>
+          </div>
+
+          {/* Image buttons along the path (explicit, no map) */}
+          {/* Start Here */}
+          <button
+            aria-label="Start Here"
+            onClick={() => alert('Welcome! Start your journey here.')}
+            className="absolute -translate-x-1/2 -translate-y-1/2 group z-20"
+            style={{ top: '50%', left: '40%' }}
+          >
+            <div className="hop-interval relative z-10">
+              <img
+                src={brown_book}
+                alt="brown book"
+                className="transition-transform duration-300 group-hover:scale-110"
+                style={{ width: '80px', height: '80px', filter: 'brightness(0.60)' }}
+                loading="lazy"
+              />
+            </div>
+            <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 py-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md shadow opacity-0 group-hover:opacity-100 whitespace-nowrap" style={{ marginTop: '0.5rem' }}>
+              Start Here
+            </span>
+          </button>
+
+          {/* First Quiz */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                aria-label="First Quiz"
+                className="absolute -translate-x-1/5 -translate-y-1/5 group z-30"
+                style={{ top: '48%', left: '46%' }}
+              >
+                <div className="relative" style={{ width: '130px', height: '130px' }}>
+                  {/* Chest image stays static on top */}
+                  <div className="hop-interval relative z-10">
+                    <img
+                      src={chest}
+                      alt="First Quiz"
+                      className="transition-transform duration-300"
+                      style={{ width: '100px', height: '100px', filter: 'brightness(0.60)' }}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 px-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap">
+                  Locked Chest
+                </span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="rounded-xl sm:rounded-2xl md:mx-6 left-1/2 top-1/2 -translate-y-1/2 w-full max-w-md">
+              <DialogHeader>
+                <DialogTitle>Locked Chest!</DialogTitle>
+                <DialogDescription>
+                  Complete your homework to unlock this chest!
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+
+          <button
+            aria-label="Start Here"
+            onClick={() => alert('Welcome! Start your journey here.')}
+            className="absolute -translate-x-1/2 -translate-y-1/2 group z-20"
+            style={{ top: '72%', left: '50%' }}
+          >
+            <div className="sway-x relative z-10">
+              <img
+                src={arrow}
+                alt="arrow"
+                className="transition-transform duration-300 group-hover:scale-110"
+                style={{ width: '80px', height: '80px'}}
+                loading="lazy"
+              />
+            </div>
+            <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 py-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md shadow opacity-0 group-hover:opacity-100 whitespace-nowrap" style={{ marginTop: '0.5rem' }}>
+              Start Here
+            </span>
+          </button>
+
+          {/* Checkpoint */}
+          <button
+            aria-label="Quiz"
+            onClick={() => (window.location.href = '/quiz')}
+            className="absolute -translate-x-1/2 -translate-y-1/2 group z-10"
+            style={{ top: '72%', left: '78%' }}
+          >
+            <div className="shake-interval">
+              <img
+                src={book}
+                alt="quiz"
+                className="transition-transform duration-300"
+                style={{ width: '95px', height: '95px', transform: 'rotate(0deg)' }}
+                loading="lazy"
+              />
+            </div>
+            <span className="absolute top-full left-1/2 -translate-x-1/2 px-3 py-1 bg-white/90 text-gray-800 text-xs md:text-sm font-semibold rounded-md shadow opacity-0 group-hover:opacity-100 whitespace-nowrap" style={{ marginTop: '0.35rem' }}>
+              Quiz
+            </span>
+          </button>
+
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+            {/* <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
               Homework & Assignments
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -328,7 +467,7 @@ const Pathway = () => {
                 ? 'Manage and track homework assignments ✏️' 
                 : 'Complete your assigned homework assignments ✏️'
               }
-            </p>
+            </p> */}
           </div>
 
           {/* Management Button - Only for Teachers/NGOs */}
@@ -344,7 +483,7 @@ const Pathway = () => {
             </div>
           )}
 
-          {loading ? (
+          {/* {loading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
               <p className="mt-2 text-muted-foreground">Loading homework...</p>
@@ -382,27 +521,27 @@ const Pathway = () => {
                   
                   <CardContent className="space-y-4">
                     {/* Due Date */}
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="h-4 w-4 text-primary" />
+                    {/* <div className="flex items-center gap-2 text-sm text-gray-600"> */}
+                      {/* <Calendar className="h-4 w-4 text-primary" />
                       <span className="font-medium">Due:</span>
                       <span className="text-gray-700">{new Date(hw.due_date).toLocaleDateString()}</span>
-                    </div>
+                    </div> */}
 
                     {/* Created Date */}
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    {/* <div className="flex items-center gap-2 text-sm text-gray-500">
                       <Clock className="h-4 w-4" />
                       <span>Created: {new Date(hw.created_at).toLocaleDateString()}</span>
-                    </div>
+                    </div> */}
 
                     {/* Type Badge */}
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
                         <FileText className="h-3 w-3 mr-1" />
                         {hw.type === 'homework' ? 'Homework' : 'Quiz'}
                       </Badge>
-                    </div>
+                    </div> */}
                     
-                    <div className="flex gap-2 pt-2">
+                    {/* <div className="flex gap-2 pt-2">
                       {hw.status === 'completed' ? (
                         <Button 
                           size="sm"
@@ -422,9 +561,9 @@ const Pathway = () => {
                           <CheckCircle className="h-4 w-4 mr-2" />
                           {hw.status === 'in-progress' ? 'Mark Complete' : 'Start'}
                         </Button>
-                      )}
+                      )} */}
                       
-                      {canManageHomework && (
+                      {/* {canManageHomework && (
                         <>
                           <Button 
                             size="sm" 
@@ -445,12 +584,12 @@ const Pathway = () => {
                           </Button>
                         </>
                       )}
-                    </div>
-                  </CardContent>
+                    </div> */}
+                  {/* </CardContent>
                 </Card>
               ))}
             </div>
-          )}
+          )} */}
         </div>
       )}
 

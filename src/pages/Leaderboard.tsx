@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Medal, Award, Clock, TrendingUp } from "lucide-react";
 import { useI18n } from "@/hooks/use-i18n";
+import castle from "@/assets/castle.png";
 
 // Import avatar images
 import chiWingAvatar from "@/assets/chi-wing.png";
