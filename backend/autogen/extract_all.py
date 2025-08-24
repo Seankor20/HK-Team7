@@ -266,7 +266,7 @@ class PDFImageExtractor:
             })
         
         # Save JSON to file
-        json_path = os.path.join(self.output_dir, "extraction_results.json")
+        json_path = os.path.join(self.output_dir, "extracted_results.json")
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(json_output, f, indent=2, ensure_ascii=False)
         
