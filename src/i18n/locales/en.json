@@ -75,10 +75,10 @@
       "feature3": "Flexible Schedule"
     },
     "progress": {
-      "title": "Your Child's Progress",
-      "subtitle": "See how amazing your little learner is doing!",
+      "title": "Your Progress",
+      "subtitle": "See how amazing you are!",
       "greatProgress": "Great Progress!",
-      "sarahMath": "Sarah's Math Progress",
+      "sarahMath": "Today's Class",
       "readingAchievement": "Reading Achievement"
     },
     "materials": {
@@ -88,9 +88,9 @@
       "pdfDocument": "PDF Document",
       "beginner": "Beginner",
       "intermediate": "Intermediate",
-      "numbersCounting": "Numbers & Counting",
+      "numbersCounting": "Pronunciation with Teacher Chin",
       "letterRecognition": "Letter Recognition Guide",
-      "creativeArts": "Creative Arts & Crafts",
+      "creativeArts": "Goodnight Spaceman",
       "watchNow": "Watch Now",
       "download": "Download"
     }
