@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/hooks/use-i18n";
 import { supabase } from "@/lib/supabase";
 
 export default function Login() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
@@ -26,7 +28,7 @@ export default function Login() {
       const data = await res.json();
       console.log(data);
       if (!res.ok) {
-        setError(data.error || "Unknown error");
+        setError(data.error || t('auth.unknownError'));
       } else if (isLogin) {
         // Store tokens if needed
         supabase.auth.setSession({
@@ -35,7 +37,7 @@ export default function Login() {
         });
         navigate("/", { replace: true });
       } else {
-        alert("Signup successful!");
+        alert(t('auth.signupSuccess'));
         setIsLogin(true);
       }
     } catch (err) {
@@ -50,31 +52,31 @@ export default function Login() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Project CARE
+              {t('auth.projectName')}
             </h1>
           </div>
           <LanguageSwitcher />
         </div>
       </div>
       <form onSubmit={handleAuth} className="bg-background p-8 rounded-lg shadow-lg w-full max-w-md space-y-6">
-        <h1 className="text-2xl font-bold text-center mb-2">{isLogin ? "Login" : "Sign Up"}</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">{isLogin ? t('auth.login') : t('auth.signup')}</h1>
         {error && <div className="text-red-600 text-center">{error}</div>}
         <Input
           type="email"
-          placeholder="Email"
+          placeholder={t('auth.email')}
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
         />
         <Input
           type="password"
-          placeholder="Password"
+          placeholder={t('auth.password')}
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
         />
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? (isLogin ? "Logging in..." : "Signing up...") : (isLogin ? "Login" : "Sign Up")}
+          {loading ? (isLogin ? t('auth.loggingIn') : t('auth.signingUp')) : (isLogin ? t('auth.loginButton') : t('auth.signupButton'))}
         </Button>
         <div className="text-center">
           <button
@@ -82,7 +84,7 @@ export default function Login() {
             className="text-primary underline"
             onClick={() => setIsLogin(l => !l)}
           >
-            {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+            {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}
           </button>
         </div>
       </form>

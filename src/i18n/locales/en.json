@@ -29,6 +29,22 @@
     "download": "Download",
     "pathway": "Learning Path"
   },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "signupShort": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Login",
+    "signupButton": "Sign Up",
+    "loggingIn": "Logging in...",
+    "signingUp": "Signing up...",
+    "noAccount": "Don't have an account? Sign Up",
+    "hasAccount": "Already have an account? Login",
+    "signupSuccess": "Signup successful!",
+    "unknownError": "Unknown error",
+    "projectName": "Project CARE"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "courses": "Courses",
