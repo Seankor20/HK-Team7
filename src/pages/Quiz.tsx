@@ -238,12 +238,27 @@ const Quiz = () => {
     );
   }
 
+  // Helpers to support image questions via URL or JSON with { imageUrl, text }
+  const isImageUrl = (url: string) => /^(https?:)?\/\/.*\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?$/i.test(url) || /^data:image\//.test(url);
+  const parseImageFromString = (value: string | null | undefined): { imageUrl: string; text?: string } | null => {
+    if (!value) return null;
+    try {
+      const parsed = JSON.parse(value as string);
+      if (parsed && typeof parsed === 'object' && typeof parsed.imageUrl === 'string') {
+        return { imageUrl: parsed.imageUrl as string, text: typeof parsed.text === 'string' ? parsed.text : undefined };
+      }
+    } catch {}
+    if (typeof value === 'string' && isImageUrl(value)) return { imageUrl: value };
+    return null;
+  };
+  const qMedia = parseImageFromString((question as any).question as string);
+
   return (
     <div className="min-h-screen bg-cover bg-center p-8 md:p-8" style={{ backgroundImage: `url(${dino})` }}>
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-2xl md:text-3xl font-bold">Homework</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">What is in the picture?</h1>
           <p className="font-bold">
             Question {currentQuestion + 1} of {questions.length}
           </p>
@@ -253,9 +268,24 @@ const Quiz = () => {
         {/* Question Card */}
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle className="text-xl md:text-2xl text-center">
-              {question.question}
-            </CardTitle>
+            {qMedia ? (
+              <div className="flex flex-col items-center gap-2">
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                <img
+                  src={qMedia.imageUrl}
+                  alt={qMedia.text || 'question image'}
+                  className="max-h-[320px] object-contain rounded-lg border"
+                  loading="lazy"
+                />
+                {qMedia.text && (
+                  <CardTitle className="text-base md:text-lg text-center mt-1">{qMedia.text}</CardTitle>
+                )}
+              </div>
+            ) : (
+              <CardTitle className="text-xl md:text-2xl text-center">
+                {(question as any).question}
+              </CardTitle>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3">
