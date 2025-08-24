@@ -100,9 +100,6 @@ const Homework = () => {
         .eq('type', 'homework')
         .order('due_date', { ascending: true });
       
-      console.log('Filtered homework response:', { data, error });
-      console.log('SQL query: SELECT * FROM quiz WHERE type = \'homework\' ORDER BY due_date ASC');
-      
       if (error) {
         console.error('Error fetching homework:', error);
         return;
@@ -122,31 +119,6 @@ const Homework = () => {
       fetchHomework();
     }
   }, [canManageHomework, fetchHomework]);
-
-
-
-  // Fetch questions for a specific quiz/homework
-  const fetchQuizQuestions = async (quizId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('quiz_questions')
-        .select(`
-          *,
-          question:question_id(*)
-        `)
-        .eq('quiz_id', quizId);
-      
-      if (error) {
-        console.error('Error fetching quiz questions:', error);
-        return;
-      }
-      
-      const questionData = data?.map(item => item.question).filter(Boolean) || [];
-      setQuestions(questionData);
-    } catch (error) {
-      console.error('Error fetching quiz questions:', error);
-    }
-  };
 
   // Create new homework (stored in quiz table with type = 'homework')
   const createHomework = async (e: React.FormEvent) => {
@@ -176,55 +148,48 @@ const Homework = () => {
       }
 
       if (data) {
-        setHomework(prev => [data, ...prev]);
         setFormData({ title: '', description: '', due_date: '', pdfFile: undefined });
         setIsQuizMode(false);
-        setShowCreateForm(false);
 
-        // Simulate PDF processing and question generation for 5 seconds
-        setTimeout(() => {
-          setPdfProcessing(false);
-          setShowGeneratedQuestions(true);
-          setGeneratedQuestions([
-            {
-              question: 'What is the 26th (last) letter of the English alphabet?',
-              options: ['X', 'Y', 'Z', 'W'],
-              correct: 2,
-              reason: null
-            },
-            {
-              question: 'Which pair contains only vowels?',
-              options: ['A & B', 'E & F', 'I & O', 'C & D'],
-              correct: 2,
-              reason: 'I and O are vowels'
-            },
-            {
-              question: 'Which is the first consonant in the English alphabet?',
-              options: ['B', 'C', 'D', 'F'],
-              correct: 0,
-              reason: 'B is the first consonant after A'
-            },
-            {
-              question: 'Which letter comes first in the alphabet?',
-              options: ['B', 'A', 'C', 'D'],
-              correct: 1,
-              reason: 'A is the first alphabet'
-            },
-            {
-              question: 'Which letter comes after C in the English alphabet?',
-              options: ['B', 'D', 'E', 'F'],
-              correct: 1,
-              reason: 'D comes after C'
-            }
-          ]);
-        }, 5000);
+        // After homework is created, process the uploaded PDF if present
+        if (formData.pdfFile) {
+          const pdfFilename = formData.pdfFile.name;
+          await processHomeworkPdf(pdfFilename);
+        }
+        // Only close the create form after PDF processing (or immediately if no PDF)
+        setShowCreateForm(false);
       }
     } catch (error) {
       setPdfProcessing(false);
       console.error('Error creating homework:', error);
     }
   };
-
+  // Process PDF after upload and homework creation
+  const processHomeworkPdf = async (pdfFilename: string) => {
+    setPdfProcessing(true);
+    setShowGeneratedQuestions(false);
+    console.log('Processing PDF:', pdfFilename);
+    try {
+      const res = await fetch('http://127.0.0.1:5000/process_homework_pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pdf_filename: pdfFilename }),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
+        setGeneratedQuestions(data.results[0].text_image_pairs);
+        console.log(generatedQuestions);
+        setShowGeneratedQuestions(true);
+      } else {
+        alert(data.error || 'Failed to process PDF');
+      }
+    } catch (err) {
+      alert('Error processing PDF');
+    } finally {
+      setPdfProcessing(false);
+    }
+  };
   // Update homework status
   const updateHomeworkStatus = async (homeworkId: string, newStatus: Quiz['status']) => {
     try {
@@ -351,7 +316,9 @@ const Homework = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6 relative">
+      {/* PDF Processing Loading Overlay */}
+      
       {/* Header */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -362,205 +329,184 @@ const Homework = () => {
         </p>
       </div>
 
-      {/* Create Homework Button */}
-      <div className="flex justify-center">
-        <Button
-          onClick={() => setShowCreateForm(true)}
-          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-        >
-          <PlusCircle className="h-5 w-5 mr-2" />
-          Create New Homework
-        </Button>
-      </div>
+      {/* Create Homework Button and Form, or Loading (mutually exclusive) */}
+      {pdfProcessing ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-6"></div>
+          <p className="text-xl font-semibold text-blue-700">Processing uploaded PDF...</p>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-center">
+            <Button
+              onClick={() => setShowCreateForm(true)}
+              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+            >
+              <PlusCircle className="h-5 w-5 mr-2" />
+              Create New Homework
+            </Button>
+          </div>
 
-      {/* Create/Edit Form */}
-      {(showCreateForm || editingHomework) && (
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle>
-              {editingHomework ? 'Edit Homework' : 'Create New Homework'}
-            </CardTitle>
-            <CardDescription>
-              {editingHomework ? 'Update your homework assignment' : 'Add a new homework assignment'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={editingHomework ? editHomework : createHomework} className="space-y-6">
-              {/* Basic Homework Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Enter homework title"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="due_date">Due Date</Label>
-                  <Input
-                    id="due_date"
-                    type="date"
-                    value={formData.due_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder=" Describe the homework assignment"
-                  rows={3}
-                  required
-                />
-              </div>
+          {(showCreateForm || editingHomework) && (
+            <Card className="max-w-4xl mx-auto">
+              <CardHeader>
+                <CardTitle>
+                  {editingHomework ? 'Edit Homework' : 'Create New Homework'}
+                </CardTitle>
+                <CardDescription>
+                  {editingHomework ? 'Update your homework assignment' : 'Add a new homework assignment'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={editingHomework ? editHomework : createHomework} className="space-y-6">
+                  {/* Basic Homework Info */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Enter homework title"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="due_date">Due Date</Label>
+                      <Input
+                        id="due_date"
+                        type="date"
+                        value={formData.due_date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder=" Describe the homework assignment"
+                      rows={3}
+                      required
+                    />
+                  </div>
 
-              {/* PDF Upload Section */}
-              <div className="space-y-3">
-                <Label htmlFor="pdf-upload">Attach PDF (Optional)</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                  <input
-                    type="file"
-                    id="pdf-upload"
-                    accept=".pdf"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setFormData(prev => ({ ...prev, pdfFile: file }));
-                      }
-                    }}
-                    className="hidden"
-                  />
-                  <label htmlFor="pdf-upload" className="cursor-pointer">
-                    <div className="space-y-2">
-                      <FileText className="h-8 w-8 mx-auto text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">
-                          {formData.pdfFile ? formData.pdfFile.name : 'Click to upload PDF'}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formData.pdfFile ? 'PDF file selected' : 'PDF files only'}
-                        </p>
+                  {/* PDF Upload Section */}
+                  <div className="space-y-3">
+                    <Label htmlFor="pdf-upload">Attach PDF (Optional)</Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                      <input
+                        type="file"
+                        id="pdf-upload"
+                        accept=".pdf"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setFormData(prev => ({ ...prev, pdfFile: file }));
+                          }
+                        }}
+                        className="hidden"
+                      />
+                      <label htmlFor="pdf-upload" className="cursor-pointer">
+                        <div className="space-y-2">
+                          <FileText className="h-8 w-8 mx-auto text-gray-400" />
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">
+                              {formData.pdfFile ? formData.pdfFile.name : 'Click to upload PDF'}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {formData.pdfFile ? 'PDF file selected' : 'PDF files only'}
+                            </p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                    {formData.pdfFile && (
+                      <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <FileText className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-800">{formData.pdfFile.name}</span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setFormData(prev => ({ ...prev, pdfFile: undefined }))}
+                        >
+                          Remove
+                        </Button>
                       </div>
-                    </div>
-                  </label>
-                </div>
-                {formData.pdfFile && (
-                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <FileText className="h-4 w-4 text-green-600" />
-                      <span className="text-sm text-green-800">{formData.pdfFile.name}</span>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setFormData(prev => ({ ...prev, pdfFile: undefined }))}
+                    )}
+                  </div>
+
+                  {/* Quiz Selection Section (if needed in future) */}
+                  {/* ...existing code... */}
+                  <div className="flex gap-2">
+                    <Button 
+                      type="submit" 
+                      className="flex-1" 
+                      disabled={pdfProcessing}
                     >
-                      Remove
+                      {pdfProcessing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Processing PDF...
+                        </>
+                      ) : (
+                        editingHomework ? 'Update Homework' : 'Create Homework'
+                      )}
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={editingHomework ? cancelEditing : () => setShowCreateForm(false)}
+                      disabled={pdfProcessing}
+                    >
+                      Cancel
                     </Button>
                   </div>
-                )}
-              </div>
-
-              {/* Auto-Generate Questions from PDF Toggle */}
-              {!editingHomework && formData.pdfFile && (
-                <div className="flex items-center space-x-2 p-4 border rounded-lg bg-blue-50">
-                  <input
-                    type="checkbox"
-                    id="auto-generate-questions"
-                    checked={isQuizMode}
-                    onChange={(e) => setIsQuizMode(e.target.checked)}
-                    className="rounded"
-                  />
-                  <Label htmlFor="auto-generate-questions" className="flex items-center gap-2 text-blue-800">
-                    <Brain className="h-4 w-4" />
-                    Auto-Generate Questions from PDF
-                  </Label>
-                  <p className="text-xs text-blue-600 ml-4">
-                    Your backend will process the PDF and create quiz questions automatically
-                  </p>
-                </div>
-              )}
-
-              {/* Quiz Selection Section */}
-              {isQuizMode && (
-                <div className="space-y-4 border rounded-lg p-4 bg-muted/50">
-                  <h3 className="text-lg font-semibold">Select Quiz</h3>
-                  
-                  {/* This section is no longer needed as quizzes are not directly linked here */}
-                  {/* It's kept for now, but the logic for selecting a quiz is removed */}
-                  {/* <p className="text-sm text-muted-foreground">
-                    No quizzes available. Create quizzes first in the Quiz section.
-                  </p> */}
-                  
-                  {/* The selectedQuizId state and its logic are removed */}
-                  {/* {selectedQuizId && (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                      <p className="text-sm text-blue-800">
-                        <strong>Selected Quiz:</strong> {quizzes.find(q => q.id === selectedQuizId)?.title}
-                      </p>
-                      <p className="text-xs text-blue-600 mt-1">
-                        Students will take this quiz to complete the homework assignment.
-                      </p>
-                    </div>
-                  )} */}
-                </div>
-              )}
-              
-              <div className="flex gap-2">
-                <Button 
-                  type="submit" 
-                  className="flex-1" 
-                  disabled={pdfProcessing}
-                >
-                  {pdfProcessing ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Processing PDF...
-                    </>
-                  ) : (
-                    editingHomework ? 'Update Homework' : 'Create Homework'
-                  )}
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={editingHomework ? cancelEditing : () => setShowCreateForm(false)}
-                  disabled={pdfProcessing}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
 
       {/* Generated Questions Section */}
-      {showGeneratedQuestions && (
-        <div className="max-w-2xl mx-auto my-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+      {showGeneratedQuestions && Array.isArray(generatedQuestions) && generatedQuestions.length > 0 && (
+        <div className="max-w-2xl mx-auto my-8 p-6 bg-gradient-to-br from-white to-gray-50 border-2 hover:border-primary/20 rounded-lg">
           <h2 className="text-xl font-bold mb-4 text-yellow-800">Generated Questions</h2>
-          <ol className="space-y-6 list-decimal list-inside">
+          <ol className="space-y-8 list-decimal list-inside">
             {generatedQuestions.map((q, idx) => (
-              <li key={idx} className="bg-white rounded-lg p-4 shadow-sm">
+              <li key={idx} className="bg-white rounded-lg p-4 shadow-md">
+                {q.image_link && (
+                  <div className="mb-3 flex justify-center">
+                    <img
+                      src={(() => {
+                        // Remove everything up to and including /HK-Team7
+                        const idx = q.image_link.indexOf('/HK-Team7');
+                        return idx !== -1 ? '.' + q.image_link.substring(idx + '/HK-Team7'.length) : q.image_link;
+                      })()}
+                      alt={`Question ${idx + 1} image`}
+                      className="max-h-48 max-w-xs object-contain rounded border"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="font-semibold text-gray-800 mb-2">{q.question}</div>
-                <ul className="pl-4 space-y-1">
-                  {q.options.map((opt: string, i: number) => (
-                    <li key={i} className={
-                      'flex items-center gap-2 ' +
-                      (i === q.correct ? 'text-green-700 font-bold' : 'text-gray-700')
-                    }>
+                <ul className="space-y-2 mb-2">
+                  {[q.right_ans, ...(Array.isArray(q.wrong_ans) ? q.wrong_ans.slice(0, 3) : [])].map((opt, i) => (
+                    <li key={i} className={i === 0 ? 'font-bold text-green-700 flex items-center gap-2' : 'text-gray-700 flex items-center gap-2'}>
+                      <span className="inline-block px-3 py-1 rounded border mr-2 bg-gray-50">
+                        {String.fromCharCode(65 + i)}.
+                      </span>
                       <span>{opt}</span>
-                      {i === q.correct && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Correct Answer</span>}
+                      {i === 0 && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Correct</span>}
                     </li>
                   ))}
                 </ul>
@@ -570,6 +516,10 @@ const Homework = () => {
               </li>
             ))}
           </ol>
+          <div className="flex gap-4 mt-6 justify-end">
+            <Button variant="outline">Edit</Button>
+            <Button className="bg-blue-600 text-white">Submit</Button>
+          </div>
         </div>
       )}
 

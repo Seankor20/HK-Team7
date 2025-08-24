@@ -127,28 +127,33 @@ const Chat = () => {
         {errorBanner}
         <Card>
           <CardHeader>
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <MessageCircle className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5" />
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                 {t('chat.chatRooms')}
-              </CardTitle>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('chat.searchRooms')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+              </h1>
+              
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
+            <div className="px-4 pt-0 pb-0">
+              <div className="relative w-full mb-3">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('chat.searchRooms')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-full"
+                />
+              </div>
+            </div>
             <div className="space-y-6 p-4">
               {/* General Announcements Section */}
-              <Card>
+              <Card className="border-l-4 border-blue-500">
                 <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-muted-foreground">{t('chat.generalAnnouncements')}</CardTitle>
+                  <CardTitle className="text-lg flex items-center gap-2 text-blue-700">
+                    {t('chat.generalAnnouncements')}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
@@ -190,9 +195,11 @@ const Chat = () => {
               </Card>
 
               {/* Teacher Chat Section */}
-              <Card>
+              <Card className="border-l-4 border-purple-500">
                 <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-muted-foreground">{t('chat.teacherChat')}</CardTitle>
+                  <CardTitle className="text-lg flex items-center gap-2 text-purple-700">
+                    {t('chat.teacherChat')}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">
@@ -234,10 +241,12 @@ const Chat = () => {
               </Card>
 
               {/* Parents Chat Section */}
-              <Card>
+              <Card className="border-l-4 border-green-500">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg text-muted-foreground">{t('chat.parentsChat')}</CardTitle>
+                    <CardTitle className="text-lg flex items-center gap-2 text-green-700">
+                      {t('chat.parentsChat')}
+                    </CardTitle>
                     <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                       <DialogTrigger asChild>
                         <Button size="sm" className="flex items-center gap-2">
@@ -273,7 +282,7 @@ const Chat = () => {
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-1">

@@ -1,0 +1,98 @@
+[
+    {
+        "page": 1,
+        "question_type": "read images",
+        "text_image_pairs": [
+            {
+                "right_ans": "lion",
+                "wrong_ans": [
+                    "tiger",
+                    "bear",
+                    "zebra"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_12.jpeg"
+            },
+            {
+                "right_ans": "blue",
+                "wrong_ans": [
+                    "red",
+                    "yellow",
+                    "green"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_8.jpeg"
+            },
+            {
+                "right_ans": "panda",
+                "wrong_ans": [
+                    "koala",
+                    "raccoon",
+                    "monkey"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_9.jpeg"
+            },
+            {
+                "right_ans": "notebook",
+                "wrong_ans": [
+                    "book",
+                    "paper",
+                    "pencil"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_1.jpeg"
+            },
+            {
+                "right_ans": "frog",
+                "wrong_ans": [
+                    "fish",
+                    "duck",
+                    "turtle"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_6.jpeg"
+            },
+            {
+                "right_ans": "six",
+                "wrong_ans": [
+                    "five",
+                    "seven",
+                    "eight"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_10.jpeg"
+            },
+            {
+                "right_ans": "green",
+                "wrong_ans": [
+                    "blue",
+                    "purple",
+                    "orange"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_2.jpeg"
+            },
+            {
+                "right_ans": "pear",
+                "wrong_ans": [
+                    "apple",
+                    "peach",
+                    "plum"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_7.jpeg"
+            },
+            {
+                "right_ans": "three",
+                "wrong_ans": [
+                    "two",
+                    "four",
+                    "five"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_3.jpeg"
+            },
+            {
+                "right_ans": "pencil",
+                "wrong_ans": [
+                    "pen",
+                    "crayon",
+                    "marker"
+                ],
+                "image_link": "/Users/ziyangpang/HK-Team7/backend/autogen/extracted_results/page_1_img_11.jpeg"
+            }
+        ]
+    }
+]
