@@ -321,7 +321,7 @@ const Homework = () => {
       
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent py-1">
           Homework Manager
         </h1>
         <p className="text-lg text-muted-foreground">
