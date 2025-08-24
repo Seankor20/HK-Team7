@@ -2,15 +2,23 @@ import extract_all
 import json
 import question_type
 import preprocess_llm
+import os
+import sys
 
-# Replace with your actual BASE directory path
-BASE_DIR = "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen"
-PDF_PATH = f"{BASE_DIR}/clean_pdf.pdf"
-PROMPT_PATH = f"{BASE_DIR}/prompt.txt"
-EXTRACTED_DATA_PATH = f"{BASE_DIR}/extracted_results/extracted_results.json"
-LLM_PREPROCESS_PATH = f"{BASE_DIR}/llm_preprocess.json"
-LLM_RESPONSE_PATH = f"{BASE_DIR}/llm_response.json"
-FINAL_OUTPUT_PATH = f"{BASE_DIR}/final.json"
+# Use the current script directory as BASE_DIR for portability
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Accept PDF path as argument, fallback to default
+if len(sys.argv) > 1:
+    PDF_PATH = sys.argv[1]
+else:
+    PDF_PATH = os.path.join(BASE_DIR, "homework.pdf")
+
+PROMPT_PATH = os.path.join(BASE_DIR, "prompt.txt")
+EXTRACTED_DATA_PATH = os.path.join(BASE_DIR, "extracted_results", "extracted_results.json")
+LLM_PREPROCESS_PATH = os.path.join(BASE_DIR, "llm_preprocess.json")
+LLM_RESPONSE_PATH = os.path.join(BASE_DIR, "llm_response.json")
+FINAL_OUTPUT_PATH = os.path.join(BASE_DIR, "final.json")
 
 with open(f"{BASE_DIR}/deepseek_api_key", 'r') as file:
     api_key = file.read()

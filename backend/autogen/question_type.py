@@ -18,7 +18,7 @@ def find_text_image_pairs(page: int, extracted_data: json, llm_response_file: js
     with open(llm_response_file, 'r') as file:
         llm_response = json.load(file)
         file.close()
-
+    llm_content = None
     for item in llm_response:
         if item['page'] == page:
             llm_content = item["content"]
@@ -58,8 +58,6 @@ def find_text_image_pairs(page: int, extracted_data: json, llm_response_file: js
                             'right_ans': text,
                             'wrong_ans': wrong_ans, 
                             'image_link': image_link,
-                            'text_coordinates': text_coordinate,
-                            'image_coordinates': image_coord
                         })
             pass
     return pairs

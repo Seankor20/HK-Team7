@@ -2,9 +2,13 @@ from flask import Flask, jsonify, request
 from config import supabase
 from flask_cors import CORS 
 import os
-
+import json
 app = Flask(__name__)
 CORS(app, origins="*")
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+import subprocess
 
 @app.route('/')
 def hello_world():
@@ -222,6 +226,41 @@ def get_pdfs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Endpoint to process a PDF and generate questions/answers
+@app.route('/process_homework_pdf', methods=['POST'])
+def process_homework_pdf():
+    try:
+        # Get the PDF filename from the request (should match what was uploaded)
+        data = request.json
+        pdf_filename = data.get('pdf_filename')
+        if not pdf_filename:
+            return jsonify({'error': 'No PDF filename provided'}), 400
+
+        # Path to the PDF in autogen folder
+        autogen_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autogen')
+        pdf_path = os.path.join(autogen_dir, pdf_filename)
+        if not os.path.exists(pdf_path):
+            return jsonify({'error': 'PDF file not found'}), 404
+
+        # Run main.py with the PDF (assumes main.py uses the correct PDF path)
+        result = subprocess.run(
+            ['python3', os.path.join(autogen_dir, 'main.py'), pdf_path],
+            capture_output=True, text=True
+        )
+        logger.info(result)
+        if result.returncode != 0:
+            return jsonify({'error': 'Processing failed', 'details': result.stderr}), 500
+
+        # After processing, return the generated final.json
+        final_json_path = os.path.join(autogen_dir, 'final.json')
+        if not os.path.exists(final_json_path):
+            return jsonify({'error': 'No results found'}), 500
+        with open(final_json_path, 'r', encoding='utf-8') as f:
+            results = json.load(f)
+        return jsonify({'success': True, 'results': results}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)
     

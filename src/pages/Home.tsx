@@ -70,7 +70,19 @@ const Home = () => {
         const response = await fetch("http://127.0.0.1:5000/get_images");
         if (!response.ok) throw new Error("Failed to fetch images");
         const data = await response.json();
-        setImage((data.image_urls && data.image_urls.length > 0) ? data.image_urls[0] : null);
+
+        if (data.image_urls && data.image_urls.length > 0) {
+          const found = data.image_urls.find((url: any) => {
+            if (typeof url === 'string') return url.includes('screenshot.png');
+            if (url && typeof url.public_url === 'string') return url.public_url.includes('screenshot.png');
+            return false;
+          });
+          setImage(
+            typeof found === 'string' ? found : (found && found.public_url ? found.public_url : null)
+          );
+        } else {
+          setImage(null);
+        }
       } catch (err: any) {
         setImageError(err.message || "Unknown error");
       } finally {
@@ -221,7 +233,7 @@ const Home = () => {
           ) : (
             <Card key={progressVideo.id} className="group hover:shadow-hover transition-all duration-300 cursor-pointer">
               <div className="relative">
-                <video width="750" height="500" controls poster="./screenshot.png">
+                <video width="750" height="500" controls poster={image}>
                   <source src={progressVideo.videoUrl} type="video/mp4"/>
                 </video>
               </div>
