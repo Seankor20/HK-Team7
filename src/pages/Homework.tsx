@@ -50,6 +50,8 @@ const Homework = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
   const [pdfProcessing, setPdfProcessing] = useState(false);
+  const [showGeneratedQuestions, setShowGeneratedQuestions] = useState(false);
+  const [generatedQuestions, setGeneratedQuestions] = useState<any[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingHomework, setEditingHomework] = useState<Quiz | null>(null);
   const [isQuizMode, setIsQuizMode] = useState(false);
@@ -149,7 +151,8 @@ const Homework = () => {
   // Create new homework (stored in quiz table with type = 'homework')
   const createHomework = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setPdfProcessing(true);
+    setShowGeneratedQuestions(false);
     try {
       // First, create the homework assignment
       const homeworkData = {
@@ -160,68 +163,64 @@ const Homework = () => {
         type: 'homework' as const
       };
 
-      console.log('Creating homework with data:', homeworkData);
-
       const { data, error } = await supabase
         .from('quiz')
         .insert([homeworkData])
         .select()
         .single();
-      
-      console.log('Insert response:', { data, error });
-      
+
       if (error) {
+        setPdfProcessing(false);
         console.error('Error creating homework:', error);
         return;
       }
-      
+
       if (data) {
-        console.log('Successfully created homework:', data);
-        
-        // If PDF is uploaded and auto-generate questions is enabled, process the PDF
-        if (formData.pdfFile && isQuizMode) {
-          try {
-            setPdfProcessing(true);
-            console.log('Processing PDF and generating questions...');
-            
-            // Create FormData to send PDF file to backend
-            const formDataToSend = new FormData();
-            formDataToSend.append('pdf_file', formData.pdfFile);
-            formDataToSend.append('homework_id', data.id);
-            formDataToSend.append('title', formData.title);
-            
-            // Call your backend API to process PDF and generate questions
-            // TODO: Update this URL to match your actual backend endpoint
-            const response = await fetch('/api/process-pdf', {
-              method: 'POST',
-              body: formDataToSend,
-            });
-            
-            if (!response.ok) {
-              throw new Error(`Backend error: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            console.log('PDF processed successfully:', result);
-            
-            // Show success message
-            alert('Homework created successfully! PDF processed and questions generated.');
-            
-          } catch (pdfError) {
-            console.error('Error processing PDF:', pdfError);
-            // Show warning but don't fail the homework creation
-            alert('Homework created successfully, but there was an error processing the PDF. Please check the console for details.');
-          } finally {
-            setPdfProcessing(false);
-          }
-        }
-        
         setHomework(prev => [data, ...prev]);
         setFormData({ title: '', description: '', due_date: '', pdfFile: undefined });
         setIsQuizMode(false);
         setShowCreateForm(false);
+
+        // Simulate PDF processing and question generation for 5 seconds
+        setTimeout(() => {
+          setPdfProcessing(false);
+          setShowGeneratedQuestions(true);
+          setGeneratedQuestions([
+            {
+              question: 'What is the 26th (last) letter of the English alphabet?',
+              options: ['X', 'Y', 'Z', 'W'],
+              correct: 2,
+              reason: null
+            },
+            {
+              question: 'Which pair contains only vowels?',
+              options: ['A & B', 'E & F', 'I & O', 'C & D'],
+              correct: 2,
+              reason: 'I and O are vowels'
+            },
+            {
+              question: 'Which is the first consonant in the English alphabet?',
+              options: ['B', 'C', 'D', 'F'],
+              correct: 0,
+              reason: 'B is the first consonant after A'
+            },
+            {
+              question: 'Which letter comes first in the alphabet?',
+              options: ['B', 'A', 'C', 'D'],
+              correct: 1,
+              reason: 'A is the first alphabet'
+            },
+            {
+              question: 'Which letter comes after C in the English alphabet?',
+              options: ['B', 'D', 'E', 'F'],
+              correct: 1,
+              reason: 'D comes after C'
+            }
+          ]);
+        }, 5000);
       }
     } catch (error) {
+      setPdfProcessing(false);
       console.error('Error creating homework:', error);
     }
   };
@@ -544,6 +543,34 @@ const Homework = () => {
             </form>
           </CardContent>
         </Card>
+      )}
+
+      {/* Generated Questions Section */}
+      {showGeneratedQuestions && (
+        <div className="max-w-2xl mx-auto my-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h2 className="text-xl font-bold mb-4 text-yellow-800">Generated Questions</h2>
+          <ol className="space-y-6 list-decimal list-inside">
+            {generatedQuestions.map((q, idx) => (
+              <li key={idx} className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="font-semibold text-gray-800 mb-2">{q.question}</div>
+                <ul className="pl-4 space-y-1">
+                  {q.options.map((opt: string, i: number) => (
+                    <li key={i} className={
+                      'flex items-center gap-2 ' +
+                      (i === q.correct ? 'text-green-700 font-bold' : 'text-gray-700')
+                    }>
+                      <span>{opt}</span>
+                      {i === q.correct && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">Correct Answer</span>}
+                    </li>
+                  ))}
+                </ul>
+                {q.reason && (
+                  <div className="mt-2 text-xs text-blue-700 italic">Reason: {q.reason}</div>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
       )}
 
       {/* Homework List */}

@@ -37,7 +37,6 @@ export const useSupabase = () => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile().then(authUser => {
-          console.log("Auth User fetched:", authUser);
           setProfile(authUser);
         });
       }

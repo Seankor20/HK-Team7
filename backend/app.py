@@ -4,7 +4,7 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 @app.route('/')
 def hello_world():
@@ -197,7 +197,6 @@ def get_videos():
             file_path = f"videos/{file_info['name']}"
             url_data = supabase.storage.from_('docs').get_public_url(file_path)
             file_urls.append(url_data)  # For supabase-py v2; adjust if SDK returns directly
-
         # Return URLs to frontend
         return jsonify({"video_urls": file_urls}), 200
     except Exception as e:
