@@ -23,6 +23,8 @@ def find_text_image_pairs(page: int, extracted_data: json, llm_response_file: js
         if item['page'] == page:
             llm_content = item["content"]
             break
+    
+    right_ans = [item['right_ans'] for item in llm_content]
 
     pairs = []
 
@@ -35,9 +37,15 @@ def find_text_image_pairs(page: int, extracted_data: json, llm_response_file: js
             for text_block in text_blocks:
                 text = text_block['text']
 
-                if text not in llm_content and \
-                    (text[:-1]) not in llm_content:
+                if text not in right_ans and \
+                    (text[:-1]) not in right_ans:
                     continue
+                
+                for item in llm_content:
+                    if text == item['right_ans'] or \
+                        (text[:-1] == item['right_ans']):
+                        wrong_ans = item['wrong_ans']
+                        break
 
                 text_coordinate = text_block['coordinates']
                 
@@ -47,7 +55,8 @@ def find_text_image_pairs(page: int, extracted_data: json, llm_response_file: js
                         image_coord[3] < text_coordinate[1] and \
                         text_coordinate[1] - image_coord[3] < THRESHOLD:
                         pairs.append({
-                            'text': text,
+                            'right_ans': text,
+                            'wrong_ans': wrong_ans, 
                             'image_link': image_link,
                             'text_coordinates': text_coordinate,
                             'image_coordinates': image_coord
