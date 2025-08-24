@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 import type { Database } from './supabase'
 
-type Profile = Database['public']['Tables']['profiles']['Row']
+type Profile = Database['public']['Tables']['user']['Row']
 type Question = Database['public']['Tables']['question']['Row']
 type Quiz = Database['public']['Tables']['quizzes']['Row']
 type ChatMessage = Database['public']['Tables']['chat_messages']['Row']
