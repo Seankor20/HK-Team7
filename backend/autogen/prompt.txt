@@ -1,0 +1,3 @@
+The following are a json format file extracted from an English course post-test assessment for kindergarten kids. There are four types of questions: read alphabets/words, read images, phonetic awareness, read sentences. Your task is to tell me the question type on each page, as well as the question content list. You should #only# output a json format string.
+e.g. output: [{"page":1, "question_type":"read alphabets/words", "content": ["chair\n", "table\n", "Q\n"]}, {"page":2, "question_type": "read words", "room\n", "coat\n"}]
+The extracted json file is: 
