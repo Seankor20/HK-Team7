@@ -14,6 +14,8 @@ import yoyoAvatar from "@/assets/yoyo.png";
 import avaAvatar from "@/assets/ava2.png";
 import shaunAvatar from "@/assets/shaun.png";
 import angelAvatar from "@/assets/angel.png";
+import kingAvatar from "@/assets/avatar_king.png";
+import girl from "@/assets/girl.png";
 
 interface user {
   id: number;
@@ -51,7 +53,7 @@ const Leaderboard = () => {
       {
         id: 1,
         name: "Chi Wing Wang",
-        avatar: chiWingAvatar,
+        avatar: kingAvatar,
         score: 945,
         streak: 12,
         testsCompleted: 28,
@@ -60,7 +62,7 @@ const Leaderboard = () => {
       {
         id: 2,
         name: "Rainbow Cheng",
-        avatar: rainbowAvatar,
+        avatar: girl,
         score: 920,
         streak: 8,
         testsCompleted: 25,
