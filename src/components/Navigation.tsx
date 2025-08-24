@@ -22,7 +22,7 @@ const Navigation = () => {
 
   // Check if user has access to homework management
   const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
-  const canChat = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin' || user?.user_metadata?.role === 'parents'
+  const canChat = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin' || user?.user_metadata?.role === 'parent'
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
     ...(!canManageHomework ? [{ path: "/pathway", label: t('common.learningPath'), icon: Map }] : []),
