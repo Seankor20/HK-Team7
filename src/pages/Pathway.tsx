@@ -76,6 +76,7 @@ const Pathway = () => {
   const [loading, setLoading] = useState(false);
   const [materialsLoading, setMaterialsLoading] = useState(false);
   const [recentQuizCompletion, setRecentQuizCompletion] = useState<any>(null);
+  const [completedQuizzes, setCompletedQuizzes] = useState<any[]>([]);
   
   const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
 
@@ -88,7 +89,46 @@ const Pathway = () => {
     });
     fetchHomework();
     checkRecentQuizCompletion();
+    
+    // Load completed quizzes from localStorage
+    const savedQuizzes = localStorage.getItem('completedQuizzes');
+    if (savedQuizzes) {
+      try {
+        const parsed = JSON.parse(savedQuizzes);
+        setCompletedQuizzes(parsed);
+      } catch (error) {
+        console.error('Error parsing completed quizzes:', error);
+      }
+    }
   }, [user, authLoading, canManageHomework]);
+
+  // Save completed quizzes to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('completedQuizzes', JSON.stringify(completedQuizzes));
+  }, [completedQuizzes]);
+
+  // Check for quiz completions when component becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkRecentQuizCompletion();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Also check when the component mounts and when the user navigates back
+    const handleFocus = () => {
+      checkRecentQuizCompletion();
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   // // Fetch homework from Supabase (filtered by type = 'homework')
   // useEffect(() => {
@@ -190,10 +230,12 @@ const Pathway = () => {
     }
   };
 
+  // Calculate progress based on completed homework and quizzes
   const completedHomework = homework.filter(hw => hw.status === 'completed');
-  const quizXP = recentQuizCompletion ? recentQuizCompletion.xpEarned : 0;
-  const totalXP = (completedHomework.length * 100) + quizXP; // 100 XP per completed homework + quiz XP
-  const progressPercentage = homework.length > 0 ? (completedHomework.length / homework.length) * 100 : 0;
+  const totalCompleted = completedHomework.length + completedQuizzes.length;
+  const totalUnits = homework.length + completedQuizzes.length;
+  const totalXP = (completedHomework.length * 100) + (completedQuizzes.reduce((sum, quiz) => sum + quiz.xpEarned, 0)); // 100 XP per completed homework + quiz XP
+  const progressPercentage = totalUnits > 0 ? (totalCompleted / totalUnits) * 100 : 0;
 
 
   const getHomeworkStatusColor = (status: string) => {
@@ -214,14 +256,40 @@ const Pathway = () => {
   // Check for recent quiz completion and update progress
   const checkRecentQuizCompletion = () => {
     const quizData = localStorage.getItem('lastQuizCompletion');
+    
     if (quizData) {
       const parsed = JSON.parse(quizData);
       setRecentQuizCompletion(parsed);
       
+      setCompletedQuizzes(prev => {
+        // Check if this quiz is already in the list to avoid duplicates
+        const exists = prev.find(q => q.id === parsed.id);
+        if (!exists) {
+          const newList = [...prev, parsed];
+          return newList;
+        }
+        return prev;
+      });
+      
       // Clear the localStorage after reading to avoid showing old data
       localStorage.removeItem('lastQuizCompletion');
+    } else {
     }
   };
+
+  // Force update completedQuizzes when recentQuizCompletion changes
+  useEffect(() => {
+    if (recentQuizCompletion) {
+      setCompletedQuizzes(prev => {
+        const exists = prev.find(q => q.id === recentQuizCompletion.id);
+        if (!exists) {
+          const newList = [...prev, recentQuizCompletion];
+          return newList;
+        }
+        return prev;
+      });
+    }
+  }, [recentQuizCompletion]);
 
   return (
     <div className="p-4 md:p-8 space-y-6">
@@ -236,17 +304,21 @@ const Pathway = () => {
                 <Star className="h-8 w-8 text-yellow-500" />
               </div>
               <h3 className="text-xl font-bold text-green-700 mb-2">
-                🎉 Quiz Completed! 🎉
+                {t('pathway.quizCompletion.title')}
               </h3>
               <p className="text-green-600 mb-3">
-                You scored {recentQuizCompletion.score} out of {recentQuizCompletion.totalQuestions} ({recentQuizCompletion.percentage}%)
+                {t('pathway.quizCompletion.score', {
+                  score: recentQuizCompletion.score,
+                  total: recentQuizCompletion.totalQuestions,
+                  percentage: recentQuizCompletion.percentage
+                })}
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Badge className="bg-green-100 text-green-800 border-green-300">
-                  +{recentQuizCompletion.xpEarned} XP Earned
+                  {t('pathway.quizCompletion.xpEarned', { xp: recentQuizCompletion.xpEarned })}
                 </Badge>
                 <Badge className="bg-blue-100 text-blue-800 border-blue-300">
-                  {recentQuizCompletion.completedAt ? new Date(recentQuizCompletion.completedAt).toLocaleDateString() : 'Today'}
+                  {recentQuizCompletion.completedAt ? new Date(recentQuizCompletion.completedAt).toLocaleDateString() : t('pathway.quizCompletion.completedToday')}
                 </Badge>
               </div>
             </CardContent>
@@ -273,9 +345,9 @@ const Pathway = () => {
               </div>
               <div className="text-xl font-bold text-primary">{totalXP}</div>
               <div className="text-xs text-muted-foreground">{t('pathway.totalXP')}</div>
-              {quizXP > 0 && (
+              {completedQuizzes.length > 0 && (
                 <div className="text-xs text-green-600 mt-1">
-                  +{quizXP} from quiz
+                  +{completedQuizzes.reduce((sum, quiz) => sum + quiz.xpEarned, 0)} {t('pathway.quizCompletion.fromQuiz')}
                 </div>
               )}
             </CardContent>
@@ -288,7 +360,7 @@ const Pathway = () => {
                   <Target className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <div className="text-xl font-bold text-primary">{completedHomework.length}</div>
+              <div className="text-xl font-bold text-primary">{totalCompleted}</div>
               <div className="text-xs text-muted-foreground">{t('pathway.completed')}</div>
             </CardContent>
           </Card>
@@ -315,7 +387,7 @@ const Pathway = () => {
           <Progress value={progressPercentage} className="h-3" />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>0</span>
-            <span>{homework.length} {t('pathway.units')}</span>
+            <span>{totalUnits} {t('pathway.units')}</span>
           </div>
         </div>
       </div>
@@ -529,18 +601,18 @@ const Pathway = () => {
           {/* {loading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-2 text-muted-foreground">Loading homework...</p>
+              <p className="mt-2 text-muted-foreground">{t('pathway.loadingHomework')}</p>
             </div>
           ) : homework.length === 0 ? (
             <div className="text-center py-8">
               <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <p className="text-lg text-muted-foreground">
-                {canManageHomework ? 'No homework assignments created yet!' : 'No homework assigned yet!'}
+                {canManageHomework ? t('pathway.noHomeworkCreated') : t('pathway.noHomeworkAssigned')}
               </p>
               <p className="text-sm text-muted-foreground">
                 {canManageHomework 
-                  ? 'Create your first homework assignment to get started.' 
-                  : 'Check back later for new assignments.'
+                  ? t('pathway.createFirstHomework')
+                  : t('pathway.checkBackLater')
                 }
               </p>
             </div>

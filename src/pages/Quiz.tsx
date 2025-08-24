@@ -110,6 +110,7 @@ const Quiz = () => {
   const goToLearning = () => {
     // Store quiz completion data in localStorage for progress tracking
     const quizData = {
+      id: `quiz_${Date.now()}`, // Unique quiz completion ID
       completed: true,
       score: score,
       totalQuestions: questions.length,

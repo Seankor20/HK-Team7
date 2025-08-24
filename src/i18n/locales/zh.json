@@ -156,7 +156,14 @@
     "createdDate": "创建日期：",
     "type": "类型",
     "homeworkType": "家庭作业",
-    "quizType": "测验"
+    "quizType": "测验",
+    "quizCompletion": {
+      "title": "🎉 测验完成！🎉",
+      "score": "你答对了 {{score}} 题，共 {{total}} 题 ({{percentage}}%)",
+      "xpEarned": "+{{xp}} 经验值获得",
+      "completedToday": "今天",
+      "fromQuiz": "来自测验"
+    }
   },
   "quiz": {
     "title": "测试你的知识",
