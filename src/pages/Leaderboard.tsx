@@ -7,13 +7,11 @@ import castle from "../assets/castle.jpg";
 import { useEffect, useState } from "react";
 
 // Import avatar images
-import chiWingAvatar from "@/assets/chi-wing.png";
-import rainbowAvatar from "@/assets/rainbow.png";
-import ciciAvatar from "@/assets/cici.png";
-import yoyoAvatar from "@/assets/yoyo.png";
+import ciciAvatar from "@/assets/cici2.png";
+import yoyoAvatar from "@/assets/yoyo2.png";
 import avaAvatar from "@/assets/ava2.png";
 import shaunAvatar from "@/assets/shaun.png";
-import angelAvatar from "@/assets/angel.png";
+import angelAvatar from "@/assets/angel2.png";
 import kingAvatar from "@/assets/avatar_king.png";
 import girl from "@/assets/girl.png";
 
@@ -231,7 +229,7 @@ const Leaderboard = () => {
               topPosition = '30%'; 
               horizontalPosition = '30%';
             } else if (currentRank === 3) {
-              topPosition = '30%'; 
+              topPosition = '35%'; 
               horizontalPosition = '75%';
             } else if (currentRank === 4 ){
               topPosition = '55%'; 

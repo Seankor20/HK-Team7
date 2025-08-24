@@ -38,9 +38,9 @@ const Navigation = () => {
       <div className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-40 p-3">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
-              KidsLearn
-            </h1>
+          <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            Project CARE
+          </h1>
           </div>
           <LanguageSwitcher />
         </div>
@@ -54,7 +54,7 @@ const Navigation = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  KidsLearn
+                  Project CARE
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
                   Learning Together
