@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import LanguageSwitcher from './LanguageSwitcher';
 import { Badge } from "./ui/badge";
+import { ThemeToggle } from './ThemeToggle';
 
 const Navigation = () => {
   const location = useLocation();
@@ -21,14 +22,14 @@ const Navigation = () => {
 
   // Check if user has access to homework management
   const canManageHomework = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin';
-
+  const canChat = user?.user_metadata?.role === 'teacher' || user?.user_metadata?.role === 'ngo' || user?.user_metadata?.role === 'admin' || user?.user_metadata?.role === 'parents'
   const navItems = [
     { path: "/", label: t('common.home'), icon: Home },
     ...(!canManageHomework ? [{ path: "/pathway", label: t('common.learningPath'), icon: Map }] : []),
     // Only show homework for teachers, NGOs, and admins
     ...(canManageHomework ? [{ path: "/homework", label: t('common.homework'), icon: PenTool }] : []),
     { path: "/leaderboard", label: t('common.leaderboard'), icon: Trophy },
-    { path: "/chat", label: t('common.chat'), icon: MessageCircle },
+    ...(canChat ? [{ path: "/chat", label: t('common.chat'), icon: MessageCircle }] : []),
     { path: "/profile", label: t('common.profile'), icon: User },
   ];
 
@@ -42,7 +43,10 @@ const Navigation = () => {
             Project CARE
           </h1>
           </div>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
 
@@ -68,7 +72,10 @@ const Navigation = () => {
                   </div>
                 )}
               </div>
-              <LanguageSwitcher />
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <LanguageSwitcher />
+              </div>
             </div>
           </div>
           
