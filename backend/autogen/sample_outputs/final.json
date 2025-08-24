@@ -30,8 +30,13 @@
         "question_type": "read images",
         "text_image_pairs": [
             {
-                "text": "lion",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_12.jpeg",
+                "right_ans": "lion",
+                "wrong_ans": [
+                    "tiger",
+                    "bear",
+                    "cat"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_12.jpeg",
                 "text_coordinates": [
                     79.92913055419922,
                     374.0685729980469,
@@ -46,8 +51,13 @@
                 ]
             },
             {
-                "text": "blue",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_8.jpeg",
+                "right_ans": "blue",
+                "wrong_ans": [
+                    "red",
+                    "green",
+                    "yellow"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_8.jpeg",
                 "text_coordinates": [
                     93.55220031738281,
                     693.0750122070312,
@@ -62,8 +72,13 @@
                 ]
             },
             {
-                "text": "panda",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_9.jpeg",
+                "right_ans": "panda",
+                "wrong_ans": [
+                    "koala",
+                    "raccoon",
+                    "bear"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_9.jpeg",
                 "text_coordinates": [
                     214.84194946289062,
                     693.0750122070312,
@@ -78,8 +93,13 @@
                 ]
             },
             {
-                "text": "notebook",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_1.jpeg",
+                "right_ans": "notebook",
+                "wrong_ans": [
+                    "book",
+                    "paper",
+                    "pencil"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_1.jpeg",
                 "text_coordinates": [
                     205.80479431152344,
                     373.6934509277344,
@@ -94,8 +114,13 @@
                 ]
             },
             {
-                "text": "frog",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_6.jpeg",
+                "right_ans": "frog",
+                "wrong_ans": [
+                    "toad",
+                    "fish",
+                    "turtle"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_6.jpeg",
                 "text_coordinates": [
                     349.43572998046875,
                     535.4988403320312,
@@ -110,8 +135,13 @@
                 ]
             },
             {
-                "text": "six",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_10.jpeg",
+                "right_ans": "six",
+                "wrong_ans": [
+                    "seven",
+                    "five",
+                    "eight"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_10.jpeg",
                 "text_coordinates": [
                     355.4382019042969,
                     693.0750122070312,
@@ -126,8 +156,13 @@
                 ]
             },
             {
-                "text": "green",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_2.jpeg",
+                "right_ans": "green",
+                "wrong_ans": [
+                    "blue",
+                    "red",
+                    "purple"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_2.jpeg",
                 "text_coordinates": [
                     345.6564025878906,
                     373.3009338378906,
@@ -142,8 +177,13 @@
                 ]
             },
             {
-                "text": "pear",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_7.jpeg",
+                "right_ans": "pear",
+                "wrong_ans": [
+                    "apple",
+                    "peach",
+                    "orange"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_7.jpeg",
                 "text_coordinates": [
                     474.493408203125,
                     535.4988403320312,
@@ -158,8 +198,13 @@
                 ]
             },
             {
-                "text": "three",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_3.jpeg",
+                "right_ans": "three",
+                "wrong_ans": [
+                    "two",
+                    "four",
+                    "one"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_3.jpeg",
                 "text_coordinates": [
                     474.44464111328125,
                     371.817138671875,
@@ -174,8 +219,13 @@
                 ]
             },
             {
-                "text": "pencil",
-                "image_link": "/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/page_3_img_11.jpeg",
+                "right_ans": "pencil",
+                "wrong_ans": [
+                    "crayon",
+                    "marker",
+                    "pen"
+                ],
+                "image_link": "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen/extracted_results/page_3_img_11.jpeg",
                 "text_coordinates": [
                     480.5748596191406,
                     693.0750122070312,
@@ -199,7 +249,6 @@
             "Do you like lion?",
             "She has two apples",
             "I like the orange.",
-            "This is a red stawberry.",
             "He sees five dogs."
         ]
     }

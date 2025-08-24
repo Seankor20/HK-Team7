@@ -1,6 +1,6 @@
 import json
 def main(extracted_data_file, output_file):
-    with open("/Users/xuelisun/Desktop/MS_Teckathon/extracted_results/extraction_results.json", 'r') as file:
+    with open(extracted_data_file, 'r') as file:
         extraction_results = json.load(file)
 
     result = []
@@ -19,5 +19,5 @@ def main(extracted_data_file, output_file):
             'text_blocks': text_blocks
         })
 
-    json.dump(result, open("/Users/xuelisun/Desktop/MS_Teckathon/llm_preprocess.json", 'w', encoding='utf-8'), ensure_ascii=False, indent=4)
+    json.dump(result, open(output_file, 'w', encoding='utf-8'), ensure_ascii=False, indent=4)
     print("File save to llm_preprocess.json")

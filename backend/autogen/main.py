@@ -3,19 +3,19 @@ import json
 import question_type
 import preprocess_llm
 
-# Replace with your actual home directory path
-HOME_DIR = "/Users/xuelisun/Desktop/MS_Teckathon"
-PDF_PATH = f"{HOME_DIR}/clean_pdf.pdf"
-PROMPT_PATH = f"{HOME_DIR}/prompt.txt"
-EXTRACTED_DATA_PATH = f"{HOME_DIR}/extracted_results/extraction_results.json"
-LLM_PREPROCESS_PATH = f"{HOME_DIR}/llm_preprocess.json"
-LLM_RESPONSE_PATH = f"{HOME_DIR}/llm_response.json"
-FINAL_OUTPUT_PATH = f"{HOME_DIR}/final.json"
+# Replace with your actual BASE directory path
+BASE_DIR = "/Users/xuelisun/Desktop/MS_hackathon_overall/HK-Team7/backend/autogen"
+PDF_PATH = f"{BASE_DIR}/clean_pdf.pdf"
+PROMPT_PATH = f"{BASE_DIR}/prompt.txt"
+EXTRACTED_DATA_PATH = f"{BASE_DIR}/extracted_results/extracted_results.json"
+LLM_PREPROCESS_PATH = f"{BASE_DIR}/llm_preprocess.json"
+LLM_RESPONSE_PATH = f"{BASE_DIR}/llm_response.json"
+FINAL_OUTPUT_PATH = f"{BASE_DIR}/final.json"
 
-with open(f"{HOME_DIR}/deepseek_api_key", 'r') as file:
+with open(f"{BASE_DIR}/deepseek_api_key", 'r') as file:
     api_key = file.read()
 
-extract_all.main(pdf=PDF_PATH, output=f"{HOME_DIR}/extracted_results")
+extract_all.main(pdf=PDF_PATH, output=f"{BASE_DIR}/extracted_results")
 preprocess_llm.main(extracted_data_file=EXTRACTED_DATA_PATH, output_file=LLM_PREPROCESS_PATH)
 
 with open(PROMPT_PATH, 'r') as file:
