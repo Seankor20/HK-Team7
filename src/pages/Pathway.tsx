@@ -70,7 +70,7 @@ interface CompletedMaterial {
 const Pathway = () => {
   const { t } = useI18n();
   const { user, loading: authLoading } = useSupabase();
-  const [activeTab, setActiveTab] = useState<'materials' | 'homework' | 'quiz'>('materials');
+  const [activeTab, setActiveTab] = useState<'materials' | 'homework' | 'quiz'>('homework');
   const [homework, setHomework] = useState<Homework[]>([]);
   const [completedMaterials, setCompletedMaterials] = useState<CompletedMaterial[]>([]);
   const [loading, setLoading] = useState(false);
